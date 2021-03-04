@@ -4,10 +4,12 @@
 \alias{net_convo}
 \title{Generate network from conversation tweets}
 \usage{
-net_convo(df_convo = NULL)
+net_convo(df_convo = NULL, type = "activity")
 }
 \arguments{
 \item{df_convo}{Dataframe. Conversation tweets collected by get_convo function.}
+
+\item{type}{Character string. Type of network to generate. Default is activity.}
 }
 \value{
 Named list of dataframes for network nodes and edges.
@@ -18,7 +20,7 @@ Generate network from conversation tweets
 \examples{
 \dontrun{
 # generate twitter conversation network
-network <- net_convo(tweets)
+network <- net_convo(tweets, "actor")
 
 # network nodes and edges
 network$nodes
