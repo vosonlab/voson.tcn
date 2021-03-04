@@ -1,7 +1,7 @@
 # get package version
 get_version <- function() {
-  if ("rtconvo" %in% loadedNamespaces()) {
-    return(utils::packageVersion("rtconvo"))
+  if ("vosonTCN" %in% loadedNamespaces()) {
+    return(utils::packageVersion("vosonTCN"))
   }
   "_"
 }
