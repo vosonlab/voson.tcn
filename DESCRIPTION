@@ -1,0 +1,28 @@
+Package: vosonTCN
+Title: Twitter Conversation Networks and Analysis
+Description: Collects tweets and metadata for threaded conversations and generates networks.
+Version: 0.0.1.9000
+Type: Package
+Imports:
+    dplyr,
+    httr,
+    jsonlite,
+    magrittr,
+    openssl,
+    rlang,
+    tibble,
+    tidyr
+Authors@R: c(
+    person("Bryan", "Gertzel",
+           role = c("aut", "cre"),
+           email = "bryan.gertzel@anu.edu.au"),
+    person("Robert", "Ackland",
+           email = "robert.ackland@anu.edu.au", role = "ctb",
+           comment = c(ORCID = "0000-0002-0008-1766")),
+    person("Francisca", "Borquez",
+           email = "francisca.borquez@anu.edu.au", role = "ctb"))
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
