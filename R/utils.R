@@ -12,7 +12,7 @@ save_set_opts <- function() {
   opts$encoding <- getOption("encoding")
   opts$HTTPUserAgent <- getOption("HTTPUserAgent")
   options(encoding = "UTF-8")
-  options(HTTPUserAgent = paste0("rtconvo v", get_version(), " (R package)"))
+  options(HTTPUserAgent = paste0("vosonTCN v", get_version(), " (R package)"))
   opts
 }
 
