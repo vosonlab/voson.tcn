@@ -26,6 +26,8 @@ Under the Standard Product track this allows a cap of 500,000 tweets to be colle
 
 The API `Recent search` endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, meaning a maximum limit of 45,000 tweets per 15 mins. This package is not currently using user access which would have smaller per user rate-limits.
 
+#### Example
+
 ``` r
 library(vosonTCN)
 
@@ -75,7 +77,7 @@ network <- net_convo(tweets)
 # saveRDS(network, "./tcn_network.rds")
 ```
 
-### Graph
+#### Network Graph
 
 ```R
 library(igraph)
