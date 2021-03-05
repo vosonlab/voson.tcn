@@ -48,11 +48,15 @@ saveRDS(token, "~/.tcn_token")
 # read token from file
 token <- readRDS("~/.tcn_token")
 
-# choose a twitter conversation
+# choose a twitter conversation or multiple
 # e.g https://twitter.com/Warcraft/status/1366810588039573505
+#     https://twitter.com/Warcraft/status/1367583684770074625
 
-# can use any tweet id that is part of the conversation thread
-tweets <- get_convo(token, tweet_id = "1366810588039573505")
+# can use any tweet id that is part of the conversation thread and a list of ids, urls or both
+tweet_ids <- c("https://twitter.com/Warcraft/status/1366810588039573505",
+               "1367583684770074625")
+               
+tweets <- get_convos(token, tweet_ids)
 
 # save collected data
 saveRDS(tweets, "./tcn_tweets.rds")

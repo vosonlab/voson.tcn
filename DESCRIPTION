@@ -9,9 +9,12 @@ Imports:
     jsonlite,
     magrittr,
     openssl,
+    purrr,
     rlang,
+    stringr,
     tibble,
     tidyr
+Depends: R (>= 3.5.0)
 Authors@R: c(
     person("Bryan", "Gertzel",
            role = c("aut", "cre"),

@@ -21,3 +21,15 @@ restore_opts <- function(opts) {
   options(encoding = opts$encoding)
   options(HTTPUserAgent = opts$HTTPUserAgent)
 }
+
+# extract tweet ids from tweet urls
+ids_from_urls <- function(urls) {
+  na.omit(unique(sapply(urls, function(x) {
+    if (!is.na(suppressWarnings(as.numeric(x)))) {
+      return(as.character(x))
+    }
+    path <- stringr::str_split(httr::parse_url(x)$path, "/", simplify = TRUE)
+    id <- path[length(path)]
+    ifelse(!is.na(suppressWarnings(as.numeric(id))), as.character(id), NA)
+  }, USE.NAMES = FALSE)))
+}

@@ -1,32 +1,50 @@
 #' Get conversation tweets
 #'
 #' @param token List. Twitter API tokens.
-#' @param tweet_id Character string. Tweet id of any tweet that is part of the threaded conversation.
+#' @param tweet_ids List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
+#' a list of tweet URLs or a mixed list.
 #'
 #' @return A dataframe of tweets.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # get twitter conversation by tweet id
-#' tweets <- get_convo(token, "1309703812123226112")
+#' # get twitter conversations by tweet ids or urls
+#' tweet_ids <- c("xxxxx", ""xxxxx)
+
+#' tweets <- get_convos(token, tweet_ids)
 #' }
 #'
-get_convo <- function(token, tweet_id = NULL) {
+get_convos <- function(token, tweet_ids = NULL) {
   # check params
   if (is.null(token$bearer) ||
       !is.character(token$bearer)) {
     stop("invalid bearer token.")
   }
-  if (is.null(tweet_id) ||
-      is.na(as.numeric(tweet_id))) {
-    stop("invalid tweet_id.")
+
+  tweet_ids <- ids_from_urls(tweet_ids)
+
+  if (is.null(tweet_ids) ||
+      is.na(as.numeric(tweet_ids))) {
+    stop("invalid id in tweet_ids.")
   }
 
   # httr options
   saved_opts <- save_set_opts()
   on.exit(restore_opts(saved_opts), add = TRUE)
 
+  purrr::map_dfr(tweet_ids, ~get_convo(token, .x))
+
+  # todo: remove purrr dependency and use a loop, track conversation_id and rate-limit
+  # res_df <- tibble()
+  # for (id in tweet_ids) {
+  #
+  #   res_df <- dplyr::bind_rows(res_df, df)
+  # }
+}
+
+# get conversation
+get_convo <- function(token, tweet_id = NULL) {
   # create authorization header
   bearer_token <-
     httr::add_headers(Authorization = paste0("Bearer ", token$bearer))
@@ -38,7 +56,7 @@ get_convo <- function(token, tweet_id = NULL) {
            "?tweet.fields=conversation_id")
   resp <- httr::GET(url, bearer_token)
   if (resp$status != 200) {
-    stop(
+    warning(
       paste0(
         "twitter api response status: ",
         resp$status,
@@ -48,6 +66,7 @@ get_convo <- function(token, tweet_id = NULL) {
       ),
       call. = FALSE
     )
+    return(NULL)
   }
 
   # parse response
@@ -55,7 +74,8 @@ get_convo <- function(token, tweet_id = NULL) {
   convo_id <- resp_obj$data$conversation_id
 
   if (is.null(convo_id)) {
-    stop("failed to get tweet conversation_id.", call. = FALSE)
+    warning("failed to get tweet conversation_id.", call. = FALSE)
+    return(NULL)
   }
 
   # tweet fields to collect for conversation tweets
@@ -70,13 +90,24 @@ get_convo <- function(token, tweet_id = NULL) {
     ),
     collapse = ","
   )
+  fields <- paste0("tweet.fields=", fields)
+
+  # expansions <- paste0(
+  #   c(
+  #     "author_id",
+  #     "referenced_tweets.id.author_id"
+  #   ),
+  #   expansions = ","
+  # )
+  # expansions <- paste0("expansions=", expansions)
 
   # get conversation starter tweet as it is not returned by search
   url <-
     paste0("https://api.twitter.com/2/tweets/",
            convo_id,
-           "?tweet.fields=",
-           fields)
+           "?", fields # ,
+           # "&", expansions
+           )
   resp <- httr::GET(url, bearer_token)
   resp_obj <- resp_data(resp)
   if (resp$status != 200) {
@@ -99,8 +130,8 @@ get_convo <- function(token, tweet_id = NULL) {
     paste0(
       "https://api.twitter.com/2/tweets/search/recent?query=conversation_id:",
       convo_id,
-      "&tweet.fields=",
-      fields,
+      "&", fields,
+      # "&", expansions,
       "&max_results=100"
     )
 
@@ -109,6 +140,10 @@ get_convo <- function(token, tweet_id = NULL) {
   resp_obj <- resp_data(resp)
 
   if (resp$status == 200) {
+    # check referenced_tweets
+    df_convo <- ensure_ref_tweets_list(df_convo)
+    resp_obj$data <- ensure_ref_tweets_list(resp_obj$data)
+
     df_convo <- dplyr::bind_rows(resp_obj$data, df_convo)
   } else {
     message(
@@ -173,4 +208,14 @@ resp_data <- function(resp_obj) {
     message(e)
     return(NULL)
   })
+}
+
+# ensure referenced tweets column is a list
+ensure_ref_tweets_list <- function(x) {
+  if ("referenced_tweets" %in% colnames(x)) {
+    if (class(x$referenced_tweets) == "data.frame") {
+      x <- dplyr::mutate(x, referenced_tweets = list(.data$referenced_tweets))
+    }
+  }
+  x
 }
