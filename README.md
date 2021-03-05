@@ -3,7 +3,7 @@ Twitter Conversation Networks and Analysis.
 
 ### Installation
 
-``` r
+```R
 # To install from a private repo, use auth_token with a token
 # from https://github.com/settings/tokens. You only need the
 # repo scope.
@@ -29,7 +29,7 @@ The API `Recent search` endpoint where the conversation tweets are retrieved fro
 ### Example
 
 #### Get Access Token
-``` r
+```R
 library(vosonTCN)
 
 # -- create bearer token
@@ -56,7 +56,7 @@ token <- readRDS("~/.tcn_token")
 tweet_ids <- c("https://twitter.com/Warcraft/status/1366810588039573505",
                "1367583684770074625")
                
-tweets <- get_convos(token, tweet_ids)
+tweets <- get_tcs(tweet_ids, token)
 
 # save collected data
 saveRDS(tweets, "./tcn_tweets.rds")
@@ -68,7 +68,7 @@ saveRDS(tweets, "./tcn_tweets.rds")
 
 # - activity
 
-activity_net <- net_convo(tweets)
+activity_net <- net_tcs(tweets)
 
 > nrow(activity_net$nodes)
 [1] 27
@@ -93,11 +93,11 @@ activity_net <- net_convo(tweets)
 # 3 1366933290704322562 1366810588039573505 replied_to
 
 # save network to file
-saveRDS(activity_net, "./tcn_activity_net.rds")
+saveRDS(activity_net, "./tcn_activity.rds")
 
 # - actor
 
-actor_net <- net_convo(tweets, "actor")
+actor_net <- net_tcs(tweets, "actor")
 
 > nrow(actor_net$nodes)
 [1] 24
@@ -123,7 +123,7 @@ actor_net <- net_convo(tweets, "actor")
 # >
 
 # save network to file
-saveRDS(actor_net, "./tcn_actor_net.rds")
+saveRDS(actor_net, "./tcn_actor.rds")
 ```
 
 #### Network Graphs
@@ -131,7 +131,7 @@ saveRDS(actor_net, "./tcn_actor_net.rds")
 ```R
 library(igraph)
 
-network <- readRDS("./tcn_actor_net.rds")
+network <- readRDS("./tcn_actor.rds")
 
 g <- graph_from_data_frame(network$edges, vertices = network$nodes)
 

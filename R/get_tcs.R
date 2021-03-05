@@ -1,8 +1,8 @@
 #' Get conversation tweets
 #'
-#' @param token List. Twitter API tokens.
-#' @param tweet_ids List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
+#' @param tweet_ids List. Tweet ids of any tweet that are part of the thread conversations of interest. Also accepts
 #' a list of tweet URLs or a mixed list.
+#' @param token List. Twitter API tokens.
 #'
 #' @return A dataframe of tweets.
 #' @export
@@ -12,10 +12,10 @@
 #' # get twitter conversations by tweet ids or urls
 #' tweet_ids <- c("xxxxx", ""xxxxx)
 
-#' tweets <- get_convos(token, tweet_ids)
+#' tweets <- get_tcs(tweet_ids, token)
 #' }
 #'
-get_convos <- function(token, tweet_ids = NULL) {
+get_tcs <- function(tweet_ids = NULL, token) {
   # check params
   if (is.null(token$bearer) ||
       !is.character(token$bearer)) {
@@ -33,7 +33,7 @@ get_convos <- function(token, tweet_ids = NULL) {
   saved_opts <- save_set_opts()
   on.exit(restore_opts(saved_opts), add = TRUE)
 
-  purrr::map_dfr(tweet_ids, ~get_convo(token, .x))
+  purrr::map_dfr(tweet_ids, ~get_tc(.x, token))
 
   # todo: remove purrr dependency and use a loop, track conversation_id and rate-limit
   # res_df <- tibble()
@@ -44,7 +44,7 @@ get_convos <- function(token, tweet_ids = NULL) {
 }
 
 # get conversation
-get_convo <- function(token, tweet_id = NULL) {
+get_tc <- function(tweet_id = NULL, token) {
   # create authorization header
   bearer_token <-
     httr::add_headers(Authorization = paste0("Bearer ", token$bearer))
