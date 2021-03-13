@@ -10,16 +10,14 @@
 #' @return Named list containing the token.
 #' @export
 #'
-get_token <- function(# type = "app",
-                      # app_name = "twitter-app",
-                      consumer_key = NULL,
-                      consumer_secret = NULL # ,
-                      # access_token = NULL,
-                      # access_secret = NULL
-                     ) {
-
-  # app based api auth - OAuth2.0 (bearer) - read only purposes
-  # user based api auth - OAuth1.0a - provide access token or use user sign in - read / write purposes
+tcn_token <- function(
+  # type = "app",
+  # app_name = "twitter-app",
+  consumer_key = NULL,
+  consumer_secret = NULL # ,
+  # access_token = NULL,
+  # access_secret = NULL
+  ) {
 
   # if (!type %in% c("app", "user")) {
   #   stop("invalid token type.")
@@ -33,7 +31,7 @@ get_token <- function(# type = "app",
   saved_opts <- save_set_opts()
   on.exit(restore_opts(saved_opts), add = TRUE)
 
-  # ---- bearer token
+  # -- bearer token
   # if (type == "app") {
     token <- get_bearer(consumer_key, consumer_secret)
 
@@ -44,6 +42,7 @@ get_token <- function(# type = "app",
     return(list(bearer = token))
   # }
 
+  # -- user token
   # if (type == "user") {
   #   if (is.null(app_name) || !is.character(app_name) || nchar(app_name) > 32) {
   #     stop("invalid app name.")
@@ -56,14 +55,14 @@ get_token <- function(# type = "app",
   #     redirect_uri = "http://127.0.0.1:1410/"
   #   )
   #
-  #   # ---- user sign in access token
+  #   # -- user sign in access token
   #   if (is.null(access_token) || is.null(access_secret)) {
   #     token <- httr::oauth1.0_token(
   #       endpoint = httr::oauth_endpoints("twitter"),
   #       app = app)
   #   }
   #
-  #   # ---- user provided access token
+  #   # -- user provided access token
   #   if (is.null(access_token) || is.null(access_secret) ||
   #       !is.character(access_token) || !is.character(access_secret)) {
   #     stop("invalid access token or secret.")

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vosonlab.github.io/vosonTCN/index.html</loc>
+  </url>
+  <url>
+    <loc>https://vosonlab.github.io/vosonTCN/reference/tcn_network.html</loc>
+  </url>
+  <url>
+    <loc>https://vosonlab.github.io/vosonTCN/reference/tcn_threads.html</loc>
+  </url>
+  <url>
+    <loc>https://vosonlab.github.io/vosonTCN/reference/tcn_token.html</loc>
+  </url>
+  <url>
+    <loc>https://vosonlab.github.io/vosonTCN/reference/vosonTCN-package.html</loc>
+  </url>
+</urlset>

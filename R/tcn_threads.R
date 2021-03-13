@@ -1,25 +1,31 @@
-#' Get conversation tweets
+#' Get threaded conversation tweets
 #'
-#' @param tweet_ids List. Tweet ids of any tweet that are part of the thread conversations of interest. Also accepts
+#' @param tweet_ids List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
 #' a list of tweet URLs or a mixed list.
 #' @param token List. Twitter API tokens.
+#' @param end_point Character string. Twitter API v2 search end-point. Can be either "recent" for the last 7 days or
+#' "all" if users app has access to historical tweets. Default is "recent".
+#' @param skip_list Character vector. List of tweet conversation IDs to skip searching if found. This list is
+#' automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
+#' duplication.
 #'
 #' @return A dataframe of tweets.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # get twitter conversations by tweet ids or urls
-#' tweet_ids <- c("xxxxx", ""xxxxx)
+#' # get twitter conversation threads by tweet ids or urls
+#' tweet_ids <- c("xxxxxxxx",
+#'                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
 
-#' tweets <- get_tcs(tweet_ids, token)
+#' tweets <- tcn_threads(tweet_ids, token)
 #' }
 #'
-get_tcs <- function(tweet_ids = NULL, token) {
+tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", skip_list = NULL) {
   # check params
   if (is.null(token$bearer) ||
       !is.character(token$bearer)) {
-    stop("invalid bearer token.")
+    stop("missing or invalid bearer token.")
   }
 
   tweet_ids <- ids_from_urls(tweet_ids)
@@ -33,21 +39,37 @@ get_tcs <- function(tweet_ids = NULL, token) {
   saved_opts <- save_set_opts()
   on.exit(restore_opts(saved_opts), add = TRUE)
 
-  purrr::map_dfr(tweet_ids, ~get_tc(.x, token))
+  # purrr::map_dfr(tweet_ids, ~get_thread(.x, token$bearer, end_point))
 
-  # todo: remove purrr dependency and use a loop, track conversation_id and rate-limit
-  # res_df <- tibble()
-  # for (id in tweet_ids) {
-  #
-  #   res_df <- dplyr::bind_rows(res_df, df)
-  # }
+  res_df <- tibble::tibble()
+  for (id in tweet_ids) {
+    df <- get_thread(
+      tweet_id = id,
+      token = token$bearer,
+      end_point = end_point,
+      skip_list = skip_list)
+
+    if (!is.null(df) && nrow(df) > 0) {
+      skip_list <- union(skip_list, unique(unlist(df$conversation_id)))
+      res_df <- dplyr::bind_rows(res_df, df)
+    }
+  }
+
+  res_df
 }
 
 # get conversation
-get_tc <- function(tweet_id = NULL, token) {
+get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip_list = NULL) {
   # create authorization header
   bearer_token <-
-    httr::add_headers(Authorization = paste0("Bearer ", token$bearer))
+    httr::add_headers(Authorization = paste0("Bearer ", token))
+
+  # search end-points
+  # /2/tweets/search/all - historical
+  # /2/tweets/search/recent - last 7 days
+  if (!end_point %in% c("recent", "all")) {
+    end_point <- "recent"
+  }
 
   # get conversation_id from tweet requested by tweet_id
   url <-
@@ -78,6 +100,11 @@ get_tc <- function(tweet_id = NULL, token) {
     return(NULL)
   }
 
+  if (convo_id %in% skip_list) {
+    warning("skipping tweet id as conversation_id in skip list.", call. = FALSE)
+    return(NULL)
+  }
+
   # tweet fields to collect for conversation tweets
   fields <- paste0(
     c(
@@ -92,21 +119,11 @@ get_tc <- function(tweet_id = NULL, token) {
   )
   fields <- paste0("tweet.fields=", fields)
 
-  # expansions <- paste0(
-  #   c(
-  #     "author_id",
-  #     "referenced_tweets.id.author_id"
-  #   ),
-  #   expansions = ","
-  # )
-  # expansions <- paste0("expansions=", expansions)
-
   # get conversation starter tweet as it is not returned by search
   url <-
     paste0("https://api.twitter.com/2/tweets/",
            convo_id,
-           "?", fields # ,
-           # "&", expansions
+           "?", fields
            )
   resp <- httr::GET(url, bearer_token)
   resp_obj <- resp_data(resp)
@@ -128,10 +145,11 @@ get_tc <- function(tweet_id = NULL, token) {
   # initial search tweets
   search_url <-
     paste0(
-      "https://api.twitter.com/2/tweets/search/recent?query=conversation_id:",
+      "https://api.twitter.com/2/tweets/search/",
+      end_point,
+      "?query=conversation_id:",
       convo_id,
       "&", fields,
-      # "&", expansions,
       "&max_results=100"
     )
 

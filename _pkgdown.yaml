@@ -1,0 +1,45 @@
+title: vosonTCN
+url: https://vosonlab.github.io/vosonTCN
+
+navbar:
+  structure:
+    left:
+    - home
+    - news
+    - reference
+    right:
+    - vosonlab
+    - twitter
+    - github
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    news:
+      icon: fa-newspaper
+      text: "Changelog"
+      href: news/index.html
+    reference:
+      icon: fa-cubes fa-lg
+      text: "Reference"
+      href: reference/index.html
+    vosonlab:
+      icon: fa-flask fa-lg
+      href: http://vosonlab.net/
+    twitter:
+      icon: fab fa-twitter-square fa-lg
+      href: https://twitter.com/vosonlab
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/vosonlab/vosonTCN
+
+reference:
+- title: Function Reference
+  desc: Available functions and helpers
+  contents:
+  - '`tcn_token`'
+  - '`tcn_threads`'
+  - '`tcn_network`'
+
+toc:
+  depth: 2
