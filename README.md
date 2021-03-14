@@ -1,27 +1,29 @@
 # vosonTCN
 
-Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
+Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
-#### Twitter OAuth Authentication
+An introduction to the Twitter API v2 can be found [here](https://developer.twitter.com/en/docs/twitter-api/early-access), and the Twitter Developer Application that includes early access [here](https://developer.twitter.com/en/apply-for-access).
 
-This package uses the app based authentication approach with an `OAuth2` bearer token that only has read-only access, as opposed to a user based one that requires an `OAuth1a` token and has broader permissions. To retrieve a bearer token the `consumer key` and `consumer secret` for a Developer `Standard Project` or `Academic Research Project` app that has been approved to use the Twitter API v2 endpoints are required. These can be found on the Twitter Developer Portals [Projects & Apps](https://developer.twitter.com/en/portal/projects-and-apps) page.
+### OAuth Authentication
 
-#### Search Endpoint
+This package currently uses app based authentication approach with an `OAuth2` bearer token rather than a user based one that uses an `OAuth1a` token. Bearer tokens have read-only API access and higher rate-limits, whereas user tokens have lower rate-limits and broader permissions that are not required for searching and collecting tweets. To retrieve a bearer token, both the `consumer key` and `consumer secret` for a Developer `Standard Project` or `Academic Research Project` app (that has been approved to use the Twitter API v2 endpoints) are required. These can be found or created on the Twitter Developer Portals [Projects & Apps](https://developer.twitter.com/en/portal/projects-and-apps) page.
 
-By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can use the `tcn_threads` parameter `type = "all"` to collect all `historical` conversation tweets.
+### Search Endpoint
 
-#### Twitter API v2 Rate-limits
+By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can also use the `tcn_threads` parameter `type = "all"` to collect on all `historical` conversation tweets.
 
-The API `Recent search` endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins. This package is not currently using user based access which would have smaller per user rate-limits.
+### Rate-limits and Quotas
+
+The API `recent search` endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins.
 
 There is currently a cap of 500,000 tweets that be collected per month per project under the Twitter API v2 `Standard` product track and 10,000,000 for the `Academic Research` track.
 
-#### Limitations
+### Limitations
 
 - Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.
 - Does not yet support OAuth1a authentication.
 
-### Installation
+## Installation
 
 ```R
 library(remotes)
@@ -29,15 +31,13 @@ library(remotes)
 install_github("vosonlab/vosonTCN")
 ```
 
-### Usage
+## Usage
 
 #### Get Access Token
 
 Retrieve and save an app bearer token using its consumer keys.
 ```R
 library(vosonTCN)
-
-# -- get bearer token
 
 token <- tcn_token(consumer_key = "xxxxxxxx",
                    consumer_secret = "xxxxxxxx")
