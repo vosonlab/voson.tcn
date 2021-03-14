@@ -33,7 +33,7 @@ install_github("vosonlab/vosonTCN")
 
 ## Usage
 
-#### Get Access Token
+### Get Access Token
 
 Retrieve and save an app bearer token using its consumer keys.
 ```R
@@ -46,7 +46,7 @@ token <- tcn_token(consumer_key = "xxxxxxxx",
 saveRDS(token, "~/.tcn_token")
 ```
 
-#### Collect Tweets
+### Collect Tweets
 
 Using tweet urls collect conversation tweets and enough metadata to generate networks.
 ```R
@@ -66,7 +66,7 @@ tweet_ids <- c("https://twitter.com/Warcraft/status/1366810588039573505",
 tweets <- tcn_threads(tweet_ids, token)
 ```
 
-#### Generate Networks
+### Generate Networks
 
 Two types of networks can be generated from the tweets collected. An `activity` network in which tweets are the nodes and an `actor` network where Twitter users are the nodes. Edges are the relationships between nodes, in both networks these are either a `reply` or a `quote`, signifying for example that a tweet is a reply-to another tweet or that a user has replied to another user.
 ```R
@@ -116,7 +116,7 @@ actor_net <- tcn_network(tweets, "actor")
 # >
 ```
 
-#### Network Graphs
+### Network Graphs
 
 Convert network to an igraph object and perform a simple plot.
 ```R

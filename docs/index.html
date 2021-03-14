@@ -92,49 +92,49 @@
 <div id="vosontcn" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#vosontcn" class="anchor"></a>vosonTCN</h1></div>
-<p>Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 <a href="https://developer.twitter.com/en/products/twitter-api/early-access">Early Access</a> endpoints to collect tweets and generate networks for threaded conversations identified using the new <a href="https://developer.twitter.com/en/docs/twitter-api/conversation-id">conversation identifier</a>.</p>
-<div id="twitter-oauth-authentication" class="section level4">
-<h4 class="hasAnchor">
-<a href="#twitter-oauth-authentication" class="anchor"></a>Twitter OAuth Authentication</h4>
-<p>This package uses the app based authentication approach with an <code>OAuth2</code> bearer token that only has read-only access, as opposed to a user based one that requires an <code>OAuth1a</code> token and has broader permissions. To retrieve a bearer token the <code>consumer key</code> and <code>consumer secret</code> for a Developer <code>Standard Project</code> or <code>Academic Research Project</code> app that has been approved to use the Twitter API v2 endpoints are required. These can be found on the Twitter Developer Portals <a href="https://developer.twitter.com/en/portal/projects-and-apps">Projects &amp; Apps</a> page.</p>
+<p>Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 <a href="https://developer.twitter.com/en/products/twitter-api/early-access">Early Access</a> endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet <a href="https://developer.twitter.com/en/docs/twitter-api/conversation-id">conversation identifier</a>.</p>
+<p>An introduction to the Twitter API v2 can be found <a href="https://developer.twitter.com/en/docs/twitter-api/early-access">here</a>, and the Twitter Developer Application that includes early access <a href="https://developer.twitter.com/en/apply-for-access">here</a>.</p>
+<div id="oauth-authentication" class="section level3">
+<h3 class="hasAnchor">
+<a href="#oauth-authentication" class="anchor"></a>OAuth Authentication</h3>
+<p>This package currently uses app based authentication approach with an <code>OAuth2</code> bearer token rather than a user based one that uses an <code>OAuth1a</code> token. Bearer tokens have read-only API access and higher rate-limits, whereas user tokens have lower rate-limits and broader permissions that are not required for searching and collecting tweets. To retrieve a bearer token, both the <code>consumer key</code> and <code>consumer secret</code> for a Developer <code>Standard Project</code> or <code>Academic Research Project</code> app (that has been approved to use the Twitter API v2 endpoints) are required. These can be found or created on the Twitter Developer Portals <a href="https://developer.twitter.com/en/portal/projects-and-apps">Projects &amp; Apps</a> page.</p>
 </div>
-<div id="search-endpoint" class="section level4">
-<h4 class="hasAnchor">
-<a href="#search-endpoint" class="anchor"></a>Search Endpoint</h4>
-<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can use the <code>tcn_threads</code> parameter <code>type = "all"</code> to collect all <code>historical</code> conversation tweets.</p>
+<div id="search-endpoint" class="section level3">
+<h3 class="hasAnchor">
+<a href="#search-endpoint" class="anchor"></a>Search Endpoint</h3>
+<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>type = "all"</code> to collect on all <code>historical</code> conversation tweets.</p>
 </div>
-<div id="twitter-api-v2-rate-limits" class="section level4">
-<h4 class="hasAnchor">
-<a href="#twitter-api-v2-rate-limits" class="anchor"></a>Twitter API v2 Rate-limits</h4>
-<p>The API <code>Recent search</code> endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins. This package is not currently using user based access which would have smaller per user rate-limits.</p>
+<div id="rate-limits-and-quotas" class="section level3">
+<h3 class="hasAnchor">
+<a href="#rate-limits-and-quotas" class="anchor"></a>Rate-limits and Quotas</h3>
+<p>The API <code>recent search</code> endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins.</p>
 <p>There is currently a cap of 500,000 tweets that be collected per month per project under the Twitter API v2 <code>Standard</code> product track and 10,000,000 for the <code>Academic Research</code> track.</p>
 </div>
-<div id="limitations" class="section level4">
-<h4 class="hasAnchor">
-<a href="#limitations" class="anchor"></a>Limitations</h4>
+<div id="limitations" class="section level3">
+<h3 class="hasAnchor">
+<a href="#limitations" class="anchor"></a>Limitations</h3>
 <ul>
-<li>Not currently managing quotas or rate-limits. Doesn’t check or wait until reset time when the rate-limit has been reached.</li>
+<li>Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.</li>
+<li>Does not yet support OAuth1a authentication.</li>
 </ul>
 </div>
-<div id="installation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h3>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org">remotes</a></span><span class="op">)</span>
 
 <span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"vosonlab/vosonTCN"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="usage" class="section level3">
+<div id="usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#usage" class="anchor"></a>Usage</h2>
+<div id="get-access-token" class="section level3">
 <h3 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h3>
-<div id="get-access-token" class="section level4">
-<h4 class="hasAnchor">
-<a href="#get-access-token" class="anchor"></a>Get Access Token</h4>
+<a href="#get-access-token" class="anchor"></a>Get Access Token</h3>
 <p>Retrieve and save an app bearer token using its consumer keys.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">vosonTCN</span><span class="op">)</span>
-
-<span class="co"># -- get bearer token</span>
 
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,
                    consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
@@ -142,103 +142,81 @@
 <span class="co"># if you save the token to file this step only needs to be done once</span>
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">token</span>, <span class="st">"~/.tcn_token"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="collect-tweets" class="section level4">
-<h4 class="hasAnchor">
-<a href="#collect-tweets" class="anchor"></a>Collect Tweets</h4>
+<div id="collect-tweets" class="section level3">
+<h3 class="hasAnchor">
+<a href="#collect-tweets" class="anchor"></a>Collect Tweets</h3>
 <p>Using tweet urls collect conversation tweets and enough metadata to generate networks.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># -- collect some conversation tweets</span>
-
-<span class="co"># read token from file</span>
+<code class="sourceCode R"><span class="co"># read token from file</span>
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"~/.tcn_token"</span><span class="op">)</span>
 
-<span class="co"># choose a twitter conversation or multiple</span>
-<span class="co"># e.g https://twitter.com/Warcraft/status/1366810588039573505</span>
+<span class="co"># choose a twitter conversation thread or multiple threads to collect</span>
+<span class="co"># e.g https://twitter.com/Warcraft/status/1366810588039573505, and</span>
 <span class="co">#     https://twitter.com/Warcraft/status/1367583684770074625</span>
 
-<span class="co"># can use any tweet id that is part of the conversation thread and a list of ids, urls or both</span>
+<span class="co"># can use any tweet or tweet id that is part of the conversation thread</span>
+<span class="co"># input is a list of tweet ids, tweet urls or combination of both</span>
 <span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"https://twitter.com/Warcraft/status/1366810588039573505"</span>,
                <span class="st">"1367583684770074625"</span><span class="op">)</span>
-               
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span>
 
-<span class="co"># save collected data</span>
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"./tcn_tweets.rds"</span><span class="op">)</span></code></pre></div>
+<span class="co"># collect the conversation threads as a dataframe of tweets for supplied ids           </span>
+<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="generate-networks" class="section level4">
-<h4 class="hasAnchor">
-<a href="#generate-networks" class="anchor"></a>Generate Networks</h4>
+<div id="generate-networks" class="section level3">
+<h3 class="hasAnchor">
+<a href="#generate-networks" class="anchor"></a>Generate Networks</h3>
 <p>Two types of networks can be generated from the tweets collected. An <code>activity</code> network in which tweets are the nodes and an <code>actor</code> network where Twitter users are the nodes. Edges are the relationships between nodes, in both networks these are either a <code>reply</code> or a <code>quote</code>, signifying for example that a tweet is a reply-to another tweet or that a user has replied to another user.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># -- generate networks</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># -- activity network</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>tweets <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./tcn_tweets.rds"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>activity_net <span class="ot">&lt;-</span> <span class="fu">tcn_network</span>(tweets)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - activity</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>activity_net <span class="ot">&lt;-</span> <span class="fu">tcn_network</span>(tweets)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">nrow</span>(activity_net<span class="sc">$</span>nodes)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">27</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(activity_net<span class="sc">$</span>nodes, <span class="at">n =</span> <span class="dv">3</span>))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 5</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   tweet_id     user_id      source      created_at     text</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 13670463885~ 13540157795~ Twitter fo~ 2021-03-03T09~ "@Warcraft I am a professional~</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 13669645882~ 13526866149~ Twitter We~ 2021-03-03T04~ "@Warcraft I'd watch but I don~</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 13669332907~ 85150515685~ Twitter fo~ 2021-03-03T02~ "@Warcraft Been gone for a bit~</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">nrow</span>(activity_net<span class="sc">$</span>edges)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">27</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># activity nodes dataframe structure</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(activity_net<span class="sc">$</span>nodes, <span class="at">n =</span> <span class="dv">3</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 5</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   tweet_id     user_id      source      created_at     text</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 13670463885~ 13540157795~ Twitter fo~ 2021-03-03T09~ "@Warcraft I am a professional~</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 13669645882~ 13526866149~ Twitter We~ 2021-03-03T04~ "@Warcraft I'd watch but I don~</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 13669332907~ 85150515685~ Twitter fo~ 2021-03-03T02~ "@Warcraft Been gone for a bit~</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># activity edges dataframe structure</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(activity_net<span class="sc">$</span>edges, <span class="at">n =</span> <span class="dv">3</span>))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 3</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   from                to                  type</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;               &lt;chr&gt;               &lt;chr&gt;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 1367046388530339844 1366810588039573505 replied_to</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 1366964588240121859 1366810588039573505 replied_to</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 1366933290704322562 1366810588039573505 replied_to</span></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(activity_net<span class="sc">$</span>edges, <span class="at">n =</span> <span class="dv">3</span>))</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 3</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   from                to                  type</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;               &lt;chr&gt;               &lt;chr&gt;</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 1367046388530339844 1366810588039573505 replied_to</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 1366964588240121859 1366810588039573505 replied_to</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 1366933290704322562 1366810588039573505 replied_to</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># save network to file</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(activity_net, <span class="st">"./tcn_activity.rds"</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># - actor</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># -- actor network</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>actor_net <span class="ot">&lt;-</span> <span class="fu">tcn_network</span>(tweets, <span class="st">"actor"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co"># actor nodes dataframe structure</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(actor_net<span class="sc">$</span>nodes, <span class="at">n =</span> <span class="dv">3</span>))</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 2</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   user_id             source</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;               &lt;chr&gt;</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 1354015779528744960 Twitter for iPhone</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 1352686614909214721 Twitter Web App</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 851505156856455168  Twitter for Android</span></span>
 <span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>actor_net <span class="ot">&lt;-</span> <span class="fu">tcn_network</span>(tweets, <span class="st">"actor"</span>)</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">nrow</span>(actor_net<span class="sc">$</span>nodes)</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">24</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(actor_net<span class="sc">$</span>nodes, <span class="at">n =</span> <span class="dv">3</span>))</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 2</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="co">#   user_id             source</span></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;               &lt;chr&gt;</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 1354015779528744960 Twitter for iPhone</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 1352686614909214721 Twitter Web App</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 851505156856455168  Twitter for Android</span></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">nrow</span>(actor_net<span class="sc">$</span>edges)</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">27</span></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(actor_net<span class="sc">$</span>edges, <span class="at">n =</span> <span class="dv">3</span>))</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 6</span></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="co">#   from         to      type     tweet_id       created_at       text</span></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;</span></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 13540157795~ 610331~ replied~ 1367046388530~ 2021-03-03T09:3~ "@Warcraft I am a professional designer,~</span></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 13526866149~ 610331~ replied~ 1366964588240~ 2021-03-03T04:1~ "@Warcraft I'd watch but I don't care to~</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 85150515685~ 610331~ replied~ 1366933290704~ 2021-03-03T02:0~ "@Warcraft Been gone for a bit whats wit~</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;</span></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="co"># save network to file</span></span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(actor_net, <span class="st">"./tcn_actor.rds"</span>)</span></code></pre></div>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co"># actor edges dataframe structure</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">print</span>(<span class="fu">head</span>(actor_net<span class="sc">$</span>edges, <span class="at">n =</span> <span class="dv">3</span>))</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># # A tibble: 3 x 6</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">#   from         to      type     tweet_id       created_at       text</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 13540157795~ 610331~ replied~ 1367046388530~ 2021-03-03T09:3~ "@Warcraft I am ,~</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 13526866149~ 610331~ replied~ 1366964588240~ 2021-03-03T04:1~ "@Warcraft I'd wa~</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 85150515685~ 610331~ replied~ 1366933290704~ 2021-03-03T02:0~ "@Warcraft Been g~</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;</span></span></code></pre></div>
 </div>
-<div id="network-graphs" class="section level4">
-<h4 class="hasAnchor">
-<a href="#network-graphs" class="anchor"></a>Network Graphs</h4>
+<div id="network-graphs" class="section level3">
+<h3 class="hasAnchor">
+<a href="#network-graphs" class="anchor"></a>Network Graphs</h3>
+<p>Convert network to an igraph object and perform a simple plot.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org">igraph</a></span><span class="op">)</span>
-
-<span class="va">network</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"./tcn_actor.rds"</span><span class="op">)</span>
 
 <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_data_frame.html">graph_from_data_frame</a></span><span class="op">(</span><span class="va">network</span><span class="op">$</span><span class="va">edges</span>, vertices <span class="op">=</span> <span class="va">network</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span>
 
