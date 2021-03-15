@@ -1,7 +1,7 @@
 # get package version
 get_version <- function() {
-  if ("vosonTCN" %in% loadedNamespaces()) {
-    return(utils::packageVersion("vosonTCN"))
+  if ("voson.tcn" %in% loadedNamespaces()) {
+    return(utils::packageVersion("voson.tcn"))
   }
   "_"
 }
@@ -12,7 +12,7 @@ save_set_opts <- function() {
   opts$encoding <- getOption("encoding")
   opts$HTTPUserAgent <- getOption("HTTPUserAgent")
   options(encoding = "UTF-8")
-  options(HTTPUserAgent = paste0("vosonTCN v", get_version(), " (R package)"))
+  options(HTTPUserAgent = paste0("voson.tcn v", get_version(), " (R package)"))
   opts
 }
 

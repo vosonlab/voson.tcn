@@ -1,5 +1,5 @@
-title: vosonTCN
-url: https://vosonlab.github.io/vosonTCN
+title: voson.tcn
+url: https://vosonlab.github.io/voson.tcn
 
 navbar:
   structure:
@@ -31,7 +31,7 @@ navbar:
       href: https://twitter.com/vosonlab
     github:
       icon: fab fa-github fa-lg
-      href: https://github.com/vosonlab/vosonTCN
+      href: https://github.com/vosonlab/voson.tcn
 
 reference:
 - title: Function Reference

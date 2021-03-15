@@ -1,4 +1,4 @@
-# vosonTCN - Twitter Conversation Networks
+# voson.tcn - Twitter Conversation Networks
 
 Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
@@ -28,7 +28,7 @@ There is currently a cap of 500,000 tweets that be collected per month per proje
 ```R
 library(remotes)
 
-install_github("vosonlab/vosonTCN")
+install_github("vosonlab/voson.tcn")
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ install_github("vosonlab/vosonTCN")
 
 Retrieve and save an app bearer token using its consumer keys.
 ```R
-library(vosonTCN)
+library(voson.tcn)
 
 token <- tcn_token(consumer_key = "xxxxxxxx",
                    consumer_secret = "xxxxxxxx")

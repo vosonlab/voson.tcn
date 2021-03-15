@@ -1,4 +1,4 @@
-# vosonTCN 0.1.2.9000
+# voson.tcn 0.1.3.9000
 
 ## Initial Version
 - Retrieve a Twitter bearer token using app consumer keys with the `tcn_token` function.

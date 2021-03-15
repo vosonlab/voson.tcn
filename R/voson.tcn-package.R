@@ -1,5 +1,5 @@
-#' @name vosonTCN-package
-#' @aliases vosonTCN-package vosonTCN
+#' @name voson.tcn-package
+#' @aliases voson.tcn-package voson.tcn
 #' @docType package
 #' @keywords internal
 "_PACKAGE"
