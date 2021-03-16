@@ -1,4 +1,5 @@
-# voson.tcn - Twitter Conversation Networks[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.3.9000&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn)
+# voson.tcn - Twitter Conversation Networks
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.3.9000&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
