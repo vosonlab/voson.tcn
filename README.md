@@ -123,7 +123,6 @@ print(head(actor_net$edges, n = 3))
 # 1 13540157795~ 610331~ replied~ 1367046388530~ 2021-03-03T09:3~ "@Warcraft I am ,~
 # 2 13526866149~ 610331~ replied~ 1366964588240~ 2021-03-03T04:1~ "@Warcraft I'd wa~
 # 3 85150515685~ 610331~ replied~ 1366933290704~ 2021-03-03T02:0~ "@Warcraft Been g~
-# >
 ```
 
 ### Network Graphs
@@ -132,7 +131,7 @@ Convert network to an igraph object and perform a simple plot.
 ```R
 library(igraph)
 
-g <- graph_from_data_frame(network$edges, vertices = network$nodes)
+g <- graph_from_data_frame(actor_net$edges, vertices = actor_net$nodes)
 
 plot(g)
 ```
