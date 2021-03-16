@@ -72,13 +72,14 @@ tweets <- tcn_threads(tweet_ids, token)
 ### Generate Networks
 
 Two types of networks can be generated from the tweets collected. An `activity` network in which tweets are the nodes and an `actor` network where Twitter users are the nodes. Edges are the relationships between nodes, in both networks these are either a `reply` or a `quote`, signifying for example that a tweet is a reply-to another tweet or that a user has replied to another user.
-```R
-# -- activity network
 
+#### Create an activity network
+```R
 activity_net <- tcn_network(tweets)
 
 # activity nodes dataframe structure
-> print(head(activity_net$nodes, n = 3))
+print(head(activity_net$nodes, n = 3))
+
 # # A tibble: 3 x 5
 #   tweet_id     user_id      source      created_at     text
 #   <chr>        <chr>        <chr>       <chr>          <chr>
@@ -87,20 +88,25 @@ activity_net <- tcn_network(tweets)
 # 3 13669332907~ 85150515685~ Twitter fo~ 2021-03-03T02~ "@Warcraft Been gone for a bit~
 
 # activity edges dataframe structure
-> print(head(activity_net$edges, n = 3))
+print(head(activity_net$edges, n = 3))
+
 # # A tibble: 3 x 3
 #   from                to                  type
 #   <chr>               <chr>               <chr>
 # 1 1367046388530339844 1366810588039573505 replied_to
 # 2 1366964588240121859 1366810588039573505 replied_to
 # 3 1366933290704322562 1366810588039573505 replied_to
+```
 
-# -- actor network
+#### Create an actor network
+```R
+# create an actor network
 
 actor_net <- tcn_network(tweets, "actor")
 
 # actor nodes dataframe structure
-> print(head(actor_net$nodes, n = 3))
+print(head(actor_net$nodes, n = 3))
+
 # # A tibble: 3 x 2
 #   user_id             source
 #   <chr>               <chr>
@@ -109,7 +115,8 @@ actor_net <- tcn_network(tweets, "actor")
 # 3 851505156856455168  Twitter for Android
 
 # actor edges dataframe structure
-> print(head(actor_net$edges, n = 3))
+print(head(actor_net$edges, n = 3))
+
 # # A tibble: 3 x 6
 #   from         to      type     tweet_id       created_at       text
 #   <chr>        <chr>   <chr>    <chr>          <chr>            <chr>
