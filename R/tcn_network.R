@@ -1,6 +1,6 @@
 #' Generate network from conversation tweets
 #'
-#' @param threads_df Dataframe. Threaded conversation tweets collected by get_threads function.
+#' @param data Named list. Dataframes of threaded conversation tweets and users collected by get_threads function.
 #' @param type Character string. Type of network to generate. Default is "actor".
 #'
 #' @return Named list of dataframes for network nodes and edges.
@@ -16,12 +16,12 @@
 #' network$edges
 #' }
 #'
-tcn_network <- function(threads_df = NULL, type = "actor") {
-  if (is.null(threads_df) || !is.data.frame(threads_df)) {
+tcn_network <- function(data = NULL, type = "actor") {
+  if (is.null(data) || !is.data.frame(data$tweets)) {
     stop("invalid input dataframe.")
   }
 
-  if (nrow(threads_df) < 1) {
+  if (nrow(data$tweets) < 1) {
     stop("input dataframe is empty.")
   }
 
@@ -29,19 +29,10 @@ tcn_network <- function(threads_df = NULL, type = "actor") {
     stop("network type not supported.")
   }
 
-  # unnest referenced tweets
-  threads_df %<>% dplyr::rename(tweet_id = .data$id)
-  threads_df %<>% tidyr::unnest(cols = c("referenced_tweets"),
-                                keep_empty = TRUE) %>%
-    dplyr::rename(
-      ref_tweet_id = .data$id,
-      ref_tweet_type = .data$type
-    )
-
   if (type == "activity") {
     # network edges
     edges <-
-      threads_df %>% dplyr::select(
+      data$tweets %>% dplyr::select(
         from = .data$tweet_id,
         to = .data$ref_tweet_id,
         type = .data$ref_tweet_type
@@ -54,7 +45,7 @@ tcn_network <- function(threads_df = NULL, type = "actor") {
         edges %>% dplyr::select(tweet_id = .data$from),
         edges %>% dplyr::select(tweet_id = .data$to)
       ) %>%
-      dplyr::left_join(threads_df, by = "tweet_id") %>%
+      dplyr::left_join(data$tweets, by = "tweet_id") %>%
       dplyr::distinct(.data$tweet_id, .keep_all = TRUE) %>%
       dplyr::select(.data$tweet_id,
                     user_id = .data$author_id,
@@ -62,12 +53,17 @@ tcn_network <- function(threads_df = NULL, type = "actor") {
                     .data$created_at,
                     .data$text)
 
-    # edges <- edges %>% dplyr::filter((.data$from != .data$to) & !is.na(.data$type))
+    # remove non-conversation self-loops
+    edges <- edges %>% dplyr::filter((.data$from != .data$to) & !is.na(.data$type))
+
+    if (!is.null(data$users) && nrow(data$users > 0)) {
+      nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
+    }
 
   } else if (type == "actor") {
     # does not include quoted edges as quoted tweet user ids are not in the data,
     # so just has conversation replies at this stage
-    edges <- threads_df %>%
+    edges <- data$tweets %>%
       dplyr::filter(is.na(.data$ref_tweet_type) |
                       .data$ref_tweet_type != "quoted") %>%
       dplyr::select(
@@ -88,9 +84,13 @@ tcn_network <- function(threads_df = NULL, type = "actor") {
         edges %>% dplyr::select(user_id = .data$from),
         edges %>% dplyr::select(user_id = .data$to)
       ) %>%
-      dplyr::left_join(threads_df, by = c("user_id" = "author_id")) %>%
+      dplyr::left_join(data$tweets, by = c("user_id" = "author_id")) %>%
       dplyr::distinct(.data$user_id, .keep_all = TRUE) %>%
       dplyr::select(.data$user_id, .data$source)
+
+    if (!is.null(data$users) && nrow(data$users > 0)) {
+      nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
+    }
   }
 
   list(nodes = nodes, edges = edges)

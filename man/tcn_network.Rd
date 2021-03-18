@@ -4,10 +4,10 @@
 \alias{tcn_network}
 \title{Generate network from conversation tweets}
 \usage{
-tcn_network(threads_df = NULL, type = "actor")
+tcn_network(data = NULL, type = "actor")
 }
 \arguments{
-\item{threads_df}{Dataframe. Threaded conversation tweets collected by get_threads function.}
+\item{data}{Named list. Dataframes of threaded conversation tweets and users collected by get_threads function.}
 
 \item{type}{Character string. Type of network to generate. Default is "actor".}
 }

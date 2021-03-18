@@ -41,7 +41,7 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
 
   # purrr::map_dfr(tweet_ids, ~get_thread(.x, token$bearer, end_point))
 
-  res_df <- tibble::tibble()
+  tweets_df <- users_df <- tibble::tibble()
   for (id in tweet_ids) {
     df <- get_thread(
       tweet_id = id,
@@ -49,13 +49,28 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
       end_point = end_point,
       skip_list = skip_list)
 
-    if (!is.null(df) && nrow(df) > 0) {
-      skip_list <- union(skip_list, unique(unlist(df$conversation_id)))
-      res_df <- dplyr::bind_rows(res_df, df)
+    if (!is.null(df$tweets) && nrow(df$tweets) > 0) {
+      skip_list <- union(skip_list,
+                         unlist(df$tweets %>% dplyr::filter(.data$includes == "FALSE") %>%
+                                dplyr::select(.data$conversation_id) %>%
+                                dplyr::distinct()))
+      tweets_df <- dplyr::bind_rows(tweets_df, df$tweets)
+      users_df <- dplyr::bind_rows(users_df, df$users)
     }
   }
 
-  res_df
+  if (nrow(tweets_df) > 0) {
+    tweets_df <- tweets_df %>%
+      dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE)
+  }
+
+  if (nrow(users_df) > 0) {
+    users_df <- users_df %>%
+      dplyr::rename(user_id = .data$id, screen_name = .data$name) %>%
+      dplyr::distinct(.data$user_id, .keep_all = TRUE)
+  }
+
+  list(tweets = tweets_df, users = users_df)
 }
 
 # get conversation
@@ -65,8 +80,6 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
     httr::add_headers(Authorization = paste0("Bearer ", token))
 
   # search end-points
-  # /2/tweets/search/all - historical
-  # /2/tweets/search/recent - last 7 days
   if (!end_point %in% c("recent", "all")) {
     end_point <- "recent"
   }
@@ -106,41 +119,31 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
   }
 
   # tweet fields to collect for conversation tweets
-  fields <- paste0(
+  tweet_fields <- paste0(
     c(
       "conversation_id",
-      "referenced_tweets",
-      "in_reply_to_user_id",
       "author_id",
       "created_at",
-      "source"
+      "source",
+      "public_metrics",
+      "in_reply_to_user_id",
+      "referenced_tweets"
     ),
     collapse = ","
   )
-  fields <- paste0("tweet.fields=", fields)
+  tweet_fields <- paste0("tweet.fields=", tweet_fields)
 
-  # get conversation starter tweet as it is not returned by search
-  url <-
-    paste0("https://api.twitter.com/2/tweets/",
-           convo_id,
-           "?", fields
-           )
-  resp <- httr::GET(url, bearer_token)
-  resp_obj <- resp_data(resp)
-  if (resp$status != 200) {
-    message(
-      paste0(
-        "twitter api response status (tweets): ",
-        resp$status,
-        ".\n",
-        "conversation_id: ",
-        convo_id
-      )
-    )
-  }
-
-  # create dataframe
-  df_convo <- tibble::as_tibble(resp_obj$data)
+  # expansions includes tweets, users
+  expansions <- paste0(
+    c(
+      "author_id",
+      "in_reply_to_user_id",
+      "referenced_tweets.id",
+      "referenced_tweets.id.author_id"
+    ),
+    collapse = ","
+  )
+  expansions <- paste0("expansions=", expansions)
 
   # initial search tweets
   search_url <-
@@ -149,7 +152,8 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
       end_point,
       "?query=conversation_id:",
       convo_id,
-      "&", fields,
+      "&", tweet_fields,
+      "&", expansions,
       "&max_results=100"
     )
 
@@ -158,11 +162,13 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
   resp_obj <- resp_data(resp)
 
   if (resp$status == 200) {
-    # check referenced_tweets
-    df_convo <- ensure_ref_tweets_list(df_convo)
-    resp_obj$data <- ensure_ref_tweets_list(resp_obj$data)
+    tweets <-
+      tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
+    tweets_incl <-
+      tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
 
-    df_convo <- dplyr::bind_rows(resp_obj$data, df_convo)
+    df_convo <- dplyr::bind_rows(tweets, tweets_incl)
+    df_users <- tibble::as_tibble(resp_obj$includes$users)
   } else {
     message(
       paste0(
@@ -185,9 +191,17 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
 
     if (resp$status == 200) {
       resp_obj <- resp_data(resp)
+
       if (!is.null(resp_obj$data)) {
-        df_convo <- dplyr::bind_rows(df_convo, resp_obj$data)
+        tweets <-
+          tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
+        tweets_incl <-
+          tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
+
+        df_convo <- dplyr::bind_rows(df_convo, tweets, tweets_incl)
+        df_users <- dplyr::bind_rows(df_users, tibble::as_tibble(resp_obj$includes$users))
       }
+
       next_token <- resp_obj$meta$next_token
     } else {
       message(
@@ -204,7 +218,7 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
     }
   }
 
-  df_convo
+  list(tweets = df_convo, users = df_users)
 }
 
 # httr response json text into a dataframe
@@ -212,9 +226,16 @@ resp_data <- function(resp_obj) {
   # if errors print them and return
   if (length(httr::content(resp_obj)$error)) {
     err <-
-      sapply(httr::content(resp_obj)$error, function(x)
-        warning(x$message))
-    return(NULL)
+      sapply(httr::content(resp_obj)$error,
+             function(x) {
+               if (!is.null(x$message)) { warning(x$message) }
+             })
+
+    # return(NULL)
+    res_count <- httr::content(resp_obj)$meta$result_count
+    if (is.null(res_count) || (as.numeric(res_count) < 1)) {
+      return(NULL)
+    }
   }
 
   # return dataframe produced from content json
@@ -228,11 +249,19 @@ resp_data <- function(resp_obj) {
   })
 }
 
-# ensure referenced tweets column is a list
-ensure_ref_tweets_list <- function(x) {
+# unnest referenced tweets column
+unnest_ref_tweets <- function(x) {
   if ("referenced_tweets" %in% colnames(x)) {
     if (class(x$referenced_tweets) == "data.frame") {
       x <- dplyr::mutate(x, referenced_tweets = list(.data$referenced_tweets))
+    }
+    x <- x %>%
+      dplyr::rename(tweet_id = .data$id) %>%
+      tidyr::unnest(cols = c("referenced_tweets"), keep_empty = TRUE) %>%
+      dplyr::rename(ref_tweet_id = .data$id, ref_tweet_type = .data$type)
+  } else {
+    if (!is.null(x)) {
+      x <- x %>% dplyr::rename(tweet_id = .data$id)
     }
   }
   x

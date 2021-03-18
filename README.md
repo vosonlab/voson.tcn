@@ -1,5 +1,5 @@
 # voson.tcn - Twitter Conversation Networks
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.3.9000&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.4.9000&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -127,11 +127,15 @@ print(head(actor_net$edges, n = 3))
 
 ### Network Graphs
 
-Convert network to an igraph object and perform a simple plot.
+Convert network to an igraph object and perform a simple plot of an actor network with node and edge labels.
 ```R
 library(igraph)
 
 g <- graph_from_data_frame(actor_net$edges, vertices = actor_net$nodes)
 
-plot(g)
+# plot graph
+plot(g, layout = layout_with_fr(g),
+     vertex.label = V(g)$username,
+     edge.label = E(g)$type,
+     vertex.size = 3, edge.arrow.size = 0.2)
 ```

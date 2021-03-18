@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5.9000</span>
       </span>
     </div>
 
@@ -140,14 +140,14 @@
     <p>Generate network from conversation tweets</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tcn_network</span><span class='op'>(</span>threads_df <span class='op'>=</span> <span class='cn'>NULL</span>, type <span class='op'>=</span> <span class='st'>"actor"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>tcn_network</span><span class='op'>(</span>data <span class='op'>=</span> <span class='cn'>NULL</span>, type <span class='op'>=</span> <span class='st'>"actor"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>threads_df</th>
-      <td><p>Dataframe. Threaded conversation tweets collected by get_threads function.</p></td>
+      <th>data</th>
+      <td><p>Named list. Dataframes of threaded conversation tweets and users collected by get_threads function.</p></td>
     </tr>
     <tr>
       <th>type</th>

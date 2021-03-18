@@ -1,4 +1,13 @@
-# voson.tcn 0.1.3.9000
+# voson.tcn 0.1.5.9000
+
+## Bug Fixes
+- Removed extraneous self-loop from conversation starter node in activity networks.
+
+## Minor Updates
+- Added public metrics, referenced tweet objects and user names to tweet fields collected.
+- The `tcn_threads` function now produces a named list of dataframes: `tweets` and `users` for tweet data and user metadata.
+
+# voson.tcn 0.1.3
 
 ## Initial Version
 - Retrieve a Twitter bearer token using app consumer keys with the `tcn_token` function.
