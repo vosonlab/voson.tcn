@@ -56,16 +56,14 @@ tcn_network <- function(data = NULL, type = "actor") {
     # remove non-conversation self-loops
     edges <- edges %>% dplyr::filter((.data$from != .data$to) & !is.na(.data$type))
 
-    if (!is.null(data$users) && nrow(data$users > 0)) {
+    if (!is.null(data$users) && nrow(data$users) > 0) {
       nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
     }
 
   } else if (type == "actor") {
-    # does not include quoted edges as quoted tweet user ids are not in the data,
-    # so just has conversation replies at this stage
     edges <- data$tweets %>%
-      dplyr::filter(is.na(.data$ref_tweet_type) |
-                      .data$ref_tweet_type != "quoted") %>%
+      # dplyr::filter(is.na(.data$ref_tweet_type) |
+      #                 .data$ref_tweet_type != "quoted") %>%
       dplyr::select(
         from = .data$author_id,
         to = .data$in_reply_to_user_id,
@@ -88,7 +86,7 @@ tcn_network <- function(data = NULL, type = "actor") {
       dplyr::distinct(.data$user_id, .keep_all = TRUE) %>%
       dplyr::select(.data$user_id, .data$source)
 
-    if (!is.null(data$users) && nrow(data$users > 0)) {
+    if (!is.null(data$users) && nrow(data$users) > 0) {
       nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
     }
   }

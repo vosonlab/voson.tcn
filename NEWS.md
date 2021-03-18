@@ -1,10 +1,10 @@
-# voson.tcn 0.1.5.9000
+# voson.tcn 0.1.6.9000
 
 ## Bug Fixes
 - Removed extraneous self-loop from conversation starter node in activity networks.
 
 ## Minor Updates
-- Added public metrics, referenced tweet objects and user names to tweet fields collected.
+- Added public metrics, referenced tweet objects and user profile fields to tweet expansion and object fields collected.
 - The `tcn_threads` function now produces a named list of dataframes: `tweets` and `users` for tweet data and user metadata.
 
 # voson.tcn 0.1.3

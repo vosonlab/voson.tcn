@@ -66,7 +66,11 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
 
   if (nrow(users_df) > 0) {
     users_df <- users_df %>%
-      dplyr::rename(user_id = .data$id, screen_name = .data$name) %>%
+      dplyr::rename_with(~ paste0("profile_", .x)) %>%
+      dplyr::rename(user_id = .data$profile_id) %>%
+      tidyr::chop(c(.data$profile_public_metrics)) %>%
+      tidyr::unnest_wider(.data$profile_public_metrics, names_sep = ".") %>%
+      dplyr::arrange(dplyr::desc(as.numeric(.data$profile_public_metrics.tweet_count))) %>%
       dplyr::distinct(.data$user_id, .keep_all = TRUE)
   }
 
@@ -145,6 +149,19 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
   )
   expansions <- paste0("expansions=", expansions)
 
+  user_fields <- paste0(
+    c(
+      "created_at",
+      "description",
+      "location",
+      "profile_image_url",
+      "public_metrics",
+      "verified"
+    ),
+    collapse = ","
+  )
+  user_fields <- paste0("user.fields=", user_fields)
+
   # initial search tweets
   search_url <-
     paste0(
@@ -154,6 +171,7 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
       convo_id,
       "&", tweet_fields,
       "&", expansions,
+      "&", user_fields,
       "&max_results=100"
     )
 
@@ -166,6 +184,11 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
       tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
     tweets_incl <-
       tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
+
+    # there is duplication between a search for conversation_id tweets and returning referenced tweet objects
+    # in includes as replied to tweets as seen in conversations are referenced tweets
+    # includes will contain conversation starter tweet and any quoted tweets not part of conversation
+    tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
 
     df_convo <- dplyr::bind_rows(tweets, tweets_incl)
     df_users <- tibble::as_tibble(resp_obj$includes$users)
@@ -197,6 +220,8 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
           tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
         tweets_incl <-
           tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
+
+        tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
 
         df_convo <- dplyr::bind_rows(df_convo, tweets, tweets_incl)
         df_users <- dplyr::bind_rows(df_users, tibble::as_tibble(resp_obj$includes$users))
@@ -231,7 +256,6 @@ resp_data <- function(resp_obj) {
                if (!is.null(x$message)) { warning(x$message) }
              })
 
-    # return(NULL)
     res_count <- httr::content(resp_obj)$meta$result_count
     if (is.null(res_count) || (as.numeric(res_count) < 1)) {
       return(NULL)
