@@ -61,16 +61,20 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
 
   if (nrow(tweets_df) > 0) {
     tweets_df <- tweets_df %>%
-      dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE)
+      dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE) %>%
+      tidyr::chop(c(.data$public_metrics)) %>%
+      tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
+      tidyr::unnest(dplyr::starts_with("public_metrics"))
   }
 
   if (nrow(users_df) > 0) {
     users_df <- users_df %>%
-      dplyr::rename_with(~ paste0("profile_", .x)) %>%
-      dplyr::rename(user_id = .data$profile_id) %>%
-      tidyr::chop(c(.data$profile_public_metrics)) %>%
-      tidyr::unnest_wider(.data$profile_public_metrics, names_sep = ".") %>%
-      dplyr::arrange(dplyr::desc(as.numeric(.data$profile_public_metrics.tweet_count))) %>%
+      dplyr::rename_with(~ paste0("profile.", .x)) %>%
+      dplyr::rename(user_id = .data$profile.id) %>%
+      tidyr::chop(c(.data$profile.public_metrics)) %>%
+      tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
+      tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
+      dplyr::arrange(dplyr::desc(as.numeric(.data$profile.public_metrics.tweet_count))) %>%
       dplyr::distinct(.data$user_id, .keep_all = TRUE)
   }
 

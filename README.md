@@ -1,4 +1,5 @@
 # voson.tcn - Twitter Conversation Networks
+[![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
 [![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.6.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
@@ -24,7 +25,9 @@ There is currently a cap of 500,000 tweets that be collected per month per proje
 ### Limitations
 
 - Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.
-- Does not yet support OAuth1a authentication.
+- Does not yet support OAuth1a authentication as there is no current use case.
+- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: user_A --reply--> user_B --quote--> (external user_NA)
+- Handles but does not report on broken reply chains caused by deleted tweets or suspended users. These can result in a disconnected graph with additional components.
 
 ## Installation
 
@@ -51,19 +54,19 @@ saveRDS(token, "~/.tcn_token")
 
 ### Collect Tweets
 
-Using tweet urls collect conversation tweets and enough metadata to generate networks.
+Using tweet urls collect conversation tweets and metadata to generate networks.
 ```R
 # read token from file
 token <- readRDS("~/.tcn_token")
 
 # choose a twitter conversation thread or multiple threads to collect
-# e.g https://twitter.com/Warcraft/status/1366810588039573505, and
-#     https://twitter.com/Warcraft/status/1367583684770074625
+# e.g https://twitter.com/Warcraft/status/1372615159311699970, and
+#     https://twitter.com/Warcraft/status/1372487989385965569
 
 # can use any tweet or tweet id that is part of the conversation thread
 # input is a list of tweet ids, tweet urls or combination of both
-tweet_ids <- c("https://twitter.com/Warcraft/status/1366810588039573505",
-               "1367583684770074625")
+tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
+               "1372487989385965569")
 
 # collect the conversation threads as a dataframe of tweets for supplied ids           
 tweets <- tcn_threads(tweet_ids, token)
@@ -74,55 +77,72 @@ tweets <- tcn_threads(tweet_ids, token)
 Two types of networks can be generated from the tweets collected. An `activity` network in which tweets are the nodes and an `actor` network where Twitter users are the nodes. Edges are the relationships between nodes, in both networks these are either a `reply` or a `quote`, signifying for example that a tweet is a reply-to another tweet or that a user has replied to another user.
 
 #### Create an activity network
+
+The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.
+
 ```R
 activity_net <- tcn_network(tweets)
 
 # activity nodes dataframe structure
-print(head(activity_net$nodes, n = 3))
+print(activity_net$nodes, n = 3)
 
-# # A tibble: 3 x 5
-#   tweet_id     user_id      source      created_at     text
-#   <chr>        <chr>        <chr>       <chr>          <chr>
-# 1 13670463885~ 13540157795~ Twitter fo~ 2021-03-03T09~ "@Warcraft I am a professional~
-# 2 13669645882~ 13526866149~ Twitter We~ 2021-03-03T04~ "@Warcraft I'd watch but I don~
-# 3 13669332907~ 85150515685~ Twitter fo~ 2021-03-03T02~ "@Warcraft Been gone for a bit~
+# # A tibble: 148 x 11
+#   tweet_id  user_id  source created_at text    public_metrics.~ public_metrics.~
+#   <chr>     <chr>    <chr>  <chr>      <chr>              <int>            <int>
+# 1 13726476~ 9427940~ Twitt~ 2021-03-1~ @Warcr~                0                0
+# 2 13726461~ 1609030~ Twitt~ 2021-03-1~ @Patri~                0                0
+# 3 13726452~ 1190870~ Twitt~ 2021-03-1~ @Warcr~                0                0
+# # ... with 145 more rows, and 4 more variables:
+# #   public_metrics.like_count <int>, public_metrics.quote_count <int>,
+# #   profile.name <chr>, profile.username <chr>
 
 # activity edges dataframe structure
-print(head(activity_net$edges, n = 3))
+print(activity_net$edges, n = 3)
 
-# # A tibble: 3 x 3
-#   from                to                  type
-#   <chr>               <chr>               <chr>
-# 1 1367046388530339844 1366810588039573505 replied_to
-# 2 1366964588240121859 1366810588039573505 replied_to
-# 3 1366933290704322562 1366810588039573505 replied_to
+# # A tibble: 122 x 3
+#   from                to                  type      
+#   <chr>               <chr>               <chr>     
+# 1 1372636834971455494 1372630068162297860 replied_to
+# 2 1372635200748937223 1372615159311699970 replied_to
+# 3 1372634777275265029 1372615159311699970 replied_to
+# # ... with 119 more rows
 ```
 
 #### Create an actor network
+
+The actor network has additional user profile metadata as node attributes.
+
 ```R
 # create an actor network
 
 actor_net <- tcn_network(tweets, "actor")
 
 # actor nodes dataframe structure
-print(head(actor_net$nodes, n = 3))
+print(actor_net$nodes, n = 3)
 
-# # A tibble: 3 x 2
-#   user_id             source
-#   <chr>               <chr>
-# 1 1354015779528744960 Twitter for iPhone
-# 2 1352686614909214721 Twitter Web App
-# 3 851505156856455168  Twitter for Android
+# # A tibble: 105 x 13
+#   user_id source profile.name profile.profile~ profile.location profile.username
+#   <chr>   <chr>  <chr>        <chr>            <chr>            <chr>           
+# 1 275993~ Twitt~ "\U0001d43f~ https://pbs.twi~ England          Stab~       
+# 2 133101~ Twitt~ "Andr ~      https://pbs.twi~ NA               virg~ 
+# 3 240160~ Twitt~ "Sebast ~    https://pbs.twi~ NA               Nord~     
+# # ... with 102 more rows, and 7 more variables: profile.created_at <chr>,
+# #   profile.description <chr>, profile.verified <lgl>,
+# #   profile.public_metrics.followers_count <int>,
+# #   profile.public_metrics.following_count <int>,
+# #   profile.public_metrics.tweet_count <int>,
+# #   profile.public_metrics.listed_count <int>
 
 # actor edges dataframe structure
-print(head(actor_net$edges, n = 3))
+print(actor_net$edges, n = 3)
 
-# # A tibble: 3 x 6
-#   from         to      type     tweet_id       created_at       text
-#   <chr>        <chr>   <chr>    <chr>          <chr>            <chr>
-# 1 13540157795~ 610331~ replied~ 1367046388530~ 2021-03-03T09:3~ "@Warcraft I am ,~
-# 2 13526866149~ 610331~ replied~ 1366964588240~ 2021-03-03T04:1~ "@Warcraft I'd wa~
-# 3 85150515685~ 610331~ replied~ 1366933290704~ 2021-03-03T02:0~ "@Warcraft Been g~
+# # A tibble: 124 x 6
+#   from       to     type  tweet_id    created_at     text                       
+#   <chr>      <chr>  <chr> <chr>       <chr>          <chr>                      
+# 1 2759935913 24599~ reply 1372636834~ 2021-03-18T19~ "@Limp ~   @Warcraft @MSF_~
+# 2 133101119~ 61033~ reply 1372635200~ 2021-03-18T19~ "@Warcraft @MSF_USA Coming~
+# 3 2401609580 61033~ reply 1372634777~ 2021-03-18T19~ "@Warcraft @MSF_USA When d~
+# # ... with 121 more rows
 ```
 
 ### Network Graphs
@@ -135,7 +155,7 @@ g <- graph_from_data_frame(actor_net$edges, vertices = actor_net$nodes)
 
 # plot graph
 plot(g, layout = layout_with_fr(g),
-     vertex.label = V(g)$username,
+     vertex.label = V(g)$profile.username,
      edge.label = E(g)$type,
      vertex.size = 3, edge.arrow.size = 0.2)
 ```

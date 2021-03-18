@@ -51,13 +51,16 @@ tcn_network <- function(data = NULL, type = "actor") {
                     user_id = .data$author_id,
                     .data$source,
                     .data$created_at,
-                    .data$text)
+                    .data$text,
+                    dplyr::starts_with("public_metrics"))
 
     # remove non-conversation self-loops
     edges <- edges %>% dplyr::filter((.data$from != .data$to) & !is.na(.data$type))
 
     if (!is.null(data$users) && nrow(data$users) > 0) {
-      nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
+      nodes <- nodes %>% dplyr::left_join(data$users %>%
+                                          dplyr::select("user_id", "profile.name", "profile.username"),
+                                          by = c("user_id" = "user_id"))
     }
 
   } else if (type == "actor") {
@@ -74,7 +77,13 @@ tcn_network <- function(data = NULL, type = "actor") {
       ) %>%
       dplyr::mutate(
         to = dplyr::if_else(is.na(.data$to), .data$from, .data$to),
-        type = dplyr::if_else(is.na(.data$type), "tweet", .data$type)
+        # type = dplyr::if_else(is.na(.data$type), "tweet", .data$type)
+        type = dplyr::case_when(
+          .data$type == "replied_to" ~ "reply",
+          .data$type == "quoted" ~ "quote",
+          is.na(.data$type) ~ "tweet",
+          TRUE ~ "tweet"
+        )
       )
 
     nodes <-
