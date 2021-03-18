@@ -68,8 +68,19 @@ token <- readRDS("~/.tcn_token")
 tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
                "1372487989385965569")
 
-# collect the conversation threads as a dataframe of tweets for supplied ids           
+# collect the conversation thread tweets for supplied ids           
 tweets <- tcn_threads(tweet_ids, token)
+```
+
+The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.
+
+```r
+names(tweets)
+# [1] "tweets" "users" 
+nrow(tweets$tweets)
+# [1] 147
+nrow(tweets$users)
+# [1] 118
 ```
 
 ### Generate Networks
