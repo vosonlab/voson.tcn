@@ -26,7 +26,7 @@ There is currently a cap of 500,000 tweets that be collected per month per proje
 
 - Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.
 - Does not yet support OAuth1a authentication as there is no current use case.
-- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: user_A --reply--> user_B --quote--> (external user_NA)
+- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: `user_A --reply--> user_B --quote--> (external user_NA)`
 - Handles but does not report on broken reply chains caused by deleted tweets or suspended users. These can result in a disconnected graph with additional components.
 
 ## Installation
