@@ -94,6 +94,7 @@
 <a href="#vosontcn---twitter-conversation-networks" class="anchor"></a>voson.tcn - Twitter Conversation Networks</h1></div>
 
 <p>Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 <a href="https://developer.twitter.com/en/products/twitter-api/early-access">Early Access</a> endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet <a href="https://developer.twitter.com/en/docs/twitter-api/conversation-id">conversation identifier</a>.</p>
+<p><img src="https://raw.githubusercontent.com/vosonlab/voson.tcn/main/docs/images/tcn_activity_network.png" align="right" alt="voson.tcn activity network"></p>
 <p>An introduction to the Twitter API v2 can be found <a href="https://developer.twitter.com/en/docs/twitter-api/early-access">here</a>, and the Twitter Developer Application that includes early access <a href="https://developer.twitter.com/en/apply-for-access">here</a>.</p>
 <div id="oauth-authentication" class="section level3">
 <h3 class="hasAnchor">
@@ -143,6 +144,9 @@
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,
                    consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
 
+<span class="co"># alternatively if you have your bearer token string assign directly</span>
+<span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>bearer <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
+
 <span class="co"># if you save the token to file this step only needs to be done once</span>
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">token</span>, <span class="st">"~/.tcn_token"</span><span class="op">)</span></code></pre></div>
 </div>
@@ -183,7 +187,7 @@
 <a href="#create-an-activity-network" class="anchor"></a>Create an activity network</h4>
 <p>The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">activity_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">activity_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"activity"</span><span class="op">)</span>
 
 <span class="co"># activity nodes dataframe structure</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">activity_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
@@ -214,9 +218,7 @@
 <a href="#create-an-actor-network" class="anchor"></a>Create an actor network</h4>
 <p>The actor network has additional user profile metadata as node attributes.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># create an actor network</span>
-
-<span class="va">actor_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"actor"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">actor_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"actor"</span><span class="op">)</span>
 
 <span class="co"># actor nodes dataframe structure</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>

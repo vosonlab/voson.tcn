@@ -6,6 +6,8 @@
 
 Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
+<img src = "https://raw.githubusercontent.com/vosonlab/voson.tcn/main/docs/images/tcn_activity_network.png" align = "right" alt = "voson.tcn activity network">
+
 An introduction to the Twitter API v2 can be found [here](https://developer.twitter.com/en/docs/twitter-api/early-access), and the Twitter Developer Application that includes early access [here](https://developer.twitter.com/en/apply-for-access).
 
 ### OAuth Authentication
@@ -47,6 +49,9 @@ library(voson.tcn)
 
 token <- tcn_token(consumer_key = "xxxxxxxx",
                    consumer_secret = "xxxxxxxx")
+
+# alternatively if you have your bearer token string assign directly
+token <- list(bearer = "xxxxxxxx")
 
 # if you save the token to file this step only needs to be done once
 saveRDS(token, "~/.tcn_token")
@@ -92,7 +97,7 @@ Two types of networks can be generated from the tweets collected. An `activity` 
 The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.
 
 ```R
-activity_net <- tcn_network(tweets)
+activity_net <- tcn_network(tweets, "activity")
 
 # activity nodes dataframe structure
 print(activity_net$nodes, n = 3)
@@ -124,8 +129,6 @@ print(activity_net$edges, n = 3)
 The actor network has additional user profile metadata as node attributes.
 
 ```R
-# create an actor network
-
 actor_net <- tcn_network(tweets, "actor")
 
 # actor nodes dataframe structure
