@@ -1,6 +1,6 @@
 # voson.tcn - Twitter Conversation Networks
 [![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.6.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.7.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -78,6 +78,8 @@ tweets <- tcn_threads(tweet_ids, token)
 ```
 
 The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.
+
+*Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected.* 
 
 ```r
 names(tweets)
