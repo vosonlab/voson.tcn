@@ -56,6 +56,9 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
                                 dplyr::distinct()))
       tweets_df <- dplyr::bind_rows(tweets_df, df$tweets)
       users_df <- dplyr::bind_rows(users_df, df$users)
+    } else {
+      warning(paste0("no conversation tweets were collected for tweet id: ", id, ".\n",
+                     "* check conversation is threaded and that tweets are not older than 7 days."), call. = FALSE)
     }
   }
 
@@ -189,10 +192,12 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
     tweets_incl <-
       tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
 
-    # there is duplication between a search for conversation_id tweets and returning referenced tweet objects
-    # in includes as replied to tweets as seen in conversations are referenced tweets
-    # includes will contain conversation starter tweet and any quoted tweets not part of conversation
-    tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
+    if (nrow(tweets_incl) > 0) {
+      # there is duplication between a search for conversation_id tweets and returning referenced tweet objects
+      # in includes as replied to tweets as seen in conversations are referenced tweets
+      # includes will contain conversation starter tweet and any quoted tweets not part of conversation
+      tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
+    }
 
     df_convo <- dplyr::bind_rows(tweets, tweets_incl)
     df_users <- tibble::as_tibble(resp_obj$includes$users)
@@ -225,7 +230,9 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
         tweets_incl <-
           tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
 
-        tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
+        if (nrow(tweets_incl) > 0) {
+          tweets_incl <- dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
+        }
 
         df_convo <- dplyr::bind_rows(df_convo, tweets, tweets_incl)
         df_users <- dplyr::bind_rows(df_users, tibble::as_tibble(resp_obj$includes$users))

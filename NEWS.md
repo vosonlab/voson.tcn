@@ -1,7 +1,8 @@
-# voson.tcn 0.1.6.9000
+# voson.tcn 0.1.7.9000
 
 ## Bug Fixes
 - Removed extraneous self-loop from conversation starter node in activity networks.
+- Added a warning for threads that return no tweets and fixed `anti_join` on `tweet_id` error.
 
 ## Minor Updates
 - Added public metrics, referenced tweet objects and user profile fields to tweet expansion and object fields collected.
