@@ -39,8 +39,6 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
   saved_opts <- save_set_opts()
   on.exit(restore_opts(saved_opts), add = TRUE)
 
-  # purrr::map_dfr(tweet_ids, ~get_thread(.x, token$bearer, end_point))
-
   tweets_df <- users_df <- tibble::tibble()
   for (id in tweet_ids) {
     df <- get_thread(

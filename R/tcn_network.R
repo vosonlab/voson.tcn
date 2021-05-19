@@ -66,8 +66,6 @@ tcn_network <- function(data = NULL, type = "actor") {
 
   } else if (type == "actor") {
     edges <- data$tweets %>%
-      # dplyr::filter(is.na(.data$ref_tweet_type) |
-      #                 .data$ref_tweet_type != "quoted") %>%
       dplyr::select(
         from = .data$author_id,
         to = .data$in_reply_to_user_id,
@@ -78,7 +76,6 @@ tcn_network <- function(data = NULL, type = "actor") {
       ) %>%
       dplyr::mutate(
         to = dplyr::if_else(is.na(.data$to), .data$from, .data$to),
-        # type = dplyr::if_else(is.na(.data$type), "tweet", .data$type)
         type = dplyr::case_when(
           .data$type == "replied_to" ~ "reply",
           .data$type == "quoted" ~ "quote",
