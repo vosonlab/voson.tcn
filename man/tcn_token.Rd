@@ -4,9 +4,11 @@
 \alias{tcn_token}
 \title{Get a twitter API access token}
 \usage{
-tcn_token(consumer_key = NULL, consumer_secret = NULL)
+tcn_token(bearer = NULL, consumer_key = NULL, consumer_secret = NULL)
 }
 \arguments{
+\item{bearer}{Character string. App bearer token.}
+
 \item{consumer_key}{Character string. App consumer key.}
 
 \item{consumer_secret}{Character string. App consumer secret.}

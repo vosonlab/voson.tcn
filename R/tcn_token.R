@@ -2,6 +2,7 @@
 #'
 # @param type Character string. Either app based (bearer) or user based authentication. Default is app.
 # @param app_name Character string. Twitter project app name. Default is twitter-app.
+#' @param bearer Character string. App bearer token.
 #' @param consumer_key Character string. App consumer key.
 #' @param consumer_secret Character string. App consumer secret.
 # @param access_token Character string. Developer access token.
@@ -13,6 +14,7 @@
 tcn_token <- function(
   # type = "app",
   # app_name = "twitter-app",
+  bearer = NULL,
   consumer_key = NULL,
   consumer_secret = NULL # ,
   # access_token = NULL,
@@ -22,6 +24,13 @@ tcn_token <- function(
   # if (!type %in% c("app", "user")) {
   #   stop("invalid token type.")
   # }
+
+  if (!is.null(bearer)) {
+    if (is.character(bearer)) {
+      return(list(bearer = bearer))
+    }
+    stop("invalid bearer token.")
+  }
 
   if (is.null(consumer_key) || is.null(consumer_secret) ||
       !is.character(consumer_key) || !is.character(consumer_secret)) {

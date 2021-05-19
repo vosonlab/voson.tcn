@@ -1,12 +1,15 @@
-# voson.tcn 0.1.7.9000
+# voson.tcn 0.1.8
+
+- CRAN version.
 
 ## Bug Fixes
 - Removed extraneous self-loop from conversation starter node in activity networks.
 - Added a warning for threads that return no tweets and fixed `anti_join` on `tweet_id` error.
 
-## Minor Updates
+## Minor Changes
 - Added public metrics, referenced tweet objects and user profile fields to tweet expansion and object fields collected.
 - The `tcn_threads` function now produces a named list of dataframes: `tweets` and `users` for tweet data and user metadata.
+- Added `bearer` parameter to the `tcn_token` function to assign a bearer token directly rather than retrieving it with app keys.
 
 # voson.tcn 0.1.3
 

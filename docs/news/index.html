@@ -8,6 +8,13 @@
 
 <title>Changelog • voson.tcn</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -71,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
       </span>
     </div>
 
@@ -134,9 +141,12 @@
       
     </div>
 
-    <div id="vosontcn-0179000" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.7.9000">
-<a href="#vosontcn-0179000" class="anchor"></a>voson.tcn 0.1.7.9000</h1>
+    <div id="vosontcn-018" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.8">
+<a href="#vosontcn-018" class="anchor"></a>voson.tcn 0.1.8</h1>
+<ul>
+<li>CRAN version.</li>
+</ul>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug Fixes</h2>
@@ -145,12 +155,13 @@
 <li>Added a warning for threads that return no tweets and fixed <code>anti_join</code> on <code>tweet_id</code> error.</li>
 </ul>
 </div>
-<div id="minor-updates" class="section level2">
+<div id="minor-changes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-updates" class="anchor"></a>Minor Updates</h2>
+<a href="#minor-changes" class="anchor"></a>Minor Changes</h2>
 <ul>
 <li>Added public metrics, referenced tweet objects and user profile fields to tweet expansion and object fields collected.</li>
 <li>The <code>tcn_threads</code> function now produces a named list of dataframes: <code>tweets</code> and <code>users</code> for tweet data and user metadata.</li>
+<li>Added <code>bearer</code> parameter to the <code>tcn_token</code> function to assign a bearer token directly rather than retrieving it with app keys.</li>
 </ul>
 </div>
 </div>

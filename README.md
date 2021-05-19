@@ -1,18 +1,16 @@
-# voson.tcn - Twitter Conversation Networks
+# voson.tcn - Twitter Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
 [![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.7.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.8&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
 Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
-<img src = "https://raw.githubusercontent.com/vosonlab/voson.tcn/main/docs/images/tcn_activity_network.png" align = "right" alt = "voson.tcn activity network">
-
 An introduction to the Twitter API v2 can be found [here](https://developer.twitter.com/en/docs/twitter-api/early-access), and the Twitter Developer Application that includes early access [here](https://developer.twitter.com/en/apply-for-access).
 
 ### OAuth Authentication
 
-This package currently uses app based authentication approach with an `OAuth2` bearer token rather than a user based one that uses an `OAuth1a` token. Bearer tokens have read-only API access and higher rate-limits, whereas user tokens have lower rate-limits and broader permissions that are not required for searching and collecting tweets. To retrieve a bearer token, both the `consumer key` and `consumer secret` for a Developer `Standard Project` or `Academic Research Project` app (that has been approved to use the Twitter API v2 endpoints) are required. These can be found or created on the Twitter Developer Portals [Projects & Apps](https://developer.twitter.com/en/portal/projects-and-apps) page.
+This package currently uses app based authentication approach with an `OAuth2` bearer token rather than a user based one that uses an `OAuth1a` token. Bearer tokens have read-only API access and higher rate-limits, whereas user tokens have lower rate-limits and broader permissions that are not required for searching and collecting tweets. To retrieve a bearer token, both the `consumer key` and `consumer secret` for a Developer `Standard Project` or `Academic Research Project` app (that has been approved to use the Twitter API v2 endpoints) are required. These can be found or created on the Twitter Developer Portals [Projects & Apps](https://developer.twitter.com/en/portal/projects-and-apps) page. If you already have your bearer token you can also assign it directly to a `voson.tcn` token object using the `bearer` string parameter.
 
 ### Search Endpoint
 
@@ -28,11 +26,17 @@ There is currently a cap of 500,000 tweets that be collected per month per proje
 
 - Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.
 - Does not yet support OAuth1a authentication as there is no current use case.
-- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: `user_A --reply--> user_B --quote--> (external user_NA)`
+- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: `user_A --replies--> user_B --quotes--> (external user_NA)`
 - Handles but does not report on broken reply chains caused by deleted tweets or suspended users. These can result in a disconnected graph with additional components.
 
 ## Installation
 
+Install the latest release via CRAN:
+``` r
+install.packages("voson.tcn")
+```
+
+Install the latest development version:
 ```R
 library(remotes)
 
@@ -50,8 +54,8 @@ library(voson.tcn)
 token <- tcn_token(consumer_key = "xxxxxxxx",
                    consumer_secret = "xxxxxxxx")
 
-# alternatively if you have your bearer token string assign directly
-token <- list(bearer = "xxxxxxxx")
+# alternatively a bearer token string can be assigned directly
+token <- tcn_token(bearer = "xxxxxxxx")
 
 # if you save the token to file this step only needs to be done once
 saveRDS(token, "~/.tcn_token")
