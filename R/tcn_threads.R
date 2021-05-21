@@ -1,5 +1,7 @@
 #' Get threaded conversation tweets
 #'
+#' Collects tweets that share the same Twitter conversation ID as supplied tweets.
+#'
 #' @param tweet_ids List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
 #' a list of tweet URLs or a mixed list.
 #' @param token List. Twitter API tokens.

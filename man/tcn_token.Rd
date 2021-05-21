@@ -17,5 +17,18 @@ tcn_token(bearer = NULL, consumer_key = NULL, consumer_secret = NULL)
 Named list containing the token.
 }
 \description{
-Get a twitter API access token
+Assigns a bearer token to the token object or retrieves a bearer token from the Twitter API using a Twitter apps
+consumer keys.
+}
+\examples{
+\dontrun{
+
+# assign bearer token
+token <- tcn_token(bearer = "xxxxxxxx")
+
+# retrieve twitter app bearer token
+token <- tcn_token(consumer_key = "xxxxxxxx",
+                   consumer_secret = "xxxxxxxx")
+}
+
 }

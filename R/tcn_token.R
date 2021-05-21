@@ -1,11 +1,25 @@
 #' Get a twitter API access token
 #'
+#' Assigns a bearer token to the token object or retrieves a bearer token from the Twitter API using a Twitter apps
+#' consumer keys.
+#'
 #' @param bearer Character string. App bearer token.
 #' @param consumer_key Character string. App consumer key.
 #' @param consumer_secret Character string. App consumer secret.
 #'
 #' @return Named list containing the token.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # assign bearer token
+#' token <- tcn_token(bearer = "xxxxxxxx")
+#'
+#' # retrieve twitter app bearer token
+#' token <- tcn_token(consumer_key = "xxxxxxxx",
+#'                    consumer_secret = "xxxxxxxx")
+#' }
 #'
 tcn_token <- function(
   bearer = NULL,

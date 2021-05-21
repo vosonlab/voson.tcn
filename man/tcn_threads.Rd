@@ -28,7 +28,7 @@ duplication.}
 A dataframe of tweets.
 }
 \description{
-Get threaded conversation tweets
+Collects tweets that share the same Twitter conversation ID as supplied tweets.
 }
 \examples{
 \dontrun{

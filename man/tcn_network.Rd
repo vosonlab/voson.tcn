@@ -9,14 +9,14 @@ tcn_network(data = NULL, type = "actor")
 \arguments{
 \item{data}{Named list. Dataframes of threaded conversation tweets and users collected by get_threads function.}
 
-\item{type}{Character string. Type of network to generate. Can be an "actor" network with users as nodes, or an
-"activity" network with tweets as nodes. The edges are the relationships between the nodes. Default is "actor".}
+\item{type}{Character string. Type of network to generate, either "actor" or "activity". Default is "actor".}
 }
 \value{
 Named list of dataframes for network nodes and edges.
 }
 \description{
-Generate network from conversation tweets
+Creates the nodes and edges for a Twitter conversation network. An "activity" type network with tweets as nodes, or
+an "actor" type with users as nodes can be created.
 }
 \examples{
 \dontrun{

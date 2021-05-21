@@ -47,7 +47,8 @@
 
 
 <meta property="og:title" content="Generate network from conversation tweets — tcn_network" />
-<meta property="og:description" content="Generate network from conversation tweets" />
+<meta property="og:description" content="Creates the nodes and edges for a Twitter conversation network. An &quot;activity&quot; type network with tweets as nodes, or
+an &quot;actor&quot; type with users as nodes can be created." />
 
 
 
@@ -144,7 +145,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Generate network from conversation tweets</p>
+    <p>Creates the nodes and edges for a Twitter conversation network. An "activity" type network with tweets as nodes, or
+an "actor" type with users as nodes can be created.</p>
     </div>
 
     <pre class="usage"><span class='fu'>tcn_network</span><span class='op'>(</span>data <span class='op'>=</span> <span class='cn'>NULL</span>, type <span class='op'>=</span> <span class='st'>"actor"</span><span class='op'>)</span></pre>
@@ -158,8 +160,7 @@
     </tr>
     <tr>
       <th>type</th>
-      <td><p>Character string. Type of network to generate. Can be an "actor" network with users as nodes, or an
-"activity" network with tweets as nodes. The edges are the relationships between the nodes. Default is "actor".</p></td>
+      <td><p>Character string. Type of network to generate, either "actor" or "activity". Default is "actor".</p></td>
     </tr>
     </table>
 
