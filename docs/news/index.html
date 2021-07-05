@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10.9000</span>
       </span>
     </div>
 
@@ -159,15 +159,22 @@
       <small>Source: <a href='https://github.com/vosonlab/voson.tcn/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vosontcn-0199000" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.9.9000">
-<a href="#vosontcn-0199000" class="anchor"></a>voson.tcn 0.1.9.9000<small> Unreleased </small>
+    <div id="vosontcn-01109000" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.10.9000">
+<a href="#vosontcn-01109000" class="anchor"></a>voson.tcn 0.1.10.9000<small> Unreleased </small>
 </h1>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug Fixes</h2>
 <ul>
 <li>Fixed <code>object 'df_convo' not found</code> message when end-point related error occurs.</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor Changes</h2>
+<ul>
+<li>Added <code>start_time</code> and <code>end_time</code> parameters for academic track historical search end-point (<code>end_point = "all"</code>). These are UTC datetime strings in ISO 8601 format. If unused the API uses a default UTC start time of 30 days ago and a default end time of the current time minus 30 seconds.</li>
 </ul>
 </div>
 </div>
@@ -186,9 +193,9 @@
 <li>Added a warning for threads that return no tweets and fixed <code>anti_join</code> on <code>tweet_id</code> error.</li>
 </ul>
 </div>
-<div id="minor-changes" class="section level2">
+<div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor Changes</h2>
+<a href="#minor-changes-1" class="anchor"></a>Minor Changes</h2>
 <ul>
 <li>Added public metrics, referenced tweet objects and user profile fields to tweet expansion and object fields collected.</li>
 <li>The <code>tcn_threads</code> function now produces a named list of dataframes: <code>tweets</code> and <code>users</code> for tweet data and user metadata.</li>

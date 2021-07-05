@@ -8,6 +8,8 @@ tcn_threads(
   tweet_ids = NULL,
   token = NULL,
   end_point = "recent",
+  start_time = NULL,
+  end_time = NULL,
   skip_list = NULL
 )
 }
@@ -19,6 +21,10 @@ a list of tweet URLs or a mixed list.}
 
 \item{end_point}{Character string. Twitter API v2 search end-point. Can be either "recent" for the last 7 days or
 "all" if users app has access to historical tweets. Default is "recent".}
+
+\item{start_time}{Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to 30 days before end_time. Default is NULL.}
+
+\item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to now - 30 seconds. Default is NULL.}
 
 \item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
@@ -36,6 +42,15 @@ Collects tweets that share the same Twitter conversation ID as supplied tweets.
 tweet_ids <- c("xxxxxxxx",
                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
 tweets <- tcn_threads(tweet_ids, token, end_point = "recent")
+
+# get twitter conversation threads by tweet ids or urls using historical end-point
+# starting from May 01, 2021.
+tweet_ids <- c("xxxxxxxx",
+               "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
+tweets <- tcn_threads(tweet_ids,
+                      token = token,
+                      end_point = "all",
+                      start_time = "2021-05-01T00:00:00Z")
 }
 
 }

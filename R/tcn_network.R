@@ -50,20 +50,26 @@ tcn_network <- function(data = NULL, type = "actor") {
       ) %>%
       dplyr::left_join(data$tweets, by = "tweet_id") %>%
       dplyr::distinct(.data$tweet_id, .keep_all = TRUE) %>%
-      dplyr::select(.data$tweet_id,
-                    user_id = .data$author_id,
-                    .data$source,
-                    .data$created_at,
-                    .data$text,
-                    dplyr::starts_with("public_metrics"))
+      dplyr::select(
+        .data$tweet_id,
+        user_id = .data$author_id,
+        .data$source,
+        .data$created_at,
+        .data$text,
+        dplyr::starts_with("public_metrics")
+      )
 
     # remove non-conversation self-loops
-    edges <- edges %>% dplyr::filter((.data$from != .data$to) & !is.na(.data$type))
+    edges <-
+      edges %>% dplyr::filter((.data$from != .data$to) &
+                                !is.na(.data$type))
 
     if (!is.null(data$users) && nrow(data$users) > 0) {
-      nodes <- nodes %>% dplyr::left_join(data$users %>%
-                                          dplyr::select("user_id", "profile.name", "profile.username"),
-                                          by = c("user_id" = "user_id"))
+      nodes <- nodes %>% dplyr::left_join(
+        data$users %>%
+          dplyr::select("user_id", "profile.name", "profile.username"),
+        by = c("user_id" = "user_id")
+      )
     }
 
   } else if (type == "actor") {
@@ -96,7 +102,8 @@ tcn_network <- function(data = NULL, type = "actor") {
       dplyr::select(.data$user_id, .data$source)
 
     if (!is.null(data$users) && nrow(data$users) > 0) {
-      nodes <- nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
+      nodes <-
+        nodes %>% dplyr::left_join(data$users, by = c("user_id" = "user_id"))
     }
   }
 

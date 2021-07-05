@@ -1,7 +1,10 @@
-# voson.tcn 0.1.9.9000
+# voson.tcn 0.1.10.9000
 
 ## Bug Fixes
 - Fixed `object 'df_convo' not found` message when end-point related error occurs.
+
+## Minor Changes
+- Added `start_time` and `end_time` parameters for academic track historical search end-point (`end_point = "all"`). These are UTC datetime strings in ISO 8601 format. If unused the API uses a default UTC start time of 30 days ago and a default end time of the current time minus 30 seconds.
 
 # voson.tcn 0.1.8
 

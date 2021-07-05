@@ -21,12 +21,9 @@
 #'                    consumer_secret = "xxxxxxxx")
 #' }
 #'
-tcn_token <- function(
-  bearer = NULL,
-  consumer_key = NULL,
-  consumer_secret = NULL
-  ) {
-
+tcn_token <- function(bearer = NULL,
+                      consumer_key = NULL,
+                      consumer_secret = NULL) {
   if (!is.null(bearer)) {
     if (is.character(bearer)) {
       return(list(bearer = bearer))
@@ -35,7 +32,8 @@ tcn_token <- function(
   }
 
   if (is.null(consumer_key) || is.null(consumer_secret) ||
-      !is.character(consumer_key) || !is.character(consumer_secret)) {
+      !is.character(consumer_key) ||
+      !is.character(consumer_secret)) {
     stop("invalid consumer key or secret.")
   }
 

@@ -18,6 +18,8 @@ This package currently uses app based authentication approach with an `OAuth2` b
 
 By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can also use the `tcn_threads` parameter `end_point = "all"` to collect on all `historical` conversation tweets.
 
+If collecting on historical tweets a `start_time = "2021-03-18T00:00:00Z"` datetime parameter will need to be specified if the conversation is older than 30 days old (the default API search start time). The datetime is in UTC and ISO 8601 format passed as a string.  
+
 ### Rate-limits and Quotas
 
 The API `recent search` endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins.
@@ -81,6 +83,11 @@ tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
 
 # collect the conversation thread tweets for supplied ids           
 tweets <- tcn_threads(tweet_ids, token)
+
+# academic track historical end-point - specify start_time and optionally end_time
+tweets <- tcn_threads(tweet_ids, token = token,
+                      end_point = "all",
+                      start_time = "2021-03-17T00:00:00Z")
 ```
 
 The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.

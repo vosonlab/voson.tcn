@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10.9000</span>
       </span>
     </div>
 
@@ -129,6 +129,7 @@
 <h3 class="hasAnchor">
 <a href="#search-endpoint" class="anchor"></a>Search Endpoint</h3>
 <p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>end_point = "all"</code> to collect on all <code>historical</code> conversation tweets.</p>
+<p>If collecting on historical tweets a <code>start_time = "2021-03-18T00:00:00Z"</code> datetime parameter will need to be specified if the conversation is older than 30 days old (the default API search start time). The datetime is in UTC and ISO 8601 format passed as a string.</p>
 </div>
 <div id="rate-limits-and-quotas" class="section level3">
 <h3 class="hasAnchor">
@@ -196,7 +197,12 @@
                <span class="st">"1372487989385965569"</span><span class="op">)</span>
 
 <span class="co"># collect the conversation thread tweets for supplied ids           </span>
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span></code></pre></div>
+<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span>
+
+<span class="co"># academic track historical end-point - specify start_time and optionally end_time</span>
+<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, token <span class="op">=</span> <span class="va">token</span>,
+                      end_point <span class="op">=</span> <span class="st">"all"</span>,
+                      start_time <span class="op">=</span> <span class="st">"2021-03-17T00:00:00Z"</span><span class="op">)</span></code></pre></div>
 <p>The <code>tcn_threads</code> function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.</p>
 <p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected.</em></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
