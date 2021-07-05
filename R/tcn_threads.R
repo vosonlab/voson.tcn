@@ -20,7 +20,7 @@
 #' tweet_ids <- c("xxxxxxxx",
 #'                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
 
-#' tweets <- tcn_threads(tweet_ids, token)
+#' tweets <- tcn_threads(tweet_ids, token, end_point = "recent")
 #' }
 #'
 tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", skip_list = NULL) {
@@ -42,6 +42,7 @@ tcn_threads <- function(tweet_ids = NULL, token = NULL, end_point = "recent", sk
   on.exit(restore_opts(saved_opts), add = TRUE)
 
   tweets_df <- users_df <- tibble::tibble()
+
   for (id in tweet_ids) {
     df <- get_thread(
       tweet_id = id,
@@ -181,6 +182,8 @@ get_thread <- function(tweet_id = NULL, token = NULL, end_point = "recent", skip
       "&", user_fields,
       "&max_results=100"
     )
+
+  df_convo <- df_users <- tibble::tibble()
 
   # search tweets and add results to dataframe
   resp <- httr::GET(search_url, bearer_token)

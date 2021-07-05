@@ -48,9 +48,7 @@ tcn_token <- function(
     stop("failed to retrieve app oauth2 access token.")
   }
 
-  return(list(bearer = token))
-
-  list()
+  list(bearer = token)
 }
 
 # get bearer token

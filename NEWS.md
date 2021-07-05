@@ -1,3 +1,8 @@
+# voson.tcn 0.1.9.9000
+
+## Bug Fixes
+- Fixed `object 'df_convo' not found` message when end-point related error occurs.
+
 # voson.tcn 0.1.8
 
 - CRAN version.

@@ -35,7 +35,7 @@ Collects tweets that share the same Twitter conversation ID as supplied tweets.
 # get twitter conversation threads by tweet ids or urls
 tweet_ids <- c("xxxxxxxx",
                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
-tweets <- tcn_threads(tweet_ids, token)
+tweets <- tcn_threads(tweet_ids, token, end_point = "recent")
 }
 
 }

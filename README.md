@@ -2,7 +2,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
 [![Downloads](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.8&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.9&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -16,7 +16,7 @@ This package currently uses app based authentication approach with an `OAuth2` b
 
 ### Search Endpoint
 
-By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can also use the `tcn_threads` parameter `type = "all"` to collect on all `historical` conversation tweets.
+By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can also use the `tcn_threads` parameter `end_point = "all"` to collect on all `historical` conversation tweets.
 
 ### Rate-limits and Quotas
 

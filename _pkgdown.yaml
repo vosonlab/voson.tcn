@@ -23,6 +23,13 @@ navbar:
       icon: fa-cubes fa-lg
       text: "Reference"
       href: reference/index.html
+    articles:
+      icon: fa-book
+      text: "Articles"
+      menu:
+      - text: "Getting started with the voson.tcn package"
+        href: https://vosonlab.github.io/posts/2021-03-23-twitter-conversation-networks/
+        icon: far fa-file-alt
     vosonlab:
       icon: fa-flask fa-lg
       href: http://vosonlab.net/

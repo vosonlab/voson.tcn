@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.9000</span>
       </span>
     </div>
 
@@ -45,29 +45,47 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="news/index.html">
-    <span class="fas fa-newspaper"></span>
+    <span class="fa fa-newspaper"></span>
      
     Changelog
   </a>
 </li>
 <li>
   <a href="reference/index.html">
-    <span class="fas fa-cubes fa-lg"></span>
+    <span class="fa fa-cubes fa-lg"></span>
      
     Reference
   </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-book"></span>
+     
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="https://vosonlab.github.io/posts/2021-03-23-twitter-conversation-networks/">
+        <span class="far fa-file-alt"></span>
+         
+        Getting started with the voson.tcn package
+      </a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="http://vosonlab.net/">
-    <span class="fas fa-flask fa-lg"></span>
+    <span class="fa fa-flask fa-lg"></span>
      
   </a>
 </li>
@@ -110,7 +128,7 @@
 <div id="search-endpoint" class="section level3">
 <h3 class="hasAnchor">
 <a href="#search-endpoint" class="anchor"></a>Search Endpoint</h3>
-<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>type = "all"</code> to collect on all <code>historical</code> conversation tweets.</p>
+<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>end_point = "all"</code> to collect on all <code>historical</code> conversation tweets.</p>
 </div>
 <div id="rate-limits-and-quotas" class="section level3">
 <h3 class="hasAnchor">
@@ -149,7 +167,7 @@
 <a href="#get-access-token" class="anchor"></a>Get Access Token</h3>
 <p>Retrieve and save an app bearer token using its consumer keys.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">voson.tcn</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vosonlab/voson.tcn">voson.tcn</a></span><span class="op">)</span>
 
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,
                    consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
@@ -279,7 +297,18 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2>Links</h2>
+<ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=voson.tcn">https://​cloud.r-project.org/​package=voson.tcn</a>
+</li>
+<li>Browse source code at <br><a href="https://github.com/vosonlab/voson.tcn/">https://​github.com/​vosonlab/​voson.tcn/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/vosonlab/voson.tcn/issues">https://​github.com/​vosonlab/​voson.tcn/​issues</a>
+</li>
+</ul>
+</div>
+<div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li>GPL (&gt;= 3)</li>
@@ -297,7 +326,9 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=voson.tcn"><img src="https://www.r-pkg.org/badges/version/voson.tcn" alt="CRAN status"></a></li>
-<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.1.8&amp;logo=github" alt="Dev"></a></li>
+<li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/voson.tcn" alt="Downloads"></a></li>
+<li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn" alt="Total"></a></li>
+<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.1.9&amp;logo=github" alt="Dev"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/commits"><img src="https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&amp;color=659DBD&amp;logo=github" alt="Last Commit"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/actions"><img src="https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>

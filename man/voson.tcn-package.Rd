@@ -9,6 +9,14 @@
 \description{
 Collects tweets and metadata for threaded conversations and generates networks.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/vosonlab/voson.tcn}
+  \item Report bugs at \url{https://github.com/vosonlab/voson.tcn/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Bryan Gertzel \email{bryan.gertzel@anu.edu.au}
 
