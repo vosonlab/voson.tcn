@@ -22,6 +22,12 @@ restore_opts <- function(opts) {
   options(HTTPUserAgent = opts$HTTPUserAgent)
 }
 
+# httr request header
+request_header <- function(token) {
+  httr::add_headers(.headers = c(Authorization = paste0("Bearer ", token),
+                                 "User-Agent" = paste0("voson.tcn v", get_version(), " (R package)")))
+}
+
 # extract tweet ids from tweet urls
 ids_from_urls <- function(urls) {
   na.omit(unique(sapply(urls, function(x) {

@@ -1,3 +1,8 @@
+# voson.tcn 0.1.11.9000
+
+## Major Changes
+- Added `tcn_tweets` function. This function accepts tweet URL's or ID's and collects specific tweet data using the API v2 `tweets` end-point. Currently supports only bearer access tokens.
+
 # voson.tcn 0.1.10.9000
 
 ## Bug Fixes

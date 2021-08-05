@@ -13,7 +13,7 @@
 #' automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 #' duplication.
 #'
-#' @return A dataframe of tweets.
+#' @return A named list. Dataframes of tweets and users.
 #' @export
 #'
 #' @examples
@@ -42,6 +42,7 @@ tcn_threads <-
            start_time = NULL,
            end_time = NULL,
            skip_list = NULL) {
+
     # check params
     if (is.null(token$bearer) ||
         !is.character(token$bearer)) {
@@ -79,10 +80,6 @@ tcn_threads <-
       end_point <- "recent"
     }
 
-    # httr options
-    saved_opts <- save_set_opts()
-    on.exit(restore_opts(saved_opts), add = TRUE)
-
     tweets_df <- users_df <- tibble::tibble()
 
     for (id in tweet_ids) {
@@ -95,7 +92,7 @@ tcn_threads <-
         skip_list = skip_list
       )
 
-      if (!is.null(df$tweets) && nrow(df$tweets) > 0) {
+      if (!is.null(df$tweets) && nrow(df$tweets)) {
         skip_list <- union(
           skip_list,
           unlist(
@@ -124,7 +121,7 @@ tcn_threads <-
       }
     }
 
-    if (nrow(tweets_df) > 0) {
+    if (nrow(tweets_df)) {
       tweets_df <- tweets_df %>%
         dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE) %>%
         tidyr::chop(c(.data$public_metrics)) %>%
@@ -132,7 +129,7 @@ tcn_threads <-
         tidyr::unnest(dplyr::starts_with("public_metrics"))
     }
 
-    if (nrow(users_df) > 0) {
+    if (nrow(users_df)) {
       users_df <- users_df %>%
         dplyr::rename_with(~ paste0("profile.", .x)) %>%
         dplyr::rename(user_id = .data$profile.id) %>%
@@ -156,110 +153,39 @@ get_thread <-
            start_time = NULL,
            end_time = NULL,
            skip_list = NULL) {
-    # create authorization header
-    bearer_token <-
-      httr::add_headers(Authorization = paste0("Bearer ", token))
 
-    # get conversation_id from tweet requested by tweet_id
-    url <-
-      paste0("https://api.twitter.com/2/tweets/",
-             tweet_id,
-             "?tweet.fields=conversation_id")
-    resp <- httr::GET(url, bearer_token)
-    if (resp$status != 200) {
-      warning(
-        paste0(
-          "twitter api response status: ",
-          resp$status,
-          ".\n",
-          "tweet_id: ",
-          tweet_id
-        ),
-        call. = FALSE
-      )
+    init_tweet <- get_tweets(tweet_ids = tweet_id, token = token)
+
+    if (is.null(init_tweet) || nrow(init_tweet$tweets) < 1) {
+      warning(paste0("failed to retrieve tweet: ", tweet_id), call. = FALSE)
       return(NULL)
     }
 
-    # parse response
-    resp_obj <- resp_data(resp)
-    convo_id <- resp_obj$data$conversation_id
+    # convo_id <- resp_obj$data$conversation_id
+
+    convo_id <- (init_tweet$tweets %>% dplyr::slice_head())$conversation_id
 
     if (is.null(convo_id)) {
-      warning("failed to get tweet conversation_id.", call. = FALSE)
+      warning(paste0("failed to get tweet conversation_id. (tweet:", tweet_id, ")"), call. = FALSE)
       return(NULL)
     }
 
     if (convo_id %in% skip_list) {
-      warning("skipping tweet id as conversation_id in skip list.", call. = FALSE)
+      warning(paste0("skipping tweet id as conversation_id in skip list. (tweet:", tweet_id, ")"), call. = FALSE)
       return(NULL)
     }
 
-    # tweet fields to collect for conversation tweets
-    tweet_fields <- paste0(
-      c(
-        "conversation_id",
-        "author_id",
-        "created_at",
-        "source",
-        "public_metrics",
-        "in_reply_to_user_id",
-        "referenced_tweets"
-      ),
-      collapse = ","
-    )
-    tweet_fields <- paste0("tweet.fields=", tweet_fields)
-
-    # expansions includes tweets, users
-    expansions <- paste0(
-      c(
-        "author_id",
-        "in_reply_to_user_id",
-        "referenced_tweets.id",
-        "referenced_tweets.id.author_id"
-      ),
-      collapse = ","
-    )
-    expansions <- paste0("expansions=", expansions)
-
-    user_fields <- paste0(
-      c(
-        "created_at",
-        "description",
-        "location",
-        "profile_image_url",
-        "public_metrics",
-        "verified"
-      ),
-      collapse = ","
-    )
-    user_fields <- paste0("user.fields=", user_fields)
+    # df_convo <- df_users <- tibble::tibble()
+    df_convo <- init_tweet$tweets %>% dplyr::mutate(includes = "FALSE")
+    df_users <- init_tweet$users
 
     # initial search tweets
-    search_url <-
-      paste0(
-        "https://api.twitter.com/2/tweets/search/",
-        end_point,
-        "?query=conversation_id:",
-        convo_id,
-        "&",
-        tweet_fields,
-        "&",
-        expansions,
-        "&",
-        user_fields,
-        ifelse(!is.null(start_time),
-               paste0("&start_time=", start_time),
-               ""),
-        ifelse(!is.null(end_time),
-               paste0("&end_time=", end_time),
-               ""),
-        "&max_results=100"
-      )
-
-    df_convo <- df_users <- tibble::tibble()
+    query_url <- search_url(end_point, convo_id, start_time, end_time)
 
     # search tweets and add results to dataframe
-    resp <- httr::GET(search_url, bearer_token)
+    req_header <- request_header(token)
+
+    resp <- httr::GET(query_url, req_header)
     resp_obj <- resp_data(resp)
 
     if (resp$status == 200) {
@@ -269,9 +195,10 @@ get_thread <-
         tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
 
       if (nrow(tweets_incl) > 0) {
-        # there is duplication between a search for conversation_id tweets and returning referenced tweet objects
-        # in includes as replied to tweets as seen in conversations are referenced tweets
-        # includes will contain conversation starter tweet and any quoted tweets not part of conversation
+        # there is duplication between a search for conversation_id tweets and
+        # referenced tweet objects in the includes,
+        # this is because replied to tweets as seen in conversation threads are referenced tweets
+        # includes will also contain conversation starter tweet and any quoted tweets not part of conversation
         tweets_incl <-
           dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
       }
@@ -295,8 +222,8 @@ get_thread <-
 
     # if more pages of results keep going
     while (!is.null(next_token)) {
-      url <- paste0(search_url, "&next_token=", next_token)
-      resp <- httr::GET(url, bearer_token)
+      url <- paste0(query_url, "&next_token=", next_token)
+      resp <- httr::GET(url, req_header)
 
       if (resp$status == 200) {
         resp_obj <- resp_data(resp)
@@ -386,4 +313,81 @@ unnest_ref_tweets <- function(x) {
     }
   }
   x
+}
+
+# tweet fields to request
+query_tweet_fields <- function() {
+  tweet_fields <- paste0(
+    c(
+      "conversation_id",
+      "author_id",
+      "created_at",
+      "source",
+      "public_metrics",
+      "in_reply_to_user_id",
+      "referenced_tweets"
+    ),
+    collapse = ","
+  )
+  tweet_fields <- paste0("tweet.fields=", tweet_fields)
+}
+
+# tweet expansions to request
+# expansions includes tweets, users
+query_expansions <- function() {
+  expansions <- paste0(
+    c(
+      "author_id",
+      "in_reply_to_user_id",
+      "referenced_tweets.id",
+      "referenced_tweets.id.author_id"
+    ),
+    collapse = ","
+  )
+  expansions <- paste0("expansions=", expansions)
+}
+
+# tweet user fields to request
+query_user_fields <- function() {
+  user_fields <- paste0(
+    c(
+      "created_at",
+      "description",
+      "location",
+      "profile_image_url",
+      "public_metrics",
+      "verified"
+    ),
+    collapse = ","
+  )
+  user_fields <- paste0("user.fields=", user_fields)
+}
+
+# search query url
+search_url <- function(end_point, convo_id, start_time, end_time) {
+
+  max_results <- "100"
+  if (!is.null(start_time) | !is.null(end_time)) {
+    max_results <- "500"
+  }
+
+  paste0(
+    "https://api.twitter.com/2/tweets/search/",
+    end_point,
+    "?query=conversation_id:",
+    convo_id,
+    "&",
+    query_tweet_fields(),
+    "&",
+    query_expansions(),
+    "&",
+    query_user_fields(),
+    ifelse(!is.null(start_time),
+           paste0("&start_time=", start_time),
+           ""),
+    ifelse(!is.null(end_time),
+           paste0("&end_time=", end_time),
+           ""),
+    "&max_results=", max_results
+  )
 }
