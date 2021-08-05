@@ -45,6 +45,7 @@ reference:
   desc: Available functions and helpers
   contents:
   - '`tcn_token`'
+  - '`tcn_tweets`'
   - '`tcn_threads`'
   - '`tcn_network`'
 
