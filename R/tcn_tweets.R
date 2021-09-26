@@ -5,7 +5,7 @@
 #' @param tweet_ids List. Tweet ids or tweet URLs.
 #' @param token List. Twitter API tokens.
 #'
-#' @return A named list. Dataframes of tweets and users.
+#' @return A named list. Dataframes of tweets, users and errors.
 #' @export
 #'
 #' @examples
@@ -36,29 +36,26 @@ tcn_tweets <-
 
     df <- get_tweets(tweet_ids, token)
 
-    if (is.null(df) || nrow(df$tweets) < 1) {
+    if (nrow(df$tweets) < 1) {
       warning("failed to retrieve any tweets", call. = FALSE)
-      return(list(tweets = tibble::tibble(), users = tibble::tibble()))
     }
 
-    if (!is.null(df$tweets) && nrow(df$tweets)) {
-      df$tweets <- df$tweets %>%
-        tidyr::chop(c(.data$public_metrics)) %>%
-        tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
-        tidyr::unnest(dplyr::starts_with("public_metrics"))
-    }
+    # df$tweets <- df$tweets %>%
+    #   tidyr::chop(c(.data$public_metrics)) %>%
+    #   tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
+    #   tidyr::unnest(dplyr::starts_with("public_metrics"))
 
     if (!is.null(df$users) && nrow(df$users)) {
       df$users <- df$users %>%
         dplyr::rename_with(~ paste0("profile.", .x)) %>%
         dplyr::rename(user_id = .data$profile.id) %>%
-        tidyr::chop(c(.data$profile.public_metrics)) %>%
-        tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
-        tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
+        # tidyr::chop(c(.data$profile.public_metrics)) %>%
+        # tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
+        # tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
         dplyr::arrange(dplyr::desc(as.numeric(
           .data$profile.public_metrics.tweet_count
-        ))) %>%
-        dplyr::distinct(.data$user_id, .keep_all = TRUE)
+        ))) # %>%
+        # dplyr::distinct(.data$user_id, .keep_all = TRUE)
     }
 
     df
@@ -69,11 +66,12 @@ get_tweets <-
   function(tweet_ids = NULL,
            token = NULL) {
 
-    df_tweets <- df_users <- tibble::tibble()
+    results <- list(tweets = NULL, users = NULL, errors = NULL)
+
     query_url <- tweets_url(tweet_ids)
     req_header <- request_header(token)
-
     resp <- httr::GET(query_url, req_header)
+
     if (resp$status != 200) {
       warning(
         paste0(
@@ -82,32 +80,32 @@ get_tweets <-
         ),
         call. = FALSE
       )
-      return(NULL)
+      return(results)
     }
 
     # parse response
-    resp_obj <- resp_data(resp)
-    df_tweets <- tibble::as_tibble(unnest_ref_tweets(resp_obj$data))
-    df_users <- tibble::as_tibble(resp_obj$includes$users)
+    resp_data <- resp_content(resp)
 
-    next_token <- resp_obj$meta$next_token
+    results$tweets <- resp_data$tweets
+    results$users <- resp_data$users
+    results$errors <- resp_data$errors
+
+    next_token <- resp_data$meta$next_token
 
     while (!is.null(next_token)) {
       url <- paste0(query_url, "&next_token=", next_token)
       resp <- httr::GET(url, req_header)
 
       if (resp$status == 200) {
-        resp_obj <- resp_data(resp)
+        resp_data <- resp_content(resp)
 
-        if (!is.null(resp_obj$data)) {
-          tweets <- tibble::as_tibble(unnest_ref_tweets(resp_obj$data))
-          df_tweets <- dplyr::bind_rows(df_tweets, tweets)
-          df_users <- dplyr::bind_rows(df_users, tibble::as_tibble(resp_obj$includes$users))
-        }
+        results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
+        results$users <- dplyr::bind_rows(results$users, resp_data$users)
+        results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
 
-        next_token <- resp_obj$meta$next_token
+        next_token <- resp_data$meta$next_token
       } else {
-        message(
+        warning(
           paste0(
             "twitter api response status (tweets): ",
             resp$status,
@@ -115,18 +113,19 @@ get_tweets <-
             " next_token: ",
             next_token
           )
-        )
+        , call. = FALSE)
+        next_token <- NULL
       }
     }
 
-    list(tweets = df_tweets, users = df_users)
+    results
   }
 
 tweets_url <- function(ids) {
   paste0(
     "https://api.twitter.com/2/tweets",
     "?ids=",
-    paste0(ids, collapse = ","), # ids_from_urls(ids)
+    paste0(ids, collapse = ","),
     "&",
     query_tweet_fields(),
     "&",

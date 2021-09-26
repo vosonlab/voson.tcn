@@ -6,26 +6,30 @@ get_version <- function() {
   "_"
 }
 
-# save and set some httr related options
-save_set_opts <- function() {
-  opts <- list()
-  opts$encoding <- getOption("encoding")
-  opts$HTTPUserAgent <- getOption("HTTPUserAgent")
-  options(encoding = "UTF-8")
-  options(HTTPUserAgent = paste0("voson.tcn v", get_version(), " (R package)"))
-  opts
+get_ua <- function() {
+  paste0("voson.tcn v", get_version(), " (R package)")
 }
 
+# save and set some httr related options
+# save_set_opts <- function() {
+#   opts <- list()
+#   opts$encoding <- getOption("encoding")
+#   opts$HTTPUserAgent <- getOption("HTTPUserAgent")
+#   options(encoding = "UTF-8")
+#   options(HTTPUserAgent = paste0("voson.tcn v", get_version(), " (R package)"))
+#   opts
+# }
+
 # restore saved httr related options
-restore_opts <- function(opts) {
-  options(encoding = opts$encoding)
-  options(HTTPUserAgent = opts$HTTPUserAgent)
-}
+# restore_opts <- function(opts) {
+#   options(encoding = opts$encoding)
+#   options(HTTPUserAgent = opts$HTTPUserAgent)
+# }
 
 # httr request header
 request_header <- function(token) {
   httr::add_headers(.headers = c(Authorization = paste0("Bearer ", token),
-                                 "User-Agent" = paste0("voson.tcn v", get_version(), " (R package)")))
+                                 "User-Agent" = get_ua()))
 }
 
 # extract tweet ids from tweet urls

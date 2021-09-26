@@ -13,7 +13,7 @@
 #' automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 #' duplication.
 #'
-#' @return A named list. Dataframes of tweets and users.
+#' @return A named list. Dataframes of tweets, users and errors.
 #' @export
 #'
 #' @examples
@@ -80,7 +80,7 @@ tcn_threads <-
       end_point <- "recent"
     }
 
-    tweets_df <- users_df <- tibble::tibble()
+    results <- list(tweets = NULL, users = NULL, errors = NULL)
 
     for (id in tweet_ids) {
       df <- get_thread(
@@ -101,12 +101,16 @@ tcn_threads <-
               dplyr::distinct()
           )
         )
-        tweets_df <- dplyr::bind_rows(tweets_df, df$tweets)
-        users_df <- dplyr::bind_rows(users_df, df$users)
-      } else {
+
+        results$tweets <- dplyr::bind_rows(results$tweets, df$tweets)
+        results$users <- dplyr::bind_rows(results$users, df$users)
+        results$errors <- dplyr::bind_rows(results$errors, df$errors)
+      }
+
+      if (nrow(df$tweets) == 1) {
         warning(
           paste0(
-            "no conversation tweets were collected for tweet id: ",
+            "no additional tweets were collected for tweet id: ",
             id,
             ".\n",
             "* check conversation is threaded",
@@ -121,28 +125,28 @@ tcn_threads <-
       }
     }
 
-    if (nrow(tweets_df)) {
-      tweets_df <- tweets_df %>%
-        dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE) %>%
-        tidyr::chop(c(.data$public_metrics)) %>%
-        tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
-        tidyr::unnest(dplyr::starts_with("public_metrics"))
+    if (nrow(results$tweets)) {
+      results$tweets <- results$tweets %>%
+        dplyr::distinct(.data$tweet_id, .data$ref_tweet_type, .keep_all = TRUE) # %>%
+        # tidyr::chop(c(.data$public_metrics)) %>%
+        # tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
+        # tidyr::unnest(dplyr::starts_with("public_metrics"))
     }
 
-    if (nrow(users_df)) {
-      users_df <- users_df %>%
+    if (nrow(results$users)) {
+      results$users <- results$users %>%
         dplyr::rename_with(~ paste0("profile.", .x)) %>%
         dplyr::rename(user_id = .data$profile.id) %>%
-        tidyr::chop(c(.data$profile.public_metrics)) %>%
-        tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
-        tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
+        # tidyr::chop(c(.data$profile.public_metrics)) %>%
+        # tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
+        # tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
         dplyr::arrange(dplyr::desc(as.numeric(
           .data$profile.public_metrics.tweet_count
-        ))) %>%
-        dplyr::distinct(.data$user_id, .keep_all = TRUE)
+        ))) # %>%
+        # dplyr::distinct(.data$user_id, .keep_all = TRUE)
     }
 
-    list(tweets = tweets_df, users = users_df)
+    results
   }
 
 # get conversation
@@ -161,8 +165,6 @@ get_thread <-
       return(NULL)
     }
 
-    # convo_id <- resp_obj$data$conversation_id
-
     convo_id <- (init_tweet$tweets %>% dplyr::slice_head())$conversation_id
 
     if (is.null(convo_id)) {
@@ -175,38 +177,23 @@ get_thread <-
       return(NULL)
     }
 
-    # df_convo <- df_users <- tibble::tibble()
-    df_convo <- init_tweet$tweets %>% dplyr::mutate(includes = "FALSE")
-    df_users <- init_tweet$users
+    results <- list(tweets = init_tweet$tweets, users = init_tweet$users, errors = init_tweet$errors)
 
-    # initial search tweets
+    # search for tweets
     query_url <- search_url(end_point, convo_id, start_time, end_time)
-
-    # search tweets and add results to dataframe
     req_header <- request_header(token)
-
     resp <- httr::GET(query_url, req_header)
-    resp_obj <- resp_data(resp)
 
     if (resp$status == 200) {
-      tweets <-
-        tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
-      tweets_incl <-
-        tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
+      resp_data <- resp_content(resp)
 
-      if (nrow(tweets_incl) > 0) {
-        # there is duplication between a search for conversation_id tweets and
-        # referenced tweet objects in the includes,
-        # this is because replied to tweets as seen in conversation threads are referenced tweets
-        # includes will also contain conversation starter tweet and any quoted tweets not part of conversation
-        tweets_incl <-
-          dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
-      }
+      results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
+      results$users <- dplyr::bind_rows(results$users, resp_data$users)
+      results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
 
-      df_convo <- dplyr::bind_rows(tweets, tweets_incl)
-      df_users <- tibble::as_tibble(resp_obj$includes$users)
+      next_token <- resp_data$meta$next_token
     } else {
-      message(
+      warning(
         paste0(
           "twitter api response status (search): ",
           resp$status,
@@ -215,10 +202,9 @@ get_thread <-
           convo_id,
           " next_token: -"
         )
-      )
+        , call. = FALSE)
+      next_token <- NULL
     }
-
-    next_token <- resp_obj$meta$next_token
 
     # if more pages of results keep going
     while (!is.null(next_token)) {
@@ -226,29 +212,15 @@ get_thread <-
       resp <- httr::GET(url, req_header)
 
       if (resp$status == 200) {
-        resp_obj <- resp_data(resp)
+        resp_data <- resp_content(resp)
 
-        if (!is.null(resp_obj$data)) {
-          tweets <-
-            tibble::as_tibble(unnest_ref_tweets(resp_obj$data)) %>% dplyr::mutate(includes = "FALSE")
-          tweets_incl <-
-            tibble::as_tibble(unnest_ref_tweets(resp_obj$includes$tweets)) %>% dplyr::mutate(includes = "TRUE")
+        results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
+        results$users <- dplyr::bind_rows(results$users, resp_data$users)
+        results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
 
-          if (nrow(tweets_incl) > 0) {
-            tweets_incl <-
-              dplyr::anti_join(tweets_incl, tweets, by = c("tweet_id" = "tweet_id"))
-          }
-
-          df_convo <-
-            dplyr::bind_rows(df_convo, tweets, tweets_incl)
-          df_users <-
-            dplyr::bind_rows(df_users,
-                             tibble::as_tibble(resp_obj$includes$users))
-        }
-
-        next_token <- resp_obj$meta$next_token
+        next_token <- resp_data$meta$next_token
       } else {
-        message(
+        warning(
           paste0(
             "twitter api response status (search): ",
             resp$status,
@@ -258,61 +230,73 @@ get_thread <-
             " next_token: ",
             next_token
           )
-        )
+          , call. = FALSE)
+        next_token <- NULL
       }
     }
 
-    list(tweets = df_convo, users = df_users)
+    results
   }
 
-# httr response json text into a dataframe
-resp_data <- function(resp_obj) {
-  # if errors print them and return
-  if (length(httr::content(resp_obj)$error)) {
-    err <-
-      sapply(httr::content(resp_obj)$error,
-             function(x) {
-               if (!is.null(x$message)) {
-                 warning(x$message)
-               }
-             })
-
-    res_count <- httr::content(resp_obj)$meta$result_count
-    if (is.null(res_count) || (as.numeric(res_count) < 1)) {
-      return(NULL)
+# referenced tweets will be either 'retweeted', 'quoted' or 'replied_to'
+unnest_ref_tweets <- function(df) {
+  if ("referenced_tweets" %in% colnames(df)) {
+    if (class(df$referenced_tweets) == "data.frame") {
+      df <-
+        dplyr::mutate(df, referenced_tweets = list(.data$referenced_tweets))
     }
-  }
-
-  # return dataframe produced from content json
-  resp_content <-
-    httr::content(resp_obj, as = "text", encoding = "UTF-8")
-  json_df <- tryCatch({
-    jsonlite::fromJSON(resp_content)
-  }, error = function(e) {
-    message(e)
-    return(NULL)
-  })
-}
-
-# unnest referenced tweets column
-unnest_ref_tweets <- function(x) {
-  if ("referenced_tweets" %in% colnames(x)) {
-    if (class(x$referenced_tweets) == "data.frame") {
-      x <-
-        dplyr::mutate(x, referenced_tweets = list(.data$referenced_tweets))
-    }
-    x <- x %>%
+    df <- df %>%
       dplyr::rename(tweet_id = .data$id) %>%
       tidyr::unnest(cols = c("referenced_tweets"),
                     keep_empty = TRUE) %>%
       dplyr::rename(ref_tweet_id = .data$id,
                     ref_tweet_type = .data$type)
   } else {
-    if (!is.null(x)) {
-      x <- x %>% dplyr::rename(tweet_id = .data$id)
+    if (!is.null(df)) {
+      df <- df %>% dplyr::rename(tweet_id = .data$id) %>%
+        dplyr::mutate(ref_tweet_id = NA, ref_tweet_type = NA)
     }
   }
-  x
+  df
+}
+
+resp_content <- function(resp) {
+  ts <-
+    as.numeric(as.POSIXct(Sys.time())) # format(Sys.time(), tz = "UTC", usetz = TRUE)
+  tweets <- users <- errors <- NULL
+
+  content <- tryCatch({
+    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"),
+                       flatten = TRUE)
+  }, error = function(e) {
+    message("JSON content error: ", e)
+    return(NULL)
+  })
+
+  if (!is.null(content)) {
+    tweets <- tibble::as_tibble(unnest_ref_tweets(content$data)) %>%
+      dplyr::mutate(includes = "FALSE", timestamp = ts)
+
+    if (!is.null(content$includes$tweets)) {
+      incl_tweets <-
+        tibble::as_tibble(unnest_ref_tweets(content$includes$tweets)) %>%
+        dplyr::mutate(includes = "TRUE", timestamp = ts)
+
+      tweets <- dplyr::bind_rows(tweets, incl_tweets)
+    }
+
+    # tweets <- tweets %>% tidyr::unnest(cols = c("entities.mentions"), keep_empty = TRUE) %>%
+    #   dplyr::rename(mention_user_id = .data$id)
+
+    users <-
+      tibble::as_tibble(content$includes$users) %>% dplyr::mutate(timestamp = ts)
+    errors <-
+      tibble::as_tibble(content$errors) %>% dplyr::mutate(timestamp = ts)
+  }
+
+  list(tweets = tweets,
+       users = users,
+       errors = errors)
 }
 
 # tweet fields to request
@@ -322,6 +306,7 @@ query_tweet_fields <- function() {
       "conversation_id",
       "author_id",
       "created_at",
+      # "entities",
       "source",
       "public_metrics",
       "in_reply_to_user_id",
@@ -340,7 +325,8 @@ query_expansions <- function() {
       "author_id",
       "in_reply_to_user_id",
       "referenced_tweets.id",
-      "referenced_tweets.id.author_id"
+      "referenced_tweets.id.author_id" # ,
+      # "entities.mentions.username"
     ),
     collapse = ","
   )

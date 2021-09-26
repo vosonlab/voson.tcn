@@ -31,7 +31,7 @@ automatically appended with conversation_id's when collecting multiple conversat
 duplication.}
 }
 \value{
-A named list. Dataframes of tweets and users.
+A named list. Dataframes of tweets, users and errors.
 }
 \description{
 Collects tweets that share the same Twitter conversation ID as supplied tweets.

@@ -1,9 +1,18 @@
-# voson.tcn 0.1.11.9000
+# voson.tcn 0.2.0.9000
 
 ## Major Changes
 - Added `tcn_tweets` function. This function accepts tweet URL's or ID's and collects specific tweet data using the API v2 `tweets` end-point. Currently supports only bearer access tokens.
 
-# voson.tcn 0.1.10.9000
+## Minor Changes
+- Changed `httr` request user-agent string via header field rather than options.
+- Added `converstion_id` as node and edge attribute to networks.
+- Thread collection now returns a list of three dataframes, `tweets`, `users` and `errors`. The `errors` dataframe contains partial errors such as those caused when trying to retrieve tweets that are not publicly available.
+- Unnested `public_metrics` during the JSON to dataframe process.
+
+## Bug Fixes
+- Fixed an issue with partial errors preventing `get_tweets` from returning requested tweets.
+
+# voson.tcn 0.1.10
 
 ## Bug Fixes
 - Fixed `object 'df_convo' not found` message when end-point related error occurs.

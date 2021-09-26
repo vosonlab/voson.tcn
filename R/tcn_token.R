@@ -37,8 +37,8 @@ tcn_token <- function(bearer = NULL,
     stop("invalid consumer key or secret.")
   }
 
-  saved_opts <- save_set_opts()
-  on.exit(restore_opts(saved_opts), add = TRUE)
+  # saved_opts <- save_set_opts()
+  # on.exit(restore_opts(saved_opts), add = TRUE)
 
   token <- get_bearer(consumer_key, consumer_secret)
 
@@ -56,7 +56,10 @@ get_bearer <- function(consumer_key, consumer_secret) {
     openssl::base64_encode(paste0(consumer_key, ":", consumer_secret))
   resp <- httr::POST(
     "https://api.twitter.com/oauth2/token",
-    httr::add_headers(Authorization = paste0("Basic ", app_keys)),
+    httr::add_headers(.headers = c(
+      Authorization = paste0("Basic ", app_keys),
+      "User-Agent" = get_ua()
+    )),
     body = list(grant_type = "client_credentials")
   )
   httr::stop_for_status(resp, "get_bearer")

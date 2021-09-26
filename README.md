@@ -2,7 +2,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
 [![Downloads](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.1.11&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.2.0.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -92,15 +92,17 @@ tweets <- tcn_threads(tweet_ids, token = token,
 
 The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.
 
-*Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected.* 
+*Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id's provided will still be collected however.* 
 
 ```r
 names(tweets)
-# [1] "tweets" "users" 
+# [1] "tweets" "users" "errors"
 nrow(tweets$tweets)
 # [1] 147
 nrow(tweets$users)
 # [1] 118
+nrow(tweets$errors)
+# [1] 0
 ```
 
 ### Collect Specific Tweets
@@ -117,15 +119,17 @@ token <- readRDS("~/.tcn_token")
 tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
                "1372487989385965569")
 
-# collect the weets for supplied ids           
+# collect the tweets for supplied ids           
 tweets <- tcn_tweets(tweet_ids, token)
 
 names(tweets)
-# [1] "tweets" "users" 
+# [1] "tweets" "users" "errors"
 nrow(tweets$tweets)
 # [1] 2
 nrow(tweets$users)
 # [1] 1
+nrow(tweets$errors)
+# [1] 0
 ```
 
 ### Generate Networks

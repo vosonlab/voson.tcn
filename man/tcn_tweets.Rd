@@ -12,7 +12,7 @@ tcn_tweets(tweet_ids = NULL, token = NULL)
 \item{token}{List. Twitter API tokens.}
 }
 \value{
-A named list. Dataframes of tweets and users.
+A named list. Dataframes of tweets, users and errors.
 }
 \description{
 Collects tweets for a list of tweet ids.
