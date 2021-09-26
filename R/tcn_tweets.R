@@ -34,6 +34,11 @@ tcn_tweets <-
       stop("invalid id in tweet_ids.")
     }
 
+    if (length(tweet_ids) > 100) {
+      tweet_ids <- tweet_ids[1:100]
+      warning("only 100 tweets can be requested.", call. = FALSE)
+    }
+
     df <- get_tweets(tweet_ids, token)
 
     if (nrow(df$tweets) < 1) {
