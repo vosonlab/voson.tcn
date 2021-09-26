@@ -296,7 +296,8 @@ resp_content <- function(resp) {
 
   list(tweets = tweets,
        users = users,
-       errors = errors)
+       errors = errors,
+       meta = content$meta)
 }
 
 # tweet fields to request
