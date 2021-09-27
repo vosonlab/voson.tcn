@@ -2,7 +2,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
 [![Downloads](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.2.0.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.2.1.9000&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits)
 [![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -96,13 +96,15 @@ The `tcn_threads` function produces a named list comprising a dataframe with twe
 
 ```r
 names(tweets)
-# [1] "tweets" "users" "errors"
+# [1] "tweets" "users" "errors" "meta"
 nrow(tweets$tweets)
 # [1] 147
 nrow(tweets$users)
 # [1] 118
 nrow(tweets$errors)
 # [1] 0
+nrow(tweets$meta)
+# [1] 2
 ```
 
 ### Collect Specific Tweets

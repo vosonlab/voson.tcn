@@ -159,9 +159,9 @@
       <small>Source: <a href='https://github.com/vosonlab/voson.tcn/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vosontcn-0209000" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0.9000">
-<a href="#vosontcn-0209000" class="anchor"></a>voson.tcn 0.2.0.9000<small> Unreleased </small>
+    <div id="vosontcn-0219000" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.1.9000">
+<a href="#vosontcn-0219000" class="anchor"></a>voson.tcn 0.2.1.9000<small> Unreleased </small>
 </h1>
 <div id="major-changes" class="section level2">
 <h2 class="hasAnchor">
@@ -176,8 +176,10 @@
 <ul>
 <li>Changed <code>httr</code> request user-agent string via header field rather than options.</li>
 <li>Added <code>converstion_id</code> as node and edge attribute to networks.</li>
-<li>Thread collection now returns a list of three dataframes, <code>tweets</code>, <code>users</code> and <code>errors</code>. The <code>errors</code> dataframe contains partial errors such as those caused when trying to retrieve tweets that are not publicly available.</li>
-<li>Unnested <code>public_metrics</code> during the JSON to dataframe process.</li>
+<li>Thread collection now returns a list of three dataframes, <code>tweets</code>, <code>users</code>, <code>errors</code> and <code>meta</code>. The <code>errors</code> dataframe contains partial errors such as those caused when trying to retrieve tweets that are not publicly available. The <code>meta</code> dataframe contains search results metadata such as tweet id range, number of results and pagination token.</li>
+<li>Added unnesting of <code>public_metrics</code> during the JSON to dataframe process.</li>
+<li>Added unnesting of referenced tweets to network creation.</li>
+<li>Outputs a warning if rate-limit reached.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">

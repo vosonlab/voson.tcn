@@ -5,7 +5,7 @@
 #' @param tweet_ids List. Tweet ids or tweet URLs.
 #' @param token List. Twitter API tokens.
 #'
-#' @return A named list. Dataframes of tweets, users and errors.
+#' @return A named list. Dataframes of tweets, users, errors and request metadata.
 #' @export
 #'
 #' @examples
@@ -20,7 +20,6 @@
 tcn_tweets <-
   function(tweet_ids = NULL,
            token = NULL) {
-
     # check params
     if (is.null(token$bearer) ||
         !is.character(token$bearer)) {
@@ -39,39 +38,46 @@ tcn_tweets <-
       warning("only 100 tweets can be requested.", call. = FALSE)
     }
 
-    df <- get_tweets(tweet_ids, token)
+    results <- get_tweets(tweet_ids, token)
 
-    if (nrow(df$tweets) < 1) {
+    if (!is.null(results$tweets) && nrow(results$tweets) < 1) {
       warning("failed to retrieve any tweets", call. = FALSE)
     }
 
-    # df$tweets <- df$tweets %>%
-    #   tidyr::chop(c(.data$public_metrics)) %>%
-    #   tidyr::unnest_wider(.data$public_metrics, names_sep = ".") %>%
-    #   tidyr::unnest(dplyr::starts_with("public_metrics"))
-
-    if (!is.null(df$users) && nrow(df$users)) {
-      df$users <- df$users %>%
-        dplyr::rename_with(~ paste0("profile.", .x)) %>%
-        dplyr::rename(user_id = .data$profile.id) %>%
-        # tidyr::chop(c(.data$profile.public_metrics)) %>%
-        # tidyr::unnest_wider(.data$profile.public_metrics, names_sep = ".") %>%
-        # tidyr::unnest(dplyr::starts_with("profile.public_metrics")) %>%
-        dplyr::arrange(dplyr::desc(as.numeric(
-          .data$profile.public_metrics.tweet_count
-        ))) # %>%
-        # dplyr::distinct(.data$user_id, .keep_all = TRUE)
+    # tidy up results
+    if (!is.null(results$tweets) && nrow(results$tweets)) {
+      results$tweets <- results$tweets %>%
+        dplyr::rename(tweet_id = .data$id) %>%
+        dplyr::arrange(dplyr::desc(.data$timestamp)) %>%
+        dplyr::distinct(.data$tweet_id, .keep_all = TRUE)
     }
 
-    df
+    if (!is.null(results$users) && nrow(results$users)) {
+      results$users <- results$users %>%
+        dplyr::rename_with( ~ paste0("profile.", .x)) %>%
+        dplyr::rename(user_id = .data$profile.id,
+                      timestamp = .data$profile.timestamp) %>%
+        dplyr::arrange(dplyr::desc(
+          .data$timestamp,
+          as.numeric(.data$profile.public_metrics.tweet_count)
+        )) %>%
+        dplyr::distinct(.data$user_id, .keep_all = TRUE)
+    }
+
+    results
   }
 
 # get tweets from ids
 get_tweets <-
   function(tweet_ids = NULL,
            token = NULL) {
-
-    results <- list(tweets = NULL, users = NULL, errors = NULL)
+    results <-
+      list(
+        tweets = NULL,
+        users = NULL,
+        errors = NULL,
+        meta = NULL
+      )
 
     query_url <- tweets_url(tweet_ids)
     req_header <- req_auth_header(token)
@@ -80,13 +86,9 @@ get_tweets <-
     # resp_rate_limit(resp, "GET 2/tweets")
 
     if (resp$status != 200) {
-      warning(
-        paste0(
-          "twitter api response status: ",
-          resp$status
-        ),
-        call. = FALSE
-      )
+      warning(paste0("twitter api response status: ",
+                     resp$status),
+              call. = FALSE)
       return(results)
     }
 
@@ -96,8 +98,9 @@ get_tweets <-
     results$tweets <- resp_data$tweets
     results$users <- resp_data$users
     results$errors <- resp_data$errors
+    results$meta <- resp_data$meta
 
-    next_token <- resp_data$meta$next_token
+    next_token <- resp_data$meta[["next_token"]]
 
     while (!is.null(next_token)) {
       url <- paste0(query_url, "&next_token=", next_token)
@@ -108,11 +111,16 @@ get_tweets <-
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
 
-        results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
-        results$users <- dplyr::bind_rows(results$users, resp_data$users)
-        results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
+        results$tweets <-
+          dplyr::bind_rows(results$tweets, resp_data$tweets)
+        results$users <-
+          dplyr::bind_rows(results$users, resp_data$users)
+        results$errors <-
+          dplyr::bind_rows(results$errors, resp_data$errors)
+        results$meta <-
+          dplyr::bind_rows(results$meta, resp_data$meta)
 
-        next_token <- resp_data$meta$next_token
+        next_token <- resp_data$meta[["next_token"]]
       } else {
         warning(
           paste0(
@@ -122,7 +130,9 @@ get_tweets <-
             " next_token: ",
             next_token
           )
-        , call. = FALSE)
+          ,
+          call. = FALSE
+        )
         next_token <- NULL
       }
     }
@@ -140,5 +150,6 @@ tweets_url <- function(ids) {
     "&",
     query_expansions(),
     "&",
-    query_user_fields())
+    query_user_fields()
+  )
 }

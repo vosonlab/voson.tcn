@@ -207,13 +207,15 @@
 <p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
-<span class="co"># [1] "tweets" "users" "errors"</span>
+<span class="co"># [1] "tweets" "users" "errors" "meta"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span>
 <span class="co"># [1] 147</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">users</span><span class="op">)</span>
 <span class="co"># [1] 118</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">errors</span><span class="op">)</span>
-<span class="co"># [1] 0</span></code></pre></div>
+<span class="co"># [1] 0</span>
+<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span>
+<span class="co"># [1] 2</span></code></pre></div>
 </div>
 <div id="collect-specific-tweets" class="section level3">
 <h3 class="hasAnchor">
@@ -363,7 +365,7 @@
 <li><a href="https://cran.r-project.org/package=voson.tcn"><img src="https://www.r-pkg.org/badges/version/voson.tcn" alt="CRAN status"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/voson.tcn" alt="Downloads"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn" alt="Total"></a></li>
-<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.2.0.9000&amp;logo=github" alt="Dev"></a></li>
+<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.2.1.9000&amp;logo=github" alt="Dev"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/commits"><img src="https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&amp;color=659DBD&amp;logo=github" alt="Last Commit"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/actions"><img src="https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
