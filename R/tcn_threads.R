@@ -181,17 +181,24 @@ get_thread <-
 
     # search for tweets
     query_url <- search_url(end_point, convo_id, start_time, end_time)
-    req_header <- request_header(token)
+    req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
+
+    # resp_rate_limit(resp, "GET 2/tweets/search")
 
     if (resp$status == 200) {
       resp_data <- resp_content(resp)
+      # resp_meta(resp_data$meta)
 
       results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
       results$users <- dplyr::bind_rows(results$users, resp_data$users)
       results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
 
       next_token <- resp_data$meta$next_token
+    } else if (resp$status == 429) {
+      warning("rate-limit exceeded", call. = FALSE)
+      resp_rate_limit(resp, "GET 2/tweets/search")
+      next_token <- NULL
     } else {
       warning(
         paste0(
@@ -211,14 +218,21 @@ get_thread <-
       url <- paste0(query_url, "&next_token=", next_token)
       resp <- httr::GET(url, req_header)
 
+      # resp_rate_limit(resp, "GET 2/tweets/search")
+
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
+        # resp_meta(resp_data$meta)
 
         results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
         results$users <- dplyr::bind_rows(results$users, resp_data$users)
         results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
 
         next_token <- resp_data$meta$next_token
+      } else if (resp$status == 429) {
+        warning("rate-limit exceeded", call. = FALSE)
+        resp_rate_limit(resp, "GET 2/tweets/search")
+        next_token <- NULL
       } else {
         warning(
           paste0(
@@ -253,7 +267,8 @@ unnest_ref_tweets <- function(df) {
                     ref_tweet_type = .data$type)
   } else {
     if (!is.null(df)) {
-      df <- df %>% dplyr::rename(tweet_id = .data$id) %>%
+      df <- df %>%
+        dplyr::rename(tweet_id = .data$id) %>%
         dplyr::mutate(ref_tweet_id = NA, ref_tweet_type = NA)
     }
   }
@@ -377,4 +392,16 @@ search_url <- function(end_point, convo_id, start_time, end_time) {
            ""),
     "&max_results=", max_results
   )
+}
+
+resp_meta <- function(meta) {
+  if (!is.null(meta)) {
+    message(
+      paste(
+        "result count:", meta$result_count,
+        "oldest id:", meta$oldest_id,
+        "newest id:", meta$newest_id
+      )
+    )
+  }
 }

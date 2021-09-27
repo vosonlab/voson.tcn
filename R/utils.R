@@ -27,7 +27,7 @@ get_ua <- function() {
 # }
 
 # httr request header
-request_header <- function(token) {
+req_auth_header <- function(token) {
   httr::add_headers(.headers = c(Authorization = paste0("Bearer ", token),
                                  "User-Agent" = get_ua()))
 }
@@ -42,4 +42,17 @@ ids_from_urls <- function(urls) {
     id <- path[length(path)]
     ifelse(!is.na(suppressWarnings(as.numeric(id))), as.character(id), NA)
   }, USE.NAMES = FALSE)))
+}
+
+resp_rate_limit <- function(resp, end_point = NULL) {
+  reset <- resp$headers$`x-rate-limit-reset`
+  message(
+    paste0(
+      ifelse(is.null(end_point), "", paste0(end_point, " ")),
+      "remaining: ", resp$headers$`x-rate-limit-remaining`, "/",
+      resp$headers$`x-rate-limit-limit`,
+      " reset: ", as.POSIXct(as.numeric(reset), origin = "1970-01-01"),
+      " (UNIX ", reset, ")"
+    )
+  )
 }

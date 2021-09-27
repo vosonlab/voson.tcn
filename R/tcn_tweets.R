@@ -74,8 +74,10 @@ get_tweets <-
     results <- list(tweets = NULL, users = NULL, errors = NULL)
 
     query_url <- tweets_url(tweet_ids)
-    req_header <- request_header(token)
+    req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
+
+    # resp_rate_limit(resp, "GET 2/tweets")
 
     if (resp$status != 200) {
       warning(
@@ -100,6 +102,8 @@ get_tweets <-
     while (!is.null(next_token)) {
       url <- paste0(query_url, "&next_token=", next_token)
       resp <- httr::GET(url, req_header)
+
+      # resp_rate_limit(resp, "GET 2/tweets")
 
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
