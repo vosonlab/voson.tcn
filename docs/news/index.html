@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
       </span>
     </div>
 
@@ -159,15 +159,15 @@
       <small>Source: <a href='https://github.com/vosonlab/voson.tcn/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vosontcn-0219000" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.1.9000">
-<a href="#vosontcn-0219000" class="anchor"></a>voson.tcn 0.2.1.9000<small> Unreleased </small>
+    <div id="vosontcn-0239000" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.3.9000">
+<a href="#vosontcn-0239000" class="anchor"></a>voson.tcn 0.2.3.9000<small> Unreleased </small>
 </h1>
 <div id="major-changes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#major-changes" class="anchor"></a>Major Changes</h2>
 <ul>
-<li>Added <code>tcn_tweets</code> function. This function accepts tweet URL’s or ID’s and collects specific tweet data using the API v2 <code>tweets</code> end-point. Currently supports only bearer access tokens.</li>
+<li>Added <code>tcn_tweets</code> function. This function accepts tweet URL’s or ID’s and collects specific tweet data using the API v2 <code>tweets</code> endpoint. Currently supports only bearer access tokens.</li>
 </ul>
 </div>
 <div id="minor-changes" class="section level2">
@@ -180,6 +180,8 @@
 <li>Added unnesting of <code>public_metrics</code> during the JSON to dataframe process.</li>
 <li>Added unnesting of referenced tweets to network creation.</li>
 <li>Outputs a warning if rate-limit reached.</li>
+<li>Renamed <code>end-point</code> parameter to <code>endpoint</code> to be consistent with twitter documentation.</li>
+<li>Added <code>max_results</code> parameter to coarsely limit how many tweets are collected in a <code>tcn_threads</code> operation. This is to assist with managing the monthly tweet cap placed on projects using the API search endpoints.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">
@@ -198,14 +200,14 @@
 <h2 class="hasAnchor">
 <a href="#bug-fixes-1" class="anchor"></a>Bug Fixes</h2>
 <ul>
-<li>Fixed <code>object 'df_convo' not found</code> message when end-point related error occurs.</li>
+<li>Fixed <code>object 'df_convo' not found</code> message when endpoint related error occurs.</li>
 </ul>
 </div>
 <div id="minor-changes-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#minor-changes-1" class="anchor"></a>Minor Changes</h2>
 <ul>
-<li>Added <code>start_time</code> and <code>end_time</code> parameters for academic track historical search end-point (<code>end_point = "all"</code>). These are UTC datetime strings in ISO 8601 format. If unused the API uses a default UTC start time of 30 days ago and a default end time of the current time minus 30 seconds.</li>
+<li>Added <code>start_time</code> and <code>end_time</code> parameters for academic track historical search endpoint (<code>end_point = "all"</code>). These are UTC datetime strings in ISO 8601 format. If unused the API uses a default UTC start time of 30 days ago and a default end time of the current time minus 30 seconds.</li>
 </ul>
 </div>
 </div>
@@ -244,7 +246,7 @@
 <ul>
 <li>Retrieve a Twitter bearer token using app consumer keys with the <code>tcn_token</code> function.</li>
 <li>Option to collect on multiple conversations by passing multiple tweet URLs or IDs in a list to <code>tcn_threads</code> using the <code>tweet_ids</code> parameter.</li>
-<li>Option to use historical rather than a recent search API end-point by using <code>tcn_threads</code> with the <code>end_point = "all"</code> parameter.</li>
+<li>Option to use historical rather than a recent search API endpoint by using <code>tcn_threads</code> with the <code>end_point = "all"</code> parameter.</li>
 <li>Generate either an <code>actor</code> or <code>activity</code> network using the <code>tcn_network</code> function with the <code>type = "activity"</code> parameter.</li>
 <li>Created a package, package documentation and pkgdown site.</li>
 </ul>

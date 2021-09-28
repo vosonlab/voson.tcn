@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
       </span>
     </div>
 
@@ -128,20 +128,26 @@
 <div id="search-endpoint" class="section level3">
 <h3 class="hasAnchor">
 <a href="#search-endpoint" class="anchor"></a>Search Endpoint</h3>
-<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>end_point = "all"</code> to collect on all <code>historical</code> conversation tweets.</p>
+<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>endpoint = "all"</code> to collect on <code>full-archive</code> conversation tweets.</p>
 <p>If collecting on historical tweets a <code>start_time = "2021-03-18T00:00:00Z"</code> datetime parameter will need to be specified if the conversation is older than 30 days old (the default API search start time). The datetime is in UTC and ISO 8601 format passed as a string.</p>
 </div>
-<div id="rate-limits-and-quotas" class="section level3">
+<div id="rate-limits" class="section level3">
 <h3 class="hasAnchor">
-<a href="#rate-limits-and-quotas" class="anchor"></a>Rate-limits and Quotas</h3>
-<p>The API <code>recent search</code> endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins.</p>
-<p>There is currently a cap of 500,000 tweets that be collected per month per project under the Twitter API v2 <code>Standard</code> product track and 10,000,000 for the <code>Academic Research</code> track.</p>
+<a href="#rate-limits" class="anchor"></a>Rate-limits</h3>
+<p>The API <code>recent search</code> endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins. The <code>full-archive search</code> allows 300 requests of 500 tweets, translating to 150,000 tweets per 15 mins. There is also a limit of only 1 request per second for the <code>full-archive search</code> endpoint.</p>
+<p>The <code>tweet lookup</code> endpoint used by <code>tcn_tweets</code> has a rate-limit of 300 requests of 100 tweets (30,000) per 15 minutes.</p>
+</div>
+<div id="tweet-caps" class="section level3">
+<h3 class="hasAnchor">
+<a href="#tweet-caps" class="anchor"></a>Tweet Caps</h3>
+<p>There is currently a cap of 500 thousand tweets that be collected per month per project under the Twitter API v2 <code>Standard</code> product track, and 10 million for the <code>Academic Research</code> track. These caps only apply to certain API endpoints, such as <code>recent</code> and <code>full-archive search</code>. The <code>voson.tcn</code> <code>tcn_threads</code> function uses the search endpoints and therefore contributes towards this cap, however the <code>tcn_tweets</code> function does not.</p>
+<p>Project caps are only able to be checked from the <a href="https://developer.twitter.com/en/portal/dashboard">Twitter Developer Console Dashboard</a>.</p>
 </div>
 <div id="limitations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#limitations" class="anchor"></a>Limitations</h3>
 <ul>
-<li>Not currently managing quotas or rate-limits. Does not check or wait until reset time when the rate-limit has been reached.</li>
+<li>Checks and reports on rate-limiting, but does not currently wait until reset time when the rate-limit has been reached.</li>
 <li>Does not yet support OAuth1a authentication as there is no current use case.</li>
 <li>Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: <code>user_A --replies--&gt; user_B --quotes--&gt; (external user_NA)</code>
 </li>
@@ -199,9 +205,9 @@
 <span class="co"># collect the conversation thread tweets for supplied ids           </span>
 <span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span>
 
-<span class="co"># academic track historical end-point - specify start_time and optionally end_time</span>
+<span class="co"># academic track historical endpoint - specify start_time and optionally end_time</span>
 <span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, token <span class="op">=</span> <span class="va">token</span>,
-                      end_point <span class="op">=</span> <span class="st">"all"</span>,
+                      endpoint <span class="op">=</span> <span class="st">"all"</span>,
                       start_time <span class="op">=</span> <span class="st">"2021-03-17T00:00:00Z"</span><span class="op">)</span></code></pre></div>
 <p>The <code>tcn_threads</code> function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.</p>
 <p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
@@ -365,7 +371,7 @@
 <li><a href="https://cran.r-project.org/package=voson.tcn"><img src="https://www.r-pkg.org/badges/version/voson.tcn" alt="CRAN status"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/voson.tcn" alt="Downloads"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn"><img src="https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn" alt="Total"></a></li>
-<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.2.1.9000&amp;logo=github" alt="Dev"></a></li>
+<li><a href="https://github.com/vosonlab/voson.tcn"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.2.3.9000&amp;logo=github" alt="Dev"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/commits"><img src="https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&amp;color=659DBD&amp;logo=github" alt="Last Commit"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/actions"><img src="https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>

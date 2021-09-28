@@ -7,24 +7,32 @@
 tcn_threads(
   tweet_ids = NULL,
   token = NULL,
-  end_point = "recent",
+  endpoint = "recent",
   start_time = NULL,
   end_time = NULL,
+  max_results = NULL,
   skip_list = NULL
 )
 }
 \arguments{
-\item{tweet_ids}{List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
-a list of tweet URLs or a mixed list.}
+\item{tweet_ids}{List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts a
+list of tweet URLs or a mixed list.}
 
 \item{token}{List. Twitter API tokens.}
 
-\item{end_point}{Character string. Twitter API v2 search end-point. Can be either "recent" for the last 7 days or
-"all" if users app has access to historical tweets. Default is "recent".}
+\item{endpoint}{Character string. Twitter API v2 search endpoint. Can be either "recent" for the last 7 days or "all"
+if users app has access to historical "full-archive" tweets. Default is "recent".}
 
-\item{start_time}{Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to 30 days before end_time. Default is NULL.}
+\item{start_time}{Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will
+default to 30 days before end_time. Default is NULL.}
 
-\item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to now - 30 seconds. Default is NULL.}
+\item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
+to now - 30 seconds. Default is NULL.}
+
+\item{max_results}{Numeric. Set maximum number of tweets to collect as a cap limit precaution. Will only be accurate
+to within one search request count (100 for standard or 500 tweets for academic project). This will not be ideal
+for most cases as an API search generally retrieves the most recent tweets first, therefore the beginning part of
+the last conversation thread may be absent. Default is NULL.}
 
 \item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
@@ -41,15 +49,15 @@ Collects tweets that share the same Twitter conversation ID as supplied tweets.
 # get twitter conversation threads by tweet ids or urls
 tweet_ids <- c("xxxxxxxx",
                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
-tweets <- tcn_threads(tweet_ids, token, end_point = "recent")
+tweets <- tcn_threads(tweet_ids, token, endpoint = "recent")
 
-# get twitter conversation threads by tweet ids or urls using historical end-point
+# get twitter conversation threads by tweet ids or urls using historical endpoint
 # starting from May 01, 2021.
 tweet_ids <- c("xxxxxxxx",
                "https://twitter.com/xxxxxxxx/status/xxxxxxxx")
 tweets <- tcn_threads(tweet_ids,
                       token = token,
-                      end_point = "all",
+                      endpoint = "all",
                       start_time = "2021-05-01T00:00:00Z")
 }
 

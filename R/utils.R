@@ -6,6 +6,7 @@ get_version <- function() {
   "_"
 }
 
+# build user-agent string
 get_ua <- function() {
   paste0("voson.tcn v", get_version(), " (R package)")
 }
@@ -31,11 +32,12 @@ ids_from_urls <- function(urls) {
   }, USE.NAMES = FALSE)))
 }
 
-resp_rate_limit <- function(resp, end_point = NULL) {
+# print api rate-limit headers
+resp_rate_limit <- function(resp, endpoint = NULL) {
   reset <- resp$headers$`x-rate-limit-reset`
   message(
     paste0(
-      ifelse(is.null(end_point), "", paste0(end_point, " ")),
+      ifelse(is.null(endpoint), "", paste0(endpoint, " ")),
       "remaining: ",
       resp$headers$`x-rate-limit-remaining`,
       "/",
@@ -47,4 +49,15 @@ resp_rate_limit <- function(resp, end_point = NULL) {
       ")"
     )
   )
+}
+
+# ensure numbers
+check_numeric <- function(i) {
+  suppressWarnings({
+    i <- as.numeric(i)
+    if (is.na(all(i))) {
+      return(FALSE)
+    }
+    all(i > 0)
+  })
 }

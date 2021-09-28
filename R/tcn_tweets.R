@@ -28,43 +28,23 @@ tcn_tweets <-
 
     tweet_ids <- ids_from_urls(tweet_ids)
 
-    if (is.null(tweet_ids) ||
-        is.na(as.numeric(tweet_ids))) {
+    if (is.null(tweet_ids) || !check_numeric(tweet_ids)) {
       stop("invalid id in tweet_ids.")
     }
 
     if (length(tweet_ids) > 100) {
       tweet_ids <- tweet_ids[1:100]
-      warning("only 100 tweets can be requested.", call. = FALSE)
+      warning("only 100 tweets can be requested.")
     }
 
     results <- get_tweets(tweet_ids, token)
 
     if (!is.null(results$tweets) && nrow(results$tweets) < 1) {
-      warning("failed to retrieve any tweets", call. = FALSE)
+      warning("failed to retrieve any tweets.")
     }
 
     # tidy up results
-    if (!is.null(results$tweets) && nrow(results$tweets)) {
-      results$tweets <- results$tweets %>%
-        dplyr::rename(tweet_id = .data$id) %>%
-        dplyr::arrange(dplyr::desc(.data$timestamp)) %>%
-        dplyr::distinct(.data$tweet_id, .keep_all = TRUE)
-    }
-
-    if (!is.null(results$users) && nrow(results$users)) {
-      results$users <- results$users %>%
-        dplyr::rename_with( ~ paste0("profile.", .x)) %>%
-        dplyr::rename(user_id = .data$profile.id,
-                      timestamp = .data$profile.timestamp) %>%
-        dplyr::arrange(dplyr::desc(
-          .data$timestamp,
-          as.numeric(.data$profile.public_metrics.tweet_count)
-        )) %>%
-        dplyr::distinct(.data$user_id, .keep_all = TRUE)
-    }
-
-    results
+    clean_results(results)
   }
 
 # get tweets from ids
@@ -86,7 +66,7 @@ get_tweets <-
     # resp_rate_limit(resp, "GET 2/tweets")
 
     if (resp$status != 200) {
-      warning(paste0("twitter api response status: ",
+      warning(paste0("twitter api response status (GET 2/tweets): ",
                      resp$status),
               call. = FALSE)
       return(results)
@@ -124,7 +104,7 @@ get_tweets <-
       } else {
         warning(
           paste0(
-            "twitter api response status (tweets): ",
+            "twitter api response status (GET 2/tweets): ",
             resp$status,
             ".\n",
             " next_token: ",

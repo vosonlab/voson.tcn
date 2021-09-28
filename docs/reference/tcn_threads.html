@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
       </span>
     </div>
 
@@ -168,9 +168,10 @@
     <pre class="usage"><span class='fu'>tcn_threads</span><span class='op'>(</span>
   tweet_ids <span class='op'>=</span> <span class='cn'>NULL</span>,
   token <span class='op'>=</span> <span class='cn'>NULL</span>,
-  end_point <span class='op'>=</span> <span class='st'>"recent"</span>,
+  endpoint <span class='op'>=</span> <span class='st'>"recent"</span>,
   start_time <span class='op'>=</span> <span class='cn'>NULL</span>,
   end_time <span class='op'>=</span> <span class='cn'>NULL</span>,
+  max_results <span class='op'>=</span> <span class='cn'>NULL</span>,
   skip_list <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -179,25 +180,34 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tweet_ids</th>
-      <td><p>List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts
-a list of tweet URLs or a mixed list.</p></td>
+      <td><p>List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts a
+list of tweet URLs or a mixed list.</p></td>
     </tr>
     <tr>
       <th>token</th>
       <td><p>List. Twitter API tokens.</p></td>
     </tr>
     <tr>
-      <th>end_point</th>
-      <td><p>Character string. Twitter API v2 search end-point. Can be either "recent" for the last 7 days or
-"all" if users app has access to historical tweets. Default is "recent".</p></td>
+      <th>endpoint</th>
+      <td><p>Character string. Twitter API v2 search endpoint. Can be either "recent" for the last 7 days or "all"
+if users app has access to historical "full-archive" tweets. Default is "recent".</p></td>
     </tr>
     <tr>
       <th>start_time</th>
-      <td><p>Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to 30 days before end_time. Default is NULL.</p></td>
+      <td><p>Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will
+default to 30 days before end_time. Default is NULL.</p></td>
     </tr>
     <tr>
       <th>end_time</th>
-      <td><p>Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default to now - 30 seconds. Default is NULL.</p></td>
+      <td><p>Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
+to now - 30 seconds. Default is NULL.</p></td>
+    </tr>
+    <tr>
+      <th>max_results</th>
+      <td><p>Numeric. Set maximum number of tweets to collect as a cap limit precaution. Will only be accurate
+to within one search request count (100 for standard or 500 tweets for academic project). This will not be ideal
+for most cases as an API search generally retrieves the most recent tweets first, therefore the beginning part of
+the last conversation thread may be absent. Default is NULL.</p></td>
     </tr>
     <tr>
       <th>skip_list</th>
@@ -216,15 +226,15 @@ duplication.</p></td>
 <span class='co'># get twitter conversation threads by tweet ids or urls</span>
 <span class='va'>tweet_ids</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"xxxxxxxx"</span>,
                <span class='st'>"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class='op'>)</span>
-<span class='va'>tweets</span> <span class='op'>&lt;-</span> <span class='fu'>tcn_threads</span><span class='op'>(</span><span class='va'>tweet_ids</span>, <span class='va'>token</span>, end_point <span class='op'>=</span> <span class='st'>"recent"</span><span class='op'>)</span>
+<span class='va'>tweets</span> <span class='op'>&lt;-</span> <span class='fu'>tcn_threads</span><span class='op'>(</span><span class='va'>tweet_ids</span>, <span class='va'>token</span>, endpoint <span class='op'>=</span> <span class='st'>"recent"</span><span class='op'>)</span>
 
-<span class='co'># get twitter conversation threads by tweet ids or urls using historical end-point</span>
+<span class='co'># get twitter conversation threads by tweet ids or urls using historical endpoint</span>
 <span class='co'># starting from May 01, 2021.</span>
 <span class='va'>tweet_ids</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"xxxxxxxx"</span>,
                <span class='st'>"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class='op'>)</span>
 <span class='va'>tweets</span> <span class='op'>&lt;-</span> <span class='fu'>tcn_threads</span><span class='op'>(</span><span class='va'>tweet_ids</span>,
                       token <span class='op'>=</span> <span class='va'>token</span>,
-                      end_point <span class='op'>=</span> <span class='st'>"all"</span>,
+                      endpoint <span class='op'>=</span> <span class='st'>"all"</span>,
                       start_time <span class='op'>=</span> <span class='st'>"2021-05-01T00:00:00Z"</span><span class='op'>)</span>
 <span class='op'>}</span>
 
