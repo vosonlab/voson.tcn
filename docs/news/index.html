@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -159,9 +159,9 @@
       <small>Source: <a href='https://github.com/vosonlab/voson.tcn/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="vosontcn-0239000" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.3.9000">
-<a href="#vosontcn-0239000" class="anchor"></a>voson.tcn 0.2.3.9000<small> Unreleased </small>
+    <div id="vosontcn-024" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.4">
+<a href="#vosontcn-024" class="anchor"></a>voson.tcn 0.2.4<small> Unreleased </small>
 </h1>
 <div id="major-changes" class="section level2">
 <h2 class="hasAnchor">
@@ -176,12 +176,13 @@
 <ul>
 <li>Changed <code>httr</code> request user-agent string via header field rather than options.</li>
 <li>Added <code>converstion_id</code> as node and edge attribute to networks.</li>
-<li>Thread collection now returns a list of three dataframes, <code>tweets</code>, <code>users</code>, <code>errors</code> and <code>meta</code>. The <code>errors</code> dataframe contains partial errors such as those caused when trying to retrieve tweets that are not publicly available. The <code>meta</code> dataframe contains search results metadata such as tweet id range, number of results and pagination token.</li>
+<li>Thread collection now returns a list of four dataframes, <code>tweets</code>, <code>users</code>, <code>errors</code> and <code>meta</code>. The <code>errors</code> dataframe contains partial errors such as those caused when trying to retrieve tweets that are not publicly available. The <code>meta</code> dataframe contains search results metadata such as tweet id range, number of results and pagination token.</li>
 <li>Added unnesting of <code>public_metrics</code> during the JSON to dataframe process.</li>
 <li>Added unnesting of referenced tweets to network creation.</li>
 <li>Outputs a warning if rate-limit reached.</li>
 <li>Renamed <code>end-point</code> parameter to <code>endpoint</code> to be consistent with twitter documentation.</li>
 <li>Added <code>max_results</code> parameter to coarsely limit how many tweets are collected in a <code>tcn_threads</code> operation. This is to assist with managing the monthly tweet cap placed on projects using the API search endpoints.</li>
+<li>Expanded tweet and user fields collected.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">
@@ -192,9 +193,9 @@
 </ul>
 </div>
 </div>
-    <div id="vosontcn-0110" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.10">
-<a href="#vosontcn-0110" class="anchor"></a>voson.tcn 0.1.10<small> Unreleased </small>
+    <div id="vosontcn-01109000" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.10.9000">
+<a href="#vosontcn-01109000" class="anchor"></a>voson.tcn 0.1.10.9000<small> Unreleased </small>
 </h1>
 <div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">

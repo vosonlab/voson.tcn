@@ -447,7 +447,7 @@ query_expansions <- function() {
   expansions <- paste0(
     c(
       "author_id",
-      # "in_reply_to_user_id",
+      "in_reply_to_user_id", # may be redundant
       "referenced_tweets.id",
       "referenced_tweets.id.author_id"
     ),
