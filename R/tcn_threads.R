@@ -420,13 +420,21 @@ clean_results <- function(results) {
 query_tweet_fields <- function() {
   tweet_fields <- paste0(
     c(
-      "conversation_id",
+      "attachments",
       "author_id",
+      "context_annotations",
+      "conversation_id",
       "created_at",
-      "source",
-      "public_metrics",
+      "entities",
+      "geo",
       "in_reply_to_user_id",
-      "referenced_tweets"
+      "lang",
+      "possibly_sensitive",
+      "public_metrics",
+      "referenced_tweets",
+      "reply_settings",
+      "source",
+      "withheld"
     ),
     collapse = ","
   )
@@ -439,7 +447,7 @@ query_expansions <- function() {
   expansions <- paste0(
     c(
       "author_id",
-      "in_reply_to_user_id",
+      # "in_reply_to_user_id",
       "referenced_tweets.id",
       "referenced_tweets.id.author_id"
     ),
@@ -454,10 +462,15 @@ query_user_fields <- function() {
     c(
       "created_at",
       "description",
+      "entities",
       "location",
+      "pinned_tweet_id",
       "profile_image_url",
+      "protected",
       "public_metrics",
-      "verified"
+      "url",
+      "verified",
+      "withheld"
     ),
     collapse = ","
   )
