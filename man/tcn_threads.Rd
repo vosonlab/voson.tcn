@@ -10,7 +10,8 @@ tcn_threads(
   endpoint = "recent",
   start_time = NULL,
   end_time = NULL,
-  max_results = NULL,
+  max_results = 100,
+  max_total = NULL,
   skip_list = NULL
 )
 }
@@ -29,10 +30,14 @@ default to 30 days before end_time. Default is NULL.}
 \item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 to now - 30 seconds. Default is NULL.}
 
-\item{max_results}{Numeric. Set maximum number of tweets to collect as a cap limit precaution. Will only be accurate
-to within one search request count (100 for standard or 500 tweets for academic project). This will not be ideal
-for most cases as an API search generally retrieves the most recent tweets first, therefore the beginning part of
-the last conversation thread may be absent. Default is NULL.}
+\item{max_results}{Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
+or 500 tweets for academic projects can be collected per request. Default is 100.}
+
+\item{max_total}{Numeric. Set maximum total number of tweets to collect as a cap limit precaution. Will only be
+accurate to within one search request count (being max_results, or 100 for standard or 500 tweets for academic
+project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
+(reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
+is NULL.}
 
 \item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search

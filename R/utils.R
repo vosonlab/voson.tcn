@@ -61,3 +61,12 @@ check_numeric <- function(i) {
     all(i > 0)
   })
 }
+
+# check ISO 8601 format string
+check_fmt_datetime <- function(dt) {
+  dt_pattern <- "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+  if (!stringr::str_detect(toupper(dt), dt_pattern)) {
+    return(FALSE)
+  }
+  TRUE
+}

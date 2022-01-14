@@ -11,10 +11,13 @@
 #'   default to 30 days before end_time. Default is NULL.
 #' @param end_time Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 #'   to now - 30 seconds. Default is NULL.
-#' @param max_results Numeric. Set maximum number of tweets to collect as a cap limit precaution. Will only be accurate
-#'   to within one search request count (100 for standard or 500 tweets for academic project). This will not be ideal
-#'   for most cases as an API search generally retrieves the most recent tweets first, therefore the beginning part of
-#'   the last conversation thread may be absent. Default is NULL.
+#' @param max_results Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
+#'   or 500 tweets for academic projects can be collected per request. Default is 100.
+#' @param max_total Numeric. Set maximum total number of tweets to collect as a cap limit precaution. Will only be
+#'   accurate to within one search request count (being max_results, or 100 for standard or 500 tweets for academic
+#'   project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
+#'   (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
+#'   is NULL.
 #' @param skip_list Character vector. List of tweet conversation IDs to skip searching if found. This list is
 #'   automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 #'   duplication.
@@ -47,7 +50,8 @@ tcn_threads <-
            endpoint = "recent",
            start_time = NULL,
            end_time = NULL,
-           max_results = NULL,
+           max_results = 100,
+           max_total = NULL,
            skip_list = NULL) {
     # check params
     if (is.null(token$bearer) ||
@@ -89,6 +93,10 @@ tcn_threads <-
       stop("invalid max_results. must be a number.")
     }
 
+    if (!is.null(max_total) && !check_numeric(max_total)) {
+      stop("invalid max_total must be a number.")
+    }
+
     results <-
       list(
         tweets = NULL,
@@ -100,11 +108,11 @@ tcn_threads <-
     total_results <- 0
 
     for (id in tweet_ids) {
-      if (!is.null(max_results) && total_results >= max_results) {
+      if (!is.null(max_total) && total_results >= max_total) {
         warning(
           paste0(
-            "exceeded max results.\nmax results: ",
-            max_results,
+            "exceeded max total results.\nmax total: ",
+            max_total,
             ", total results: ",
             total_results
           )
@@ -119,6 +127,7 @@ tcn_threads <-
         start_time = start_time,
         end_time = end_time,
         max_results = max_results,
+        max_total = max_total,
         total_results = total_results,
         skip_list = skip_list
       )
@@ -174,7 +183,8 @@ get_thread <-
            endpoint = "recent",
            start_time = NULL,
            end_time = NULL,
-           max_results = NULL,
+           max_results = 100,
+           max_total = NULL,
            total_results = 0,
            skip_list = NULL) {
     init_tweet <- get_tweets(tweet_ids = tweet_id, token = token)
@@ -225,7 +235,7 @@ get_thread <-
     endpoint_desc <- paste0("GET 2/tweets/search/", endpoint)
 
     query_url <-
-      search_url(endpoint, convo_id, start_time, end_time)
+      search_url(endpoint, convo_id, start_time, end_time, max_results)
     req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
 
@@ -272,9 +282,23 @@ get_thread <-
     # if more pages of results keep going
     while (!is.null(next_token)) {
       # stop pagination if exceeded max results value
-      if (!is.null(max_results)) {
+      if (!is.null(max_total)) {
         if (!is.null(resp_data$meta$result_count)) {
-          if (total_results + sum(resp_data$meta$result_count, na.rm = TRUE) >= max_results) {
+          result_tally <- total_results + sum(resp_data$meta$result_count, na.rm = TRUE)
+          if (result_tally >= max_total) {
+            warning(
+              paste0(
+                "reached max_total tweets: ",
+                result_tally,
+                "\n",
+                "conversation_id: ",
+                convo_id,
+                ", next_token: ",
+                next_token
+              )
+              ,
+              call. = FALSE
+            )
             break
           }
         }
@@ -478,12 +502,7 @@ query_user_fields <- function() {
 }
 
 # search query url
-search_url <- function(endpoint, convo_id, start_time, end_time) {
-  max_results <- "100"
-  if (!is.null(start_time) | !is.null(end_time)) {
-    max_results <- "500"
-  }
-
+search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
   paste0(
     "https://api.twitter.com/2/tweets/search/",
     endpoint,
