@@ -18,6 +18,8 @@
 #'   project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
 #'   (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
 #'   is NULL.
+#' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
+#'   is FALSE.
 #' @param skip_list Character vector. List of tweet conversation IDs to skip searching if found. This list is
 #'   automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 #'   duplication.
@@ -52,6 +54,7 @@ tcn_threads <-
            end_time = NULL,
            max_results = 100,
            max_total = NULL,
+           retry_on_limit = FALSE,
            skip_list = NULL) {
     # check params
     if (is.null(token$bearer) ||
@@ -97,6 +100,10 @@ tcn_threads <-
       stop("invalid max_total must be a number.")
     }
 
+    if (!is.logical(retry_on_limit)) {
+      stop("invalid retry_on_limit must be logical.")
+    }
+
     results <-
       list(
         tweets = NULL,
@@ -129,6 +136,7 @@ tcn_threads <-
         max_results = max_results,
         max_total = max_total,
         total_results = total_results,
+        retry_on_limit = retry_on_limit,
         skip_list = skip_list
       )
 
@@ -186,6 +194,7 @@ get_thread <-
            max_results = 100,
            max_total = NULL,
            total_results = 0,
+           retry_on_limit = FALSE,
            skip_list = NULL) {
     init_tweet <- get_tweets(tweet_ids = tweet_id, token = token)
 
@@ -239,7 +248,25 @@ get_thread <-
     req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
 
-    # resp_rate_limit(resp, endpoint_desc)
+    # check rate-limit
+    if (resp$status == 429) {
+      warning("rate-limit reached", call. = FALSE)
+      reset <- resp$headers$`x-rate-limit-reset`
+      if (retry_on_limit & !is.null(reset)) {
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
+
+        # repeat request after reset
+        if (rl_status) {
+          resp <- httr::GET(query_url, req_header)
+        } else {
+          next_token <- NULL
+        }
+
+      } else {
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
+        next_token <- NULL
+      }
+    }
 
     if (resp$status == 200) {
       resp_data <- resp_content(resp)
@@ -254,10 +281,6 @@ get_thread <-
       results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
 
       next_token <- resp_data$meta[["next_token"]]
-    } else if (resp$status == 429) {
-      warning("rate-limit exceeded", call. = FALSE)
-      resp_rate_limit(resp, endpoint_desc)
-      next_token <- NULL
     } else {
       warning(
         paste0(
@@ -310,10 +333,28 @@ get_thread <-
         Sys.sleep(1)
       }
 
-      url <- paste0(query_url, "&next_token=", next_token)
-      resp <- httr::GET(url, req_header)
+      query_url_next <- paste0(query_url, "&next_token=", next_token)
+      resp <- httr::GET(query_url_next, req_header)
 
-      # resp_rate_limit(resp, endpoint_desc)
+      # check rate-limit
+      if (resp$status == 429) {
+        warning("rate-limit reached", call. = FALSE)
+        reset <- resp$headers$`x-rate-limit-reset`
+        if (retry_on_limit & !is.null(reset)) {
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
+
+          # repeat request after reset
+          if (rl_status) {
+            resp <- httr::GET(query_url_next, req_header)
+          } else {
+            next_token <- NULL
+          }
+
+        } else {
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
+          next_token <- NULL
+        }
+      }
 
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
@@ -329,10 +370,6 @@ get_thread <-
           dplyr::bind_rows(results$meta, resp_data$meta)
 
         next_token <- resp_data$meta[["next_token"]]
-      } else if (resp$status == 429) {
-        warning("rate-limit exceeded", call. = FALSE)
-        resp_rate_limit(resp, endpoint_desc)
-        next_token <- NULL
       } else {
         warning(
           paste0(

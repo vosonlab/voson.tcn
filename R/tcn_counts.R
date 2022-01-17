@@ -101,7 +101,7 @@ tcn_counts <-
         next_token <- resp_data$meta[["next_token"]]
       } else if (resp$status == 429) {
         warning("rate-limit exceeded", call. = FALSE)
-        resp_rate_limit(resp, endpoint_desc)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
         next_token <- NULL
       } else {
         warning(
@@ -148,7 +148,7 @@ tcn_counts <-
           next_token <- resp_data$meta[["next_token"]]
         } else if (resp$status == 429) {
           warning("rate-limit exceeded", call. = FALSE)
-          resp_rate_limit(resp, endpoint_desc)
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
           next_token <- NULL
         } else {
           warning(

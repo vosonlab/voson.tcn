@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
       </span>
     </div>
 
@@ -74,16 +74,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.0" id="vosontcn-030">voson.tcn 0.3.0<a class="anchor" aria-label="anchor" href="#vosontcn-030"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.1" id="vosontcn-031">voson.tcn 0.3.1<a class="anchor" aria-label="anchor" href="#vosontcn-031"></a></h2>
 <div class="section level3">
-<h3 id="major-changes-0-3-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-3-0"></a></h3>
+<h3 id="major-changes-0-3-1">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-3-1"></a></h3>
 <ul><li>Added the <code>tcn_counts</code> function for retrieving tweet counts over time for conversation ids. This uses the API v2 <code>tweets/counts</code> endpoint and does not contribute to the monthly tweet cap. It could be used prior to collecting conversation threads to identify conversations to target or conversations to add to a skip list.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="minor-changes-0-3-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-0"></a></h3>
+<h3 id="minor-changes-0-3-1">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-1"></a></h3>
 <ul><li>Full-archive endpoint searches with the optional API v2 <code>max_results</code> querystring parameter have started to return response status code 400 for values over 100.</li>
 <li>The <code>max_results</code> parameter for function <code>tcn_threads</code> has been changed from the maximum total results, and now refers to and allows the API parameter of the same name above to be set. The default value has been set to 100. If left at default academic projects using the full-archive search endpoint will only collect 30,000 tweets per 15 minute rate-limit.</li>
 <li>Previous <code>max_results</code> parameter for the function <code>tcn_threads</code> has been renamed to <code>max_total</code>.</li>
+<li>Added <code>retry_on_limit</code> parameter to <code>tcn_threads</code> to allow waiting for API rate-limit to reset before continuing, rather than exiting upon reaching the limit.</li>
 </ul></div>
 </div>
     <div class="section level2">

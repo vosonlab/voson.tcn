@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
       </span>
     </div>
 
@@ -87,6 +87,7 @@
   end_time <span class="op">=</span> <span class="cn">NULL</span>,
   max_results <span class="op">=</span> <span class="fl">100</span>,
   max_total <span class="op">=</span> <span class="cn">NULL</span>,
+  retry_on_limit <span class="op">=</span> <span class="cn">FALSE</span>,
   skip_list <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -116,6 +117,9 @@ accurate to within one search request count (being max_results, or 100 for stand
 project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
 (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
 is NULL.</p></dd>
+<dt>retry_on_limit</dt>
+<dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
+is FALSE.</p></dd>
 <dt>skip_list</dt>
 <dd><p>Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search

@@ -12,6 +12,7 @@ tcn_threads(
   end_time = NULL,
   max_results = 100,
   max_total = NULL,
+  retry_on_limit = FALSE,
   skip_list = NULL
 )
 }
@@ -38,6 +39,9 @@ accurate to within one search request count (being max_results, or 100 for stand
 project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
 (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
 is NULL.}
+
+\item{retry_on_limit}{Logical. When the API v2 rate-limit has been reached wait for reset time. Default
+is FALSE.}
 
 \item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search

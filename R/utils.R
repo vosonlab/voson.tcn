@@ -32,23 +32,37 @@ ids_from_urls <- function(urls) {
   }, USE.NAMES = FALSE)))
 }
 
-# print api rate-limit headers
-resp_rate_limit <- function(resp, endpoint = NULL) {
-  reset <- resp$headers$`x-rate-limit-reset`
+# api rate-limit
+resp_rate_limit <- function(headers, endpoint = NULL, sleep = FALSE) {
+  reset <- as.numeric(headers$`x-rate-limit-reset`)
   message(
     paste0(
       ifelse(is.null(endpoint), "", paste0(endpoint, " ")),
       "remaining: ",
-      resp$headers$`x-rate-limit-remaining`,
+      headers$`x-rate-limit-remaining`,
       "/",
-      resp$headers$`x-rate-limit-limit`,
+      headers$`x-rate-limit-limit`,
       " reset: ",
-      as.POSIXct(as.numeric(reset), origin = "1970-01-01"),
+      as.POSIXct(reset, origin = "1970-01-01"),
       " (UNIX ",
       reset,
       ")"
     )
   )
+
+  if (sleep) {
+    wait_time <- reset - as.numeric(as.POSIXct(Sys.time()))
+
+    # should be approx 15 mins, but if wait time > 30 mins signal exit
+    if (wait_time <= 0 | wait_time > (15*60)*2) {
+      return(FALSE)
+    }
+
+    message(paste0("waiting ", round((wait_time/60), digits = 1), " mins for reset"))
+    Sys.sleep(wait_time + 2) # add 2 sec buffer
+  }
+
+  TRUE
 }
 
 # ensure numbers
