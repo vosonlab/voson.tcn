@@ -250,7 +250,7 @@ get_thread <-
 
     # check rate-limit
     if (resp$status == 429) {
-      warning("rate-limit reached", call. = FALSE)
+      warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
       reset <- resp$headers$`x-rate-limit-reset`
       if (retry_on_limit & !is.null(reset)) {
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
@@ -338,7 +338,7 @@ get_thread <-
 
       # check rate-limit
       if (resp$status == 429) {
-        warning("rate-limit reached", call. = FALSE)
+        warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
           rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
