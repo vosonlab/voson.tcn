@@ -1,64 +1,122 @@
+
 # voson.tcn - Twitter Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
-[![CRAN status](https://www.r-pkg.org/badges/version/voson.tcn)](https://cran.r-project.org/package=voson.tcn)
-[![Downloads](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
-[![Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
-[![Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.1&logo=github)](https://github.com/vosonlab/voson.tcn)
-[![Last Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&color=659DBD&logo=github)](https://github.com/vosonlab/voson.tcn/commits)
-[![R build status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
-Twitter Conversation Networks and Analysis. This package uses the Twitter API v2 [Early Access](https://developer.twitter.com/en/products/twitter-api/early-access) endpoints to collect tweets and generate networks for threaded conversations identified using the new tweet [conversation identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
+[![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
+[![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
+[![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.2&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
+[![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
-An introduction to the Twitter API v2 can be found [here](https://developer.twitter.com/en/docs/twitter-api/early-access), and the Twitter Developer Application that includes early access [here](https://developer.twitter.com/en/apply-for-access).
+Twitter Conversation Networks and Analysis. This package uses the
+Twitter API v2 [Early
+Access](https://developer.twitter.com/en/products/twitter-api/early-access)
+endpoints to collect tweets and generate networks for threaded
+conversations identified using the new tweet [conversation
+identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
-### OAuth Authentication
-
-This package currently uses app based authentication approach with an `OAuth2` bearer token rather than a user based one that uses an `OAuth1a` token. Bearer tokens have read-only API access and higher rate-limits, whereas user tokens have lower rate-limits and broader permissions that are not required for searching and collecting tweets. To retrieve a bearer token, both the `consumer key` and `consumer secret` for a Developer `Standard Project` or `Academic Research Project` app (that has been approved to use the Twitter API v2 endpoints) are required. These can be found or created on the Twitter Developer Portals [Projects & Apps](https://developer.twitter.com/en/portal/projects-and-apps) page. If you already have your bearer token you can also assign it directly to a `voson.tcn` token object using the `bearer` string parameter.
-
-### Search Endpoint
-
-By default the `recent` search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an `Academic Research Project` they can also use the `tcn_threads` parameter `endpoint = "all"` to collect on `full-archive` conversation tweets.
-
-If collecting on historical tweets a `start_time = "2021-03-18T00:00:00Z"` datetime parameter will need to be specified if the conversation is older than 30 days old (the default API search start time). The datetime is in UTC and ISO 8601 format passed as a string.  
-
-### Rate-limits
-
-The API `recent search` endpoint where the conversation tweets are retrieved from has a rate-limit of 450 requests per 15 min (per app). A single request can retrieve 100 tweets, translating to an upper limit of 45,000 tweets per 15 mins. The `full-archive search` allows 300 requests of 500 tweets, translating to 150,000 tweets per 15 mins. There is also a limit of only 1 request per second for the `full-archive search` endpoint.
-
-The `tweet lookup` endpoint used by `tcn_tweets` has a rate-limit of 300 requests of 100 tweets (30,000) per 15 minutes.
-
-### Tweet Caps
-
-There is currently a cap of 500 thousand tweets that be collected per month per project under the Twitter API v2 `Standard` product track, and 10 million for the `Academic Research` track. These caps only apply to certain API endpoints, such as `recent` and `full-archive search`. The `voson.tcn` `tcn_threads` function uses the search endpoints and therefore contributes towards this cap, however the `tcn_tweets` function does not.
-
-Project caps are only able to be checked from the [Twitter Developer Console Dashboard](https://developer.twitter.com/en/portal/dashboard).
-
-### Limitations
-
-- Checks and reports on rate-limiting, but does not currently wait until reset time when the rate-limit has been reached.
-- Does not yet support OAuth1a authentication as there is no current use case.
-- Does not currently collect additional user metadata for authors of tweets that were quoted and are external to the conversation. This can result in incomplete actor node metadata for some quoted tweets: `user_A --replies--> user_B --quotes--> (external user_NA)`
-- Handles but does not report on broken reply chains caused by deleted tweets or suspended users. These can result in a disconnected graph with additional components.
+An introduction to the Twitter API v2 can be found
+[here](https://developer.twitter.com/en/docs/twitter-api/early-access),
+and the Twitter Developer Application that includes early access
+[here](https://developer.twitter.com/en/apply-for-access).
 
 ## Installation
 
 Install the latest release via CRAN:
+
 ``` r
 install.packages("voson.tcn")
 ```
 
-Install the latest development version:
-```R
-library(remotes)
+Install the development version:
 
-install_github("vosonlab/voson.tcn")
+``` r
+# library(remotes)
+remotes::install_github("vosonlab/voson.tcn")
 ```
+
+### OAuth Authentication
+
+This package currently uses app based authentication approach with an
+`OAuth2` bearer token rather than a user based one that uses an
+`OAuth1a` token. Bearer tokens have read-only API access and higher
+rate-limits, whereas user tokens have lower rate-limits and broader
+permissions that are not required for searching and collecting tweets.
+
+To retrieve a bearer token, both the `consumer key` and
+`consumer secret` for a Developer `Standard Project` or
+`Academic Research Project` app (that has been approved to use the
+Twitter API v2 endpoints) are required. These can be found or created on
+the Twitter Developer Portals [Projects &
+Apps](https://developer.twitter.com/en/portal/projects-and-apps) page.
+If you already have your bearer token you can also assign it directly to
+a `voson.tcn` token object using the `bearer` string parameter.
+
+### Search Endpoint
+
+By default the `recent` search endpoint is used that makes available for
+collection only tweets that were made within the last 7 days. If the
+user has an `Academic Research Project` they can also use the
+`tcn_threads` parameter `endpoint = "all"` to collect on `full-archive`
+conversation tweets.
+
+If collecting on historical tweets a
+`start_time = "2021-03-18T00:00:00Z"` datetime parameter will need to be
+specified if the conversation is older than 30 days old (the default API
+search start time). The datetime is in UTC and ISO 8601 format passed as
+a string.
+
+### Rate-limits
+
+The API `recent search` endpoint where the conversation tweets are
+retrieved from has a rate-limit of 450 requests per 15 min (per app). A
+single request can retrieve 100 tweets, translating to an upper limit of
+45,000 tweets per 15 mins.
+
+The `full-archive search` allows 300 requests of 500 tweets, translating
+to 150,000 tweets per 15 mins. There is also a limit of only 1 request
+per second for the `full-archive search` endpoint.
+
+The `tweet lookup` endpoint used by `tcn_tweets` has a rate-limit of 300
+requests of 100 tweets (30,000) per 15 minutes.
+
+The `tcn_threads` function has a parameter `retry_on_limit` that when
+set to `TRUE` will wait until the API reset time before continuing when
+a rate-limit has been reached.
+
+### Tweet Caps
+
+There is currently a cap of 500 thousand tweets that be collected per
+month per project under the Twitter API v2 `Standard` product track, and
+10 million for the `Academic Research` track. These caps only apply to
+certain API endpoints, such as `recent` and `full-archive search`. The
+`voson.tcn` `tcn_threads` function uses the search endpoints and
+therefore contributes towards this cap, however the `tcn_tweets` and
+`tcn_counts` functions do not.
+
+Project caps are only able to be checked from the [Twitter Developer
+Console Dashboard](https://developer.twitter.com/en/portal/dashboard).
+
+### Limitations
+
+-   Does not yet support OAuth1a authentication as there is no current
+    use case.
+-   Does not currently collect additional user metadata for authors of
+    tweets that were quoted and are external to the conversation. This
+    can result in incomplete actor node metadata for some quoted tweets:
+    `user_A --replies--> user_B --quotes--> (external user_NA)`
+-   Handles but does not report on broken reply chains caused by deleted
+    tweets or suspended users. These can result in a disconnected graph
+    with additional components.
 
 ## Usage
 
 ### Get Access Token
 
 Retrieve and save an app bearer token using its consumer keys.
-```R
+
+``` r
 library(voson.tcn)
 
 token <- tcn_token(consumer_key = "xxxxxxxx",
@@ -73,8 +131,10 @@ saveRDS(token, "~/.tcn_token")
 
 ### Collect Conversation Tweets
 
-Using tweet urls collect conversation tweets and metadata to generate networks.
-```R
+Using tweet urls collect conversation tweets and metadata to generate
+networks.
+
+``` r
 # read token from file
 token <- readRDS("~/.tcn_token")
 
@@ -96,11 +156,14 @@ tweets <- tcn_threads(tweet_ids, token = token,
                       start_time = "2021-03-17T00:00:00Z")
 ```
 
-The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.
+The `tcn_threads` function produces a named list comprising a dataframe
+with tweets and metadata and a dataframe of users metadata. *Note: If
+using the standard product track only recent search API requests can be
+performed. No tweets older than 7 days will be collected in the
+conversation search. The tweets and any directly referenced tweets for
+the tweet id’s provided will still be collected however.*
 
-*Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id's provided will still be collected however.* 
-
-```r
+``` r
 names(tweets)
 # [1] "tweets" "users" "errors" "meta"
 nrow(tweets$tweets)
@@ -113,13 +176,61 @@ nrow(tweets$meta)
 # [1] 2
 ```
 
+### Collect Conversation Tweet Counts
+
+This function can be used to retrieve the tweet activity in terms of
+tweet count for conversation id’s. It will return the volume of tweets
+for conversations over time, optionally by specified granularity (day,
+hour or minute). This can be useful for determining how many tweets will
+be returned before collecting tweets for a conversation or getting an
+overview of conversation tweet activity.
+
+The default time granularity is tweet counts per hour for the last 7
+days using the `recent` counts API endpoint. Researchers on the
+`Academic` track can specify an endpoint of `all` and access
+`full-archive` tweet counts.
+
+``` r
+# get tweet count for conversation thread over approximately 3 days
+# start time set approximately when conversation started
+counts <-
+  tcn_counts(
+    ids = "1491430617111674882",
+    token = token,
+    endpoint = "recent",
+    start_time = "2022-02-09T15:00:00Z",
+    end_time = "2022-02-12T10:00:00Z",
+    granularity = "day"
+  )
+
+names(counts)
+# [1] "data"   "errors" "meta"   "counts"
+
+print(counts$counts)
+# # A tibble: 4 x 6
+#   end                      start     tweet_count timestamp conversation_id page
+#   <chr>                    <chr>           <int>     <int> <chr>           <lgl>
+# 1 2022-02-10T00:00:00.000Z 2022-02-~           3    1.64e9 14914306171116~ NA
+# 2 2022-02-11T00:00:00.000Z 2022-02-~          87    1.64e9 14914306171116~ NA
+# 3 2022-02-12T00:00:00.000Z 2022-02-~          29    1.64e9 14914306171116~ NA
+# 4 2022-02-12T10:00:00.000Z 2022-02-~           0    1.64e9 14914306171116~ NA
+
+# get total tweets per conversation id for specified period
+library(dplyr)
+
+counts$counts %>% dplyr::count(conversation_id, wt = tweet_count)
+# # A tibble: 1 x 2
+#   conversation_id         n
+#   <chr>               <int>
+# 1 1491430617111674882   119
+```
+
 ### Collect Specific Tweets
 
-Using tweet urls or id's it's also possible collect specific tweets and their metadata.
-```R
-# read token from file
-token <- readRDS("~/.tcn_token")
+Using tweet urls or id’s it’s also possible collect specific tweets and
+their metadata.
 
+``` r
 # choose tweets to collect
 # e.g https://twitter.com/Warcraft/status/1372615159311699970, and
 #     https://twitter.com/Warcraft/status/1372487989385965569
@@ -142,13 +253,19 @@ nrow(tweets$errors)
 
 ### Generate Networks
 
-Two types of networks can be generated from the tweets collected. An `activity` network in which tweets are the nodes and an `actor` network where Twitter users are the nodes. Edges are the relationships between nodes, in both networks these are either a `reply` or a `quote`, signifying for example that a tweet is a reply-to another tweet or that a user has replied to another user.
+Two types of networks can be generated from the tweets collected. An
+`activity` network in which tweets are the nodes and an `actor` network
+where Twitter users are the nodes. Edges are the relationships between
+nodes, in both networks these are either a `reply` or a `quote`,
+signifying for example that a tweet is a reply-to another tweet or that
+a user has replied to another user.
 
 #### Create an activity network
 
-The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.
+The activity network has tweet metadata such as tweet metrics and author
+usernames as node attributes.
 
-```R
+``` r
 activity_net <- tcn_network(tweets, "activity")
 
 # activity nodes dataframe structure
@@ -178,9 +295,10 @@ print(activity_net$edges, n = 3)
 
 #### Create an actor network
 
-The actor network has additional user profile metadata as node attributes.
+The actor network has additional user profile metadata as node
+attributes.
 
-```R
+``` r
 actor_net <- tcn_network(tweets, "actor")
 
 # actor nodes dataframe structure
@@ -213,8 +331,10 @@ print(actor_net$edges, n = 3)
 
 ### Network Graphs
 
-Convert network to an igraph object and perform a simple plot of an actor network with node and edge labels.
-```R
+Convert network to an igraph object and perform a simple plot of an
+actor network with node and edge labels.
+
+``` r
 library(igraph)
 
 g <- graph_from_data_frame(actor_net$edges, vertices = actor_net$nodes)
@@ -225,3 +345,10 @@ plot(g, layout = layout_with_fr(g),
      edge.label = E(g)$type,
      vertex.size = 3, edge.arrow.size = 0.2)
 ```
+
+## Code of Conduct
+
+Please note that the VOSON Lab projects are released with a [Contributor
+Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

@@ -1,3 +1,8 @@
+# voson.tcn 0.3.2
+
+## Minor Changes
+- Updated standard package documentation, added citation and README.Rmd.
+
 # voson.tcn 0.3.1
 
 ## Major Changes
@@ -9,6 +14,7 @@
 - The `max_results` parameter for function `tcn_threads` has been changed from the maximum total results, and now refers to and allows the API parameter of the same name above to be set. The default value has been set to 100. If left at default academic projects using the full-archive search endpoint will only collect 30,000 tweets per 15 minute rate-limit.
 - Previous `max_results` parameter for the function `tcn_threads` has been renamed to `max_total`.
 - Added `retry_on_limit` parameter to `tcn_threads` to allow waiting for API rate-limit to reset before continuing, rather than exiting upon reaching the limit.
+- Updated standard package documentation.
 
 # voson.tcn 0.2.4
 
