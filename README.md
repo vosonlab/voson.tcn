@@ -5,7 +5,7 @@
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
-[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.1&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.2&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -345,3 +345,10 @@ plot(g, layout = layout_with_fr(g),
      edge.label = E(g)$type,
      vertex.size = 3, edge.arrow.size = 0.2)
 ```
+
+## Code of Conduct
+
+Please note that the VOSON Lab projects are released with a [Contributor
+Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
