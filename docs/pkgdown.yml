@@ -2,7 +2,7 @@ pandoc: 2.14.0.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-01-17T21:17Z
+last_built: 2022-02-12T18:58Z
 urls:
   reference: https://vosonlab.github.io/voson.tcn/reference
   article: https://vosonlab.github.io/voson.tcn/articles

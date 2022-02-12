@@ -7,6 +7,7 @@ navbar:
     - home
     - news
     - reference
+    - articles
     right:
     - vosonlab
     - twitter

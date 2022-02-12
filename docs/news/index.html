@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
@@ -42,6 +42,22 @@
     Reference
   </a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-book"></span>
+     
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="https://vosonlab.github.io/posts/2021-03-23-twitter-conversation-networks/" class="external-link">
+        <span class="far fa-file-alt"></span>
+         
+        Getting started with the voson.tcn package
+      </a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="http://vosonlab.net/" class="external-link">
     <span class="fa fa-flask fa-lg"></span>
@@ -74,6 +90,13 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.2" id="vosontcn-032">voson.tcn 0.3.2<a class="anchor" aria-label="anchor" href="#vosontcn-032"></a></h2>
+<div class="section level3">
+<h3 id="minor-changes-0-3-2">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-2"></a></h3>
+<ul><li>Updated standard package documentation, added citation and README.Rmd.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.1" id="vosontcn-031">voson.tcn 0.3.1<a class="anchor" aria-label="anchor" href="#vosontcn-031"></a></h2>
 <div class="section level3">
 <h3 id="major-changes-0-3-1">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-3-1"></a></h3>
@@ -85,6 +108,7 @@
 <li>The <code>max_results</code> parameter for function <code>tcn_threads</code> has been changed from the maximum total results, and now refers to and allows the API parameter of the same name above to be set. The default value has been set to 100. If left at default academic projects using the full-archive search endpoint will only collect 30,000 tweets per 15 minute rate-limit.</li>
 <li>Previous <code>max_results</code> parameter for the function <code>tcn_threads</code> has been renamed to <code>max_total</code>.</li>
 <li>Added <code>retry_on_limit</code> parameter to <code>tcn_threads</code> to allow waiting for API rate-limit to reset before continuing, rather than exiting upon reaching the limit.</li>
+<li>Updated standard package documentation.</li>
 </ul></div>
 </div>
     <div class="section level2">

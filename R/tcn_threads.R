@@ -68,11 +68,8 @@ tcn_threads <-
       stop("invalid id in tweet_ids.")
     }
 
-    datetime_pattern <-
-      "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
-
     if (!is.null(start_time)) {
-      if (!stringr::str_detect(toupper(start_time), datetime_pattern)) {
+      if (!check_fmt_datetime(start_time)) {
         stop(
           "invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
         )
@@ -80,7 +77,7 @@ tcn_threads <-
     }
 
     if (!is.null(end_time)) {
-      if (!stringr::str_detect(toupper(end_time), datetime_pattern)) {
+      if (!check_fmt_datetime(end_time)) {
         stop(
           "invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
         )
@@ -270,7 +267,6 @@ get_thread <-
 
     if (resp$status == 200) {
       resp_data <- resp_content(resp)
-      # resp_meta(resp_data$meta)
 
       results$tweets <-
         dplyr::bind_rows(results$tweets, resp_data$tweets)
@@ -358,7 +354,6 @@ get_thread <-
 
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
-        # resp_meta(resp_data$meta)
 
         results$tweets <-
           dplyr::bind_rows(results$tweets, resp_data$tweets)
@@ -408,13 +403,11 @@ resp_content <- function(resp) {
   })
 
   if (!is.null(content)) {
-    # tweets <- tibble::as_tibble(unnest_ref_tweets(content$data)) %>%
     tweets <-
       tibble::as_tibble(content$data) %>%
       dplyr::mutate(includes = "FALSE", timestamp = ts)
 
     if (!is.null(content$includes$tweets)) {
-      # incl_tweets <-tibble::as_tibble(unnest_ref_tweets(content$includes$tweets)) %>%
       incl_tweets <-
         tibble::as_tibble(content$includes$tweets) %>%
         dplyr::mutate(includes = "TRUE", timestamp = ts)
@@ -559,7 +552,10 @@ search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
     ifelse(!is.null(end_time),
            paste0("&end_time=", end_time),
            ""),
-    "&max_results=",
-    max_results
+    ifelse(
+      !is.null(max_results),
+      paste0("&max_results=", max_results),
+      ""
+    )    
   )
 }
