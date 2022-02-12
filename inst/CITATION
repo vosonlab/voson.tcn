@@ -1,0 +1,15 @@
+if (!exists("meta") || is.null(meta)) meta <- packageDescription("voson.tcn")
+note <- paste("R package version", meta$Version)
+year <- sub("-.*", "", meta$Date)
+if (is.null(meta$Date)) year <- sub("-.*", "", packageDate("voson.tcn"))
+
+bibentry(bibtype = "Manual",
+         header = "To cite package 'voson.tcn' in publications use:",
+         title = "voson.tcn: Twitter Conversation Networks and Analysis",
+         author = c(person("Bryan", "Gertzel"),
+                    person("Francisca", "Borquez"),
+                    person("Robert", "Ackland")),
+         organization = "VOSON Lab, Virtual Observatory for the Study of Online Networks",
+         year = year,
+         note = note,
+         url = "https://github.com/vosonlab/voson.tcn")

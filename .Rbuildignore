@@ -6,6 +6,8 @@
 ^\.Rhistory$
 
 .github
+^README\.Rmd$
+^README\.html$
 ^cran-comments\.md$
 ^LICENSE$
 
