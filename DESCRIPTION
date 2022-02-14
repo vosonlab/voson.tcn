@@ -1,6 +1,6 @@
 Package: voson.tcn
 Title: Twitter Conversation Networks and Analysis
-Version: 0.3.2
+Version: 0.3.3
 Description: Collects tweets and metadata for threaded conversations and
     generates networks.
 Type: Package

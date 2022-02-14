@@ -460,10 +460,10 @@ clean_results <- function(results) {
       dplyr::rename_with(~ paste0("profile.", .x)) %>%
       dplyr::rename(user_id = .data$profile.id,
                     timestamp = .data$profile.timestamp) %>%
-      dplyr::arrange(dplyr::desc(
-        .data$timestamp,
-        as.integer(.data$profile.public_metrics.tweet_count)
-      )) %>%
+      dplyr::arrange(
+        dplyr::desc(.data$timestamp),
+        dplyr::desc(as.integer(.data$profile.public_metrics.tweet_count)) # imperfect
+      ) %>%
       dplyr::distinct(.data$user_id, .keep_all = TRUE)
   }
 
@@ -556,6 +556,6 @@ search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
       !is.null(max_results),
       paste0("&max_results=", max_results),
       ""
-    )    
+    )
   )
 }

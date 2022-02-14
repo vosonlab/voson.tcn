@@ -1,3 +1,8 @@
+# voson.tcn 0.3.3
+
+## Bug Fixes
+- Fixed an error produced by arranging users by tweet count in `tcn_threads`.
+
 # voson.tcn 0.3.2
 
 ## Minor Changes
