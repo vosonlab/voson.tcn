@@ -159,6 +159,8 @@ users metadata.
 will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id's provided
 will still be collected however.*
 
+*Note: When specifying start and end times note that the API returns tweet created dates in `2021-03-17T00:00:00.000Z`
+format, however API requests require the shorter `2021-03-17T00:00:00Z` format.
 ```r
 names(tweets)
 # [1] "tweets" "users" "errors" "meta"

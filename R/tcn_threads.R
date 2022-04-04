@@ -170,10 +170,11 @@ tcn_threads <-
           )
         )
       }
-
-      if (!is.null(df$meta$result_count)) {
-        total_results <-
-          total_results + sum(df$meta$result_count, na.rm = TRUE)
+      if ("result_count" %in% names(df$meta)) {
+        if (!is.null(df$meta$result_count)) {
+          total_results <-
+            total_results + sum(df$meta$result_count, na.rm = TRUE)
+        }
       }
     }
 

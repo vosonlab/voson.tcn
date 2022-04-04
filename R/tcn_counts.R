@@ -73,7 +73,7 @@ tcn_counts <-
 
     results <-
       list(
-        data = NULL,
+        counts = NULL,
         errors = NULL,
         meta = NULL
       )
