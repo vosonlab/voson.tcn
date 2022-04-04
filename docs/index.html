@@ -67,7 +67,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-book"></span>
      
     Articles
@@ -128,8 +128,12 @@
 <p>Install the latest release via CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"voson.tcn"</span><span class="op">)</span></code></pre></div>
-<p>Install the development version:</p>
+<p>Install the latest release via GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"https://api.github.com/repos/vosonlab/voson.tcn/tarball/v0.3.3"</span>,
+                 repo <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></code></pre></div>
+<p>Install the development version:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># library(remotes)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"vosonlab/voson.tcn"</span><span class="op">)</span></code></pre></div>
 <div class="section level3">
@@ -176,7 +180,7 @@
 <h3 id="get-access-token">Get Access Token<a class="anchor" aria-label="anchor" href="#get-access-token"></a>
 </h3>
 <p>Retrieve and save an app bearer token using its consumer keys.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vosonlab/voson.tcn" class="external-link">voson.tcn</a></span><span class="op">)</span>
 
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,
@@ -192,7 +196,7 @@
 <h3 id="collect-conversation-tweets">Collect Conversation Tweets<a class="anchor" aria-label="anchor" href="#collect-conversation-tweets"></a>
 </h3>
 <p>Using tweet urls collect conversation tweets and metadata to generate networks.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read token from file</span>
 <span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"~/.tcn_token"</span><span class="op">)</span>
 
@@ -212,8 +216,10 @@
 <span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, token <span class="op">=</span> <span class="va">token</span>,
                       endpoint <span class="op">=</span> <span class="st">"all"</span>,
                       start_time <span class="op">=</span> <span class="st">"2021-03-17T00:00:00Z"</span><span class="op">)</span></code></pre></div>
-<p>The <code>tcn_threads</code> function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata. <em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>The <code>tcn_threads</code> function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.</p>
+<p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
+<p><em>Note: When specifying start and end times note that the API returns tweet created dates in <code>2021-03-17T00:00:00.000Z</code> format, however API requests require the shorter <code>2021-03-17T00:00:00Z</code> format.</em></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
 <span class="co"># [1] "tweets" "users" "errors" "meta"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span>
@@ -230,7 +236,7 @@
 </h3>
 <p>This function can be used to retrieve the tweet activity in terms of tweet count for conversation id’s. It will return the volume of tweets for conversations over time, optionally by specified granularity (day, hour or minute). This can be useful for determining how many tweets will be returned before collecting tweets for a conversation or getting an overview of conversation tweet activity.</p>
 <p>The default time granularity is tweet counts per hour for the last 7 days using the <code>recent</code> counts API endpoint. Researchers on the <code>Academic</code> track can specify an endpoint of <code>all</code> and access <code>full-archive</code> tweet counts.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get tweet count for conversation thread over approximately 3 days</span>
 <span class="co"># start time set approximately when conversation started</span>
 <span class="va">counts</span> <span class="op">&lt;-</span>
@@ -268,7 +274,7 @@
 <h3 id="collect-specific-tweets">Collect Specific Tweets<a class="anchor" aria-label="anchor" href="#collect-specific-tweets"></a>
 </h3>
 <p>Using tweet urls or id’s it’s also possible collect specific tweets and their metadata.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># choose tweets to collect</span>
 <span class="co"># e.g https://twitter.com/Warcraft/status/1372615159311699970, and</span>
 <span class="co">#     https://twitter.com/Warcraft/status/1372487989385965569</span>
@@ -296,7 +302,7 @@
 <h4 id="create-an-activity-network">Create an activity network<a class="anchor" aria-label="anchor" href="#create-an-activity-network"></a>
 </h4>
 <p>The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">activity_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"activity"</span><span class="op">)</span>
 
 <span class="co"># activity nodes dataframe structure</span>
@@ -327,7 +333,7 @@
 <h4 id="create-an-actor-network">Create an actor network<a class="anchor" aria-label="anchor" href="#create-an-actor-network"></a>
 </h4>
 <p>The actor network has additional user profile metadata as node attributes.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">actor_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"actor"</span><span class="op">)</span>
 
 <span class="co"># actor nodes dataframe structure</span>
@@ -362,7 +368,7 @@
 <h3 id="network-graphs">Network Graphs<a class="anchor" aria-label="anchor" href="#network-graphs"></a>
 </h3>
 <p>Convert network to an igraph object and perform a simple plot of an actor network with node and edge labels.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org" class="external-link">igraph</a></span><span class="op">)</span>
 
 <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_data_frame.html" class="external-link">graph_from_data_frame</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">edges</span>, vertices <span class="op">=</span> <span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span>

@@ -29,6 +29,13 @@ Install the latest release via CRAN:
 install.packages("voson.tcn")
 ```
 
+Install the latest release via GitHub:
+
+``` r
+install.packages("https://api.github.com/repos/vosonlab/voson.tcn/tarball/v0.3.3",
+                 repo = NULL, type = "source")
+```
+
 Install the development version:
 
 ``` r
@@ -157,11 +164,16 @@ tweets <- tcn_threads(tweet_ids, token = token,
 ```
 
 The `tcn_threads` function produces a named list comprising a dataframe
-with tweets and metadata and a dataframe of users metadata. *Note: If
-using the standard product track only recent search API requests can be
-performed. No tweets older than 7 days will be collected in the
-conversation search. The tweets and any directly referenced tweets for
-the tweet id’s provided will still be collected however.*
+with tweets and metadata and a dataframe of users metadata.
+
+*Note: If using the standard product track only recent search API
+requests can be performed. No tweets older than 7 days will be collected
+in the conversation search. The tweets and any directly referenced
+tweets for the tweet id’s provided will still be collected however.*
+
+*Note: When specifying start and end times note that the API returns
+tweet created dates in `2021-03-17T00:00:00.000Z` format, however API
+requests require the shorter `2021-03-17T00:00:00Z` format.*
 
 ``` r
 names(tweets)

@@ -38,11 +38,14 @@ if (all(sapply(c("httr", "dplyr", "jsonlite"), require, character.only = TRUE)))
   if (rel_resp$status_code == 200) {
     resp_content <- fromJSON(rawToChar(rel_resp$content))
     if ("tag_name" %in% names(resp_content)) {
-      meta <- select(slice_head(resp_content), tag_name, tarball_url)
+      meta <- select(slice_head(resp_content), tag_name, tarball_url, assets)
       rel_path <- pull(meta, tarball_url, tag_name)
+      # rel_path <- pull(meta, assets)
+      # rel_path_url <- rel_path[[1]]$browser_download_url[[1]]
+      rel_path_url <- rel_path
       rel_inst <- paste0("Install the latest release via GitHub:\n\n",
                          "``` r\n",
-                         "install.packages(\"", rel_path, "\",\n",
+                         "install.packages(\"", rel_path_url, "\",\n",
                          "                 repo = NULL, type = \"source\")\n",
                          "```\n")
     }
@@ -155,12 +158,13 @@ tweets <- tcn_threads(tweet_ids, token = token,
 
 The `tcn_threads` function produces a named list comprising a dataframe with tweets and metadata and a dataframe of
 users metadata.
+
 *Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days
 will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id's provided
 will still be collected however.*
 
 *Note: When specifying start and end times note that the API returns tweet created dates in `2021-03-17T00:00:00.000Z`
-format, however API requests require the shorter `2021-03-17T00:00:00Z` format.
+format, however API requests require the shorter `2021-03-17T00:00:00Z` format.*
 ```r
 names(tweets)
 # [1] "tweets" "users" "errors" "meta"

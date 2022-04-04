@@ -40,7 +40,7 @@
 ## Bug Fixes
 - Fixed an issue with partial errors preventing `get_tweets` from returning requested tweets.
 
-# voson.tcn 0.1.10.9000
+# voson.tcn 0.1.10
 
 ## Bug Fixes
 - Fixed `object 'df_convo' not found` message when endpoint related error occurs.
