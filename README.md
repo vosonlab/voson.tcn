@@ -1,25 +1,24 @@
 
 # voson.tcn - Twitter Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
 
+[![Twitter_API_v2](https://img.shields.io/endpoint?url=https://twbadges.glitch.me/badges/v2)](https://developer.twitter.com/en/docs/twitter-api)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
 [![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.3&logo=github)](https://github.com/vosonlab/voson.tcn)
-[![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/master)
+[![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/main)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
 Twitter Conversation Networks and Analysis. This package uses the
-Twitter API v2 [Early
-Access](https://developer.twitter.com/en/products/twitter-api/early-access)
-endpoints to collect tweets and generate networks for threaded
-conversations identified using the new tweet [conversation
+Twitter API v2 endpoints to collect tweets and generate networks for
+threaded conversations identified using the new tweet [conversation
 identifier](https://developer.twitter.com/en/docs/twitter-api/conversation-id).
 
 An introduction to the Twitter API v2 can be found
-[here](https://developer.twitter.com/en/docs/twitter-api/early-access),
-and the Twitter Developer Application that includes early access
-[here](https://developer.twitter.com/en/apply-for-access).
+[here](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api),
+and the Twitter Developer Application process
+[here](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api).
 
 ## Installation
 

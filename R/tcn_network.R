@@ -138,7 +138,8 @@ tcn_network <- function(data = NULL, type = "actor") {
 # referenced tweets will be either quoted or replied_to
 unnest_ref_tweets <- function(df) {
   if ("referenced_tweets" %in% colnames(df)) {
-    if (class(df$referenced_tweets) == "data.frame") {
+    # can occur as a df if a single record, typically will be a list
+    if (inherits(df$referenced_tweets, "data.frame")) {
       df <-
         dplyr::mutate(df, referenced_tweets = list(.data$referenced_tweets))
     }
