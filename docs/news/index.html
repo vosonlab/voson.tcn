@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
       </span>
     </div>
 
@@ -90,7 +90,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.3.3" id="vosontcn-033">voson.tcn 0.3.3<a class="anchor" aria-label="anchor" href="#vosontcn-033"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.4" id="vosontcn-034">voson.tcn 0.3.4<a class="anchor" aria-label="anchor" href="#vosontcn-034"></a></h2>
+<div class="section level3">
+<h3 id="minor-changes-0-3-4">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-4"></a></h3>
+<ul><li>Added retry on rate limit parameter to <code>tcn_counts</code> function.</li>
+<li>Added a 1 second delay to initial full-archive search requests as 15 min API rate-limit timeout was being triggered when multiple low number results returned too quickly.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.3" id="vosontcn-033">voson.tcn 0.3.3<small>2022-04-05</small><a class="anchor" aria-label="anchor" href="#vosontcn-033"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-0-3-3">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-3"></a></h3>
 <ul><li>Fixed an error produced by arranging users by tweet count in <code>tcn_threads</code>.</li>

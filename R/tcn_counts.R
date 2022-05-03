@@ -1,6 +1,6 @@
 #' Get conversation tweet counts
 #'
-#' Return the number of tweets for conversation ids.
+#' Return the tweet count per day, hour or minute for conversation ids.
 #'
 #' @param ids List. Conversation ids.
 #' @param token List. Twitter API tokens.
@@ -11,6 +11,11 @@
 #' @param end_time Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 #'   to now - 30 seconds. Default is NULL.
 #' @param granularity Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour". Default is "day".
+#' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
+#'   is FALSE.
+#'
+#' @note A rate-limit of 300 requests per 15 minute window applies. If a conversation count request contains more than
+#'   31 days-worth of results it will use more than one request as API results will be paginated.
 #'
 #' @return A dataframe of conversation ids and counts.
 #' @export
@@ -38,7 +43,8 @@ tcn_counts <-
            endpoint = "recent",
            start_time = NULL,
            end_time = NULL,
-           granularity = "day") {
+           granularity = "day",
+           retry_on_limit = FALSE) {
 
     # check params
     if (is.null(token$bearer) ||
@@ -87,6 +93,25 @@ tcn_counts <-
       req_header <- req_auth_header(token)
       resp <- httr::GET(query_url, req_header)
 
+      # check rate-limit
+      if (resp$status == 429) {
+        warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
+        reset <- resp$headers$`x-rate-limit-reset`
+        if (retry_on_limit & !is.null(reset)) {
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
+
+          # repeat request after reset
+          if (rl_status) {
+            resp <- httr::GET(query_url, req_header)
+          } else {
+            next_token <- NULL
+          }
+        } else {
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
+          next_token <- NULL
+        }
+      }
+
       if (resp$status == 200) {
         resp_data <- resp_content_counts(resp)
 
@@ -98,11 +123,9 @@ tcn_counts <-
           dplyr::bind_rows(results$errors, resp_data$errors)
         results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
 
+        # if request contains more than 31 days-worth of results
+        # will not occur for recent endpoint as it only retrieves last 7 days
         next_token <- resp_data$meta[["next_token"]]
-      } else if (resp$status == 429) {
-        warning("rate-limit exceeded", call. = FALSE)
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
-        next_token <- NULL
       } else {
         warning(
           paste0(
@@ -134,6 +157,25 @@ tcn_counts <-
         url <- paste0(query_url, "&next_token=", next_token)
         resp <- httr::GET(url, req_header)
 
+        # check rate-limit
+        if (resp$status == 429) {
+          warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
+          reset <- resp$headers$`x-rate-limit-reset`
+          if (retry_on_limit & !is.null(reset)) {
+            rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
+
+            # repeat request after reset
+            if (rl_status) {
+              resp <- httr::GET(query_url, req_header)
+            } else {
+              next_token <- NULL
+            }
+          } else {
+            rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
+            next_token <- NULL
+          }
+        }
+
         if (resp$status == 200) {
           resp_data <- resp_content_counts(resp)
 
@@ -146,10 +188,6 @@ tcn_counts <-
           results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
 
           next_token <- resp_data$meta[["next_token"]]
-        } else if (resp$status == 429) {
-          warning("rate-limit exceeded", call. = FALSE)
-          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
-          next_token <- NULL
         } else {
           warning(
             paste0(

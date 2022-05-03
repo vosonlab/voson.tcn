@@ -194,9 +194,15 @@ get_thread <-
            total_results = 0,
            retry_on_limit = FALSE,
            skip_list = NULL) {
+
     init_tweet <- get_tweets(tweet_ids = tweet_id, token = token)
 
-    if (is.null(init_tweet) || nrow(init_tweet$tweets) < 1) {
+    if (is.null(init_tweet) || !("tweets" %in% names(init_tweet))) {
+      warning(paste0("failed to retrieve tweet id: ", tweet_id), call. = FALSE)
+      return(NULL)
+    }
+
+    if (is.null(init_tweet$tweets) || nrow(init_tweet$tweets) < 1) {
       warning(paste0("failed to retrieve tweet id: ", tweet_id), call. = FALSE)
       return(NULL)
     }
@@ -238,6 +244,11 @@ get_thread <-
 
     # search for tweets
 
+    # ensure only 1 request per second full-archive search
+    if (endpoint == "all") {
+      Sys.sleep(1)
+    }
+
     # endpoint description
     endpoint_desc <- paste0("GET 2/tweets/search/", endpoint)
 
@@ -251,7 +262,7 @@ get_thread <-
       warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
       reset <- resp$headers$`x-rate-limit-reset`
       if (retry_on_limit & !is.null(reset)) {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
 
         # repeat request after reset
         if (rl_status) {
@@ -261,7 +272,7 @@ get_thread <-
         }
 
       } else {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
         next_token <- NULL
       }
     }
@@ -338,7 +349,7 @@ get_thread <-
         warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
-          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
 
           # repeat request after reset
           if (rl_status) {
@@ -348,7 +359,7 @@ get_thread <-
           }
 
         } else {
-          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
           next_token <- NULL
         }
       }

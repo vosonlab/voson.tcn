@@ -1,3 +1,10 @@
+# voson.tcn 0.3.4
+
+## Minor Changes
+- Added retry on rate limit parameter to `tcn_counts` function.
+- Added a 1 second delay to initial full-archive search requests as 15 min API rate-limit timeout was being triggered when
+multiple low number results returned too quickly.
+
 # voson.tcn 0.3.3
 
 ## Bug Fixes

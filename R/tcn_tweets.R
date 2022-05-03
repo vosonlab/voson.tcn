@@ -58,7 +58,6 @@ get_tweets <-
         errors = NULL,
         meta = NULL
       )
-
     query_url <- tweets_url(tweet_ids)
     req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
