@@ -6,7 +6,7 @@
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
-[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.3&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.4.0&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/main)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
