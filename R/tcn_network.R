@@ -33,21 +33,21 @@ tcn_network <- function(data = NULL, type = "actor") {
   }
 
   # unnest referenced tweets
-  unnested_refs <- data$tweets %>%
+  unnested_refs <- data$tweets |>
     dplyr::select(.data$tweet_id,
                   .data$author_id,
-                  .data$referenced_tweets) %>%
-    unnest_ref_tweets() %>%
+                  .data$referenced_tweets) |>
+    unnest_ref_tweets() |>
     dplyr::distinct()
 
   if (type == "activity") {
-    edges <- unnested_refs %>%
+    edges <- unnested_refs |>
       dplyr::select(
         from = .data$tweet_id,
         to = .data$ref_tweet_id,
         type = .data$ref_tweet_type
-      ) %>%
-      dplyr::filter(!is.na(.data$to)) %>% # remove non-edges
+      ) |>
+      dplyr::filter(!is.na(.data$to)) |> # remove non-edges
       dplyr::mutate(
         type = dplyr::case_when(
           .data$type == "replied_to" ~ "reply",
@@ -58,17 +58,17 @@ tcn_network <- function(data = NULL, type = "actor") {
 
     nodes <-
       dplyr::bind_rows(
-        unnested_refs %>% dplyr::select(.data$tweet_id),
-        unnested_refs %>% dplyr::select(tweet_id = .data$ref_tweet_id)
-      ) %>%
-      dplyr::filter(!is.na(.data$tweet_id)) %>%
-      dplyr::distinct() %>%
+        unnested_refs |> dplyr::select(.data$tweet_id),
+        unnested_refs |> dplyr::select(tweet_id = .data$ref_tweet_id)
+      ) |>
+      dplyr::filter(!is.na(.data$tweet_id)) |>
+      dplyr::distinct() |>
       dplyr::left_join(
-        data$tweets %>%
-          dplyr::arrange(dplyr::desc(.data$timestamp)) %>%
+        data$tweets |>
+          dplyr::arrange(dplyr::desc(.data$timestamp)) |>
           dplyr::distinct(.data$tweet_id, .keep_all = TRUE),
         by = "tweet_id"
-      ) %>%
+      ) |>
       dplyr::select(
         .data$tweet_id,
         .data$conversation_id,
@@ -80,15 +80,15 @@ tcn_network <- function(data = NULL, type = "actor") {
       )
 
     if (!is.null(data$users) && nrow(data$users) > 0) {
-      nodes <- nodes %>% dplyr::left_join(
-        data$users %>%
-          dplyr::select("user_id", "profile.name", "profile.username") %>%
+      nodes <- nodes |> dplyr::left_join(
+        data$users |>
+          dplyr::select("user_id", "profile.name", "profile.username") |>
           dplyr::distinct(.data$user_id, .keep_all = TRUE),
         by = c("user_id" = "user_id")
       )
     }
 
-    nodes <- nodes %>% dplyr::relocate(.data$tweet_id)
+    nodes <- nodes |> dplyr::relocate(.data$tweet_id)
 
   } else if (type == "actor") {
     # tweet_id, author_id, ref_tweet_id, ref_tweet_type
@@ -96,20 +96,20 @@ tcn_network <- function(data = NULL, type = "actor") {
 
     # list of tweet ids and their author ids
     tweet_authors <-
-      data$tweets %>%
-      dplyr::select(.data$tweet_id, to_user_id = .data$author_id) %>%
+      data$tweets |>
+      dplyr::select(.data$tweet_id, to_user_id = .data$author_id) |>
       dplyr::distinct()
 
-    edges <- unnested_refs %>%
-      dplyr::left_join(tweet_authors, by = c("ref_tweet_id" = "tweet_id")) %>%
+    edges <- unnested_refs |>
+      dplyr::left_join(tweet_authors, by = c("ref_tweet_id" = "tweet_id")) |>
       dplyr::select(
         from = .data$author_id,
         to = .data$to_user_id,
         type = .data$ref_tweet_type,
         .data$tweet_id
-      ) %>%
+      ) |>
       dplyr::left_join(
-        data$tweets %>%
+        data$tweets |>
           dplyr::select(
             .data$tweet_id,
             .data$conversation_id,
@@ -118,7 +118,7 @@ tcn_network <- function(data = NULL, type = "actor") {
           )
         ,
         by = "tweet_id"
-      ) %>%
+      ) |>
       dplyr::mutate(
         to = dplyr::if_else(is.na(.data$to), .data$from, .data$to),
         type = dplyr::case_when(
@@ -128,7 +128,7 @@ tcn_network <- function(data = NULL, type = "actor") {
         )
       )
 
-    nodes <- data$users %>%
+    nodes <- data$users |>
       dplyr::relocate(.data$user_id)
   }
 
@@ -143,14 +143,14 @@ unnest_ref_tweets <- function(df) {
       df <-
         dplyr::mutate(df, referenced_tweets = list(.data$referenced_tweets))
     }
-    df <- df %>%
+    df <- df |>
       tidyr::unnest(cols = c("referenced_tweets"),
-                    keep_empty = TRUE) %>%
+                    keep_empty = TRUE) |>
       dplyr::rename(ref_tweet_id = .data$id,
                     ref_tweet_type = .data$type)
   } else {
     if (!is.null(df)) {
-      df <- df %>% dplyr::mutate(ref_tweet_id = NA, ref_tweet_type = NA)
+      df <- df |> dplyr::mutate(ref_tweet_id = NA, ref_tweet_type = NA)
     }
   }
   df

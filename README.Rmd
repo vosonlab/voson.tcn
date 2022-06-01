@@ -215,7 +215,7 @@ print(counts$counts)
 # get total tweets per conversation id for specified period
 library(dplyr)
 
-counts$counts %>% dplyr::count(conversation_id, wt = tweet_count)
+counts$counts |> dplyr::count(conversation_id, wt = tweet_count)
 # # A tibble: 1 x 2
 #   conversation_id         n
 #   <chr>               <int>
@@ -234,7 +234,7 @@ tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
                "1372487989385965569")
 
 # collect the tweets for supplied ids           
-tweets <- tcn_tweets(tweet_ids, token)
+tweets <- tcn_tweets(tweet_ids, token, referenced_tweets = FALSE)
 
 names(tweets)
 # [1] "tweets" "users" "errors"

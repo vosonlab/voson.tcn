@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -264,7 +264,7 @@
 <span class="co"># get total tweets per conversation id for specified period</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
-<span class="va">counts</span><span class="op">$</span><span class="va">counts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span>
+<span class="va">counts</span><span class="op">$</span><span class="va">counts</span> |&gt; <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span>
 <span class="co"># # A tibble: 1 x 2</span>
 <span class="co">#   conversation_id         n</span>
 <span class="co">#   &lt;chr&gt;               &lt;int&gt;</span>
@@ -283,7 +283,7 @@
                <span class="st">"1372487989385965569"</span><span class="op">)</span>
 
 <span class="co"># collect the tweets for supplied ids           </span>
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_tweets.html">tcn_tweets</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span>
+<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_tweets.html">tcn_tweets</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span>, referenced_tweets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
 <span class="co"># [1] "tweets" "users" "errors"</span>
@@ -435,7 +435,7 @@
 <li><a href="https://CRAN.R-project.org/package=voson.tcn" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/voson.tcn" alt="CRAN_Monthly"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn" alt="CRAN_Total"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/releases" class="external-link"><img src="https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github" alt="Github_Release"></a></li>
-<li><a href="https://github.com/vosonlab/voson.tcn" class="external-link"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.3.4&amp;logo=github" alt="Github_Dev"></a></li>
+<li><a href="https://github.com/vosonlab/voson.tcn" class="external-link"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.3.3&amp;logo=github" alt="Github_Dev"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/commits/main" class="external-link"><img src="https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&amp;logo=github" alt="Last_Commit"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/actions" class="external-link"><img src="https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg" alt="Build_Status"></a></li>
 </ul>
@@ -452,7 +452,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

@@ -1,6 +1,6 @@
 Package: voson.tcn
 Title: Twitter Conversation Networks and Analysis
-Version: 0.3.4
+Version: 0.4.0
 Description: Collects tweets and metadata for threaded conversations and
     generates networks.
 Type: Package
@@ -8,13 +8,12 @@ Imports:
     dplyr,
     httr,
     jsonlite,
-    magrittr,
     openssl,
     rlang,
     stringr,
     tibble,
     tidyr
-Depends: R (>= 3.6)
+Depends: R (>= 4.1)
 Encoding: UTF-8
 Authors@R: c(
     person("Bryan", "Gertzel",
@@ -30,7 +29,7 @@ Authors@R: c(
 Maintainer: Bryan Gertzel <bryan.gertzel@anu.edu.au>
 License: GPL (>= 3)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 NeedsCompilation: no
 URL: https://github.com/vosonlab/voson.tcn
 BugReports: https://github.com/vosonlab/voson.tcn/issues

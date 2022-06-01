@@ -19,7 +19,7 @@
 #'   (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
 #'   is NULL.
 #' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
-#'   is FALSE.
+#'   is TRUE.
 #' @param skip_list Character vector. List of tweet conversation IDs to skip searching if found. This list is
 #'   automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 #'   duplication.
@@ -54,7 +54,7 @@ tcn_threads <-
            end_time = NULL,
            max_results = 100,
            max_total = NULL,
-           retry_on_limit = FALSE,
+           retry_on_limit = TRUE,
            skip_list = NULL) {
     # check params
     if (is.null(token$bearer) ||
@@ -113,7 +113,7 @@ tcn_threads <-
 
     for (id in tweet_ids) {
       if (!is.null(max_total) && total_results >= max_total) {
-        warning(
+        message(
           paste0(
             "exceeded max total results.\nmax total: ",
             max_total,
@@ -141,8 +141,8 @@ tcn_threads <-
         skip_list <- union(
           skip_list,
           unlist(
-            df$tweets %>% dplyr::filter(.data$includes == "FALSE") %>% #
-              dplyr::select(.data$conversation_id) %>%
+            df$tweets |> dplyr::filter(.data$includes == "FALSE") |> #
+              dplyr::select(.data$conversation_id) |>
               dplyr::distinct()
           )
         )
@@ -156,19 +156,21 @@ tcn_threads <-
       }
 
       if (!is.null(df$tweets) && nrow(df$tweets) == 1) {
-        warning(
-          paste0(
-            "no additional tweets were collected for tweet id: ",
-            id,
-            "\n",
-            "* check conversation is threaded",
-            ifelse(
-              endpoint == "recent",
-              " and that tweets are not older than 7 days.",
-              " and thread occurs after start_time."
-            )
-          )
-        )
+        # too verbose for lots of conversations
+
+        # message(
+        #   paste0(
+        #     "no additional tweets were collected for tweet id: ",
+        #     id,
+        #     "\n",
+        #     "* check conversation is threaded",
+        #     ifelse(
+        #       endpoint == "recent",
+        #       " and that tweets are not older than 7 days.",
+        #       " and thread occurs after start_time."
+        #     )
+        #   )
+        # )
       }
       if ("result_count" %in% names(df$meta)) {
         if (!is.null(df$meta$result_count)) {
@@ -198,26 +200,25 @@ get_thread <-
     init_tweet <- get_tweets(tweet_ids = tweet_id, token = token)
 
     if (is.null(init_tweet) || !("tweets" %in% names(init_tweet))) {
-      warning(paste0("failed to retrieve tweet id: ", tweet_id), call. = FALSE)
+      message(paste0("failed to retrieve tweet id: ", tweet_id))
       return(NULL)
     }
 
     if (is.null(init_tweet$tweets) || nrow(init_tweet$tweets) < 1) {
-      warning(paste0("failed to retrieve tweet id: ", tweet_id), call. = FALSE)
+      message(paste0("failed to retrieve tweet id: ", tweet_id))
       return(NULL)
     }
 
     convo_id <-
-      (init_tweet$tweets %>% dplyr::slice_head())$conversation_id
+      (init_tweet$tweets |> dplyr::slice_head())$conversation_id
 
     if (is.null(convo_id)) {
-      warning(paste0("failed to get tweet conversation_id for tweet id: ", tweet_id),
-              call. = FALSE)
+      message(paste0("failed to get tweet conversation_id for tweet id: ", tweet_id))
       return(NULL)
     }
 
     if (convo_id %in% skip_list) {
-      warning(
+      message(
         paste0(
           "skipping tweet id as conversation_id in skip list.\ntweet id:",
           tweet_id,
@@ -259,7 +260,7 @@ get_thread <-
 
     # check rate-limit
     if (resp$status == 429) {
-      warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
+      message(paste0("twitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
       if (retry_on_limit & !is.null(reset)) {
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
@@ -290,7 +291,7 @@ get_thread <-
 
       next_token <- resp_data$meta[["next_token"]]
     } else {
-      warning(
+      message(
         paste0(
           "twitter api response status (",
           endpoint_desc,
@@ -300,10 +301,7 @@ get_thread <-
           "conversation_id: ",
           convo_id,
           ", next_token: -"
-        )
-        ,
-        call. = FALSE
-      )
+        ))
       next_token <- NULL
     }
 
@@ -317,7 +315,7 @@ get_thread <-
         if (!is.null(resp_data$meta$result_count)) {
           result_tally <- total_results + sum(resp_data$meta$result_count, na.rm = TRUE)
           if (result_tally >= max_total) {
-            warning(
+            message(
               paste0(
                 "reached max_total tweets: ",
                 result_tally,
@@ -326,10 +324,7 @@ get_thread <-
                 convo_id,
                 ", next_token: ",
                 next_token
-              )
-              ,
-              call. = FALSE
-            )
+              ))
             break
           }
         }
@@ -346,7 +341,7 @@ get_thread <-
 
       # check rate-limit
       if (resp$status == 429) {
-        warning(paste0("twitter api rate-limit reached at ", Sys.time()), call. = FALSE)
+        message(paste0("twitter api rate-limit reached at ", Sys.time()))
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
           rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
@@ -378,7 +373,7 @@ get_thread <-
 
         next_token <- resp_data$meta[["next_token"]]
       } else {
-        warning(
+        message(
           paste0(
             "twitter api response status (",
             endpoint_desc,
@@ -389,10 +384,7 @@ get_thread <-
             convo_id,
             ", next_token: ",
             next_token
-          )
-          ,
-          call. = FALSE
-        )
+          ))
         next_token <- NULL
       }
       req_ts <- as.integer(as.POSIXct(Sys.time()))
@@ -416,12 +408,12 @@ resp_content <- function(resp) {
 
   if (!is.null(content)) {
     tweets <-
-      tibble::as_tibble(content$data) %>%
+      tibble::as_tibble(content$data) |>
       dplyr::mutate(includes = "FALSE", timestamp = ts)
 
     if (!is.null(content$includes$tweets)) {
       incl_tweets <-
-        tibble::as_tibble(content$includes$tweets) %>%
+        tibble::as_tibble(content$includes$tweets) |>
         dplyr::mutate(includes = "TRUE", timestamp = ts)
 
       # there is duplication between a search results for conversation_id tweets and
@@ -438,14 +430,14 @@ resp_content <- function(resp) {
     }
 
     users <-
-      tibble::as_tibble(content$includes$users) %>% dplyr::mutate(timestamp = ts)
+      tibble::as_tibble(content$includes$users) |> dplyr::mutate(timestamp = ts)
     if (!is.null(content$errors)) {
       errors <-
-        tibble::as_tibble(content$errors) %>% dplyr::mutate(timestamp = ts)
+        tibble::as_tibble(content$errors) |> dplyr::mutate(timestamp = ts)
     }
     if (!is.null(content$meta)) {
       meta <-
-        tibble::as_tibble(content$meta) %>% dplyr::mutate(timestamp = ts)
+        tibble::as_tibble(content$meta) |> dplyr::mutate(timestamp = ts)
     }
   }
 
@@ -461,113 +453,23 @@ resp_content <- function(resp) {
 # attempts to retain most recent version if duplicated
 clean_results <- function(results) {
   if (!is.null(results$tweets) && nrow(results$tweets)) {
-    results$tweets <- results$tweets %>%
-      dplyr::rename(tweet_id = .data$id) %>%
-      dplyr::arrange(dplyr::desc(.data$timestamp)) %>%
+    results$tweets <- results$tweets |>
+      dplyr::rename(tweet_id = .data$id) |>
+      dplyr::arrange(dplyr::desc(.data$timestamp)) |>
       dplyr::distinct(.data$tweet_id, .keep_all = TRUE)
   }
 
   if (!is.null(results$users) && nrow(results$users)) {
-    results$users <- results$users %>%
-      dplyr::rename_with(~ paste0("profile.", .x)) %>%
+    results$users <- results$users |>
+      dplyr::rename_with(~ paste0("profile.", .x)) |>
       dplyr::rename(user_id = .data$profile.id,
-                    timestamp = .data$profile.timestamp) %>%
+                    timestamp = .data$profile.timestamp) |>
       dplyr::arrange(
         dplyr::desc(.data$timestamp),
         dplyr::desc(as.integer(.data$profile.public_metrics.tweet_count)) # imperfect
-      ) %>%
+      ) |>
       dplyr::distinct(.data$user_id, .keep_all = TRUE)
   }
 
   results
-}
-
-# tweet fields to request
-query_tweet_fields <- function() {
-  tweet_fields <- paste0(
-    c(
-      "attachments",
-      "author_id",
-      "context_annotations",
-      "conversation_id",
-      "created_at",
-      "entities",
-      "geo",
-      "in_reply_to_user_id",
-      "lang",
-      "possibly_sensitive",
-      "public_metrics",
-      "referenced_tweets",
-      "reply_settings",
-      "source",
-      "withheld"
-    ),
-    collapse = ","
-  )
-  tweet_fields <- paste0("tweet.fields=", tweet_fields)
-}
-
-# tweet expansions to request
-# expansions includes tweets, users
-query_expansions <- function() {
-  expansions <- paste0(
-    c(
-      "author_id",
-      "in_reply_to_user_id", # may be redundant
-      "referenced_tweets.id",
-      "referenced_tweets.id.author_id"
-    ),
-    collapse = ","
-  )
-  expansions <- paste0("expansions=", expansions)
-}
-
-# tweet user fields to request
-query_user_fields <- function() {
-  user_fields <- paste0(
-    c(
-      "created_at",
-      "description",
-      "entities",
-      "location",
-      "pinned_tweet_id",
-      "profile_image_url",
-      "protected",
-      "public_metrics",
-      "url",
-      "verified",
-      "withheld"
-    ),
-    collapse = ","
-  )
-  user_fields <- paste0("user.fields=", user_fields)
-}
-
-# search query url
-search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
-  paste0(
-    "https://api.twitter.com/2/tweets/search/",
-    endpoint,
-    "?query=conversation_id:",
-    convo_id,
-    "&",
-    query_tweet_fields(),
-    "&",
-    query_expansions(),
-    "&",
-    query_user_fields(),
-    ifelse(
-      !is.null(start_time),
-      paste0("&start_time=", start_time),
-      ""
-    ),
-    ifelse(!is.null(end_time),
-           paste0("&end_time=", end_time),
-           ""),
-    ifelse(
-      !is.null(max_results),
-      paste0("&max_results=", max_results),
-      ""
-    )
-  )
 }

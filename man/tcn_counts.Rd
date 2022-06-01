@@ -57,7 +57,7 @@ counts <-
   )
 
 # total tweets per conversation id for period
-counts$counts \%>\% dplyr::count(conversation_id, wt = tweet_count)
+counts$counts |> dplyr::count(conversation_id, wt = tweet_count)
 }
 
 }

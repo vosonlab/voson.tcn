@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -103,7 +103,7 @@
   end_time <span class="op">=</span> <span class="cn">NULL</span>,
   max_results <span class="op">=</span> <span class="fl">100</span>,
   max_total <span class="op">=</span> <span class="cn">NULL</span>,
-  retry_on_limit <span class="op">=</span> <span class="cn">FALSE</span>,
+  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,
   skip_list <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -135,7 +135,7 @@ project). This will not be ideal for most cases as an API search generally retri
 is NULL.</p></dd>
 <dt>retry_on_limit</dt>
 <dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
-is FALSE.</p></dd>
+is TRUE.</p></dd>
 <dt>skip_list</dt>
 <dd><p>Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
@@ -178,7 +178,7 @@ duplication.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

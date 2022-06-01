@@ -4,12 +4,22 @@
 \alias{tcn_tweets}
 \title{Get tweets}
 \usage{
-tcn_tweets(tweet_ids = NULL, token = NULL)
+tcn_tweets(
+  tweet_ids = NULL,
+  token = NULL,
+  referenced_tweets = FALSE,
+  retry_on_limit = TRUE
+)
 }
 \arguments{
 \item{tweet_ids}{List. Tweet ids or tweet URLs.}
 
 \item{token}{List. Twitter API tokens.}
+
+\item{referenced_tweets}{Logical. Also retrieve tweets referenced by requested tweets. Default is FALSE.}
+
+\item{retry_on_limit}{Logical. When the API v2 rate-limit has been reached wait for reset time. Default
+is TRUE.}
 }
 \value{
 A named list. Dataframes of tweets, users, errors and request metadata.
