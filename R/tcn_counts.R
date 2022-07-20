@@ -25,7 +25,7 @@
 #' # get tweet count for conversation thread over approximately 7 days
 #' counts <-
 #'   tcn_counts(
-#'     ids = "xxxxxxxx",
+#'     ids = c("xxxxxx", "xxxxxx"),
 #'     token = token,
 #'     endpoint = "all",
 #'     start_time = "2020-09-30T01:00:00Z",
@@ -52,8 +52,18 @@ tcn_counts <-
       stop("missing or invalid bearer token.")
     }
 
-    if (is.null(ids) || !check_numeric(ids)) {
-      stop("invalid id in tweet_ids.")
+    ids <- ids_from_urls(ids)
+
+    if (is.null(ids)) {
+      stop("please provide ids.")
+    }
+
+    if (any(is.na(ids))) {
+      na_indexes <- which(is.na(ids))
+
+      stop(paste0("invalid ids found.\n",
+                  "index: ",
+                  paste0(na_indexes, collapse = ",")))
     }
 
     if (!is.null(start_time)) {

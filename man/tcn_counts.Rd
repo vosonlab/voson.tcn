@@ -48,7 +48,7 @@ A rate-limit of 300 requests per 15 minute window applies. If a conversation cou
 # get tweet count for conversation thread over approximately 7 days
 counts <-
   tcn_counts(
-    ids = "xxxxxxxx",
+    ids = c("xxxxxx", "xxxxxx"),
     token = token,
     endpoint = "all",
     start_time = "2020-09-30T01:00:00Z",

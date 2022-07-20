@@ -64,8 +64,16 @@ tcn_threads <-
 
     tweet_ids <- ids_from_urls(tweet_ids)
 
-    if (is.null(tweet_ids) || !check_numeric(tweet_ids)) {
-      stop("invalid id in tweet_ids.")
+    if (is.null(tweet_ids)) {
+      stop("please provide tweet_ids.")
+    }
+
+    if (any(is.na(tweet_ids))) {
+      na_indexes <- which(is.na(tweet_ids))
+
+      stop(paste0("invalid ids in tweet_ids.\n",
+                  "index: ",
+                  paste0(na_indexes, collapse = ",")))
     }
 
     if (!is.null(start_time)) {
@@ -89,11 +97,11 @@ tcn_threads <-
       endpoint <- "recent"
     }
 
-    if (!is.null(max_results) && !check_numeric(max_results)) {
+    if (is.null(max_results) || !is.numeric(max_results)) {
       stop("invalid max_results. must be a number.")
     }
 
-    if (!is.null(max_total) && !check_numeric(max_total)) {
+    if (!is.null(max_total) && !is.numeric(max_total)) {
       stop("invalid max_total must be a number.")
     }
 

@@ -33,8 +33,16 @@ tcn_tweets <-
 
     tweet_ids <- ids_from_urls(tweet_ids)
 
-    if (is.null(tweet_ids) || !check_numeric(tweet_ids)) {
-      stop("invalid id in tweet_ids.")
+    if (is.null(tweet_ids)) {
+      stop("please provide tweet_ids.")
+    }
+
+    if (any(is.na(tweet_ids))) {
+      na_indexes <- which(is.na(tweet_ids))
+
+      stop(paste0("invalid ids in tweet_ids.\n",
+           "index: ",
+           paste0(na_indexes, collapse = ",")))
     }
 
     results <-
