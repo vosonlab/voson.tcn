@@ -18,7 +18,7 @@ consumer keys."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -97,35 +97,42 @@ consumer keys.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">tcn_token</span><span class="op">(</span>bearer <span class="op">=</span> <span class="cn">NULL</span>, consumer_key <span class="op">=</span> <span class="cn">NULL</span>, consumer_secret <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tcn_token</span><span class="op">(</span>bearer <span class="op">=</span> <span class="cn">NULL</span>, consumer_key <span class="op">=</span> <span class="cn">NULL</span>, consumer_secret <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>bearer</dt>
 <dd><p>Character string. App bearer token.</p></dd>
+
+
 <dt>consumer_key</dt>
 <dd><p>Character string. App consumer key.</p></dd>
+
+
 <dt>consumer_secret</dt>
 <dd><p>Character string. App consumer secret.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Named list containing the token.</p>
+    
+
+<p>Named list containing the token.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># assign bearer token</span></span>
-<span class="r-in"><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu">tcn_token</span><span class="op">(</span>bearer <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># retrieve twitter app bearer token</span></span>
-<span class="r-in"><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu">tcn_token</span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,</span>
-<span class="r-in">                   consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># assign bearer token</span></span></span>
+<span class="r-in"><span><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu">tcn_token</span><span class="op">(</span>bearer <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># retrieve twitter app bearer token</span></span></span>
+<span class="r-in"><span><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu">tcn_token</span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,</span></span>
+<span class="r-in"><span>                   consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -140,7 +147,7 @@ consumer keys.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

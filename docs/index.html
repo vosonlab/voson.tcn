@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -127,15 +127,15 @@
 </h2>
 <p>Install the latest release via CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"voson.tcn"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"voson.tcn"</span><span class="op">)</span></span></code></pre></div>
 <p>Install the latest release via GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"https://api.github.com/repos/vosonlab/voson.tcn/tarball/v0.3.3"</span>,
-                 repo <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"https://api.github.com/repos/vosonlab/voson.tcn/tarball/v0.3.3"</span>,</span>
+<span>                 repo <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre></div>
 <p>Install the development version:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># library(remotes)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"vosonlab/voson.tcn"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># library(remotes)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"vosonlab/voson.tcn"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="oauth-authentication">OAuth Authentication<a class="anchor" aria-label="anchor" href="#oauth-authentication"></a>
 </h3>
@@ -145,7 +145,7 @@
 <div class="section level3">
 <h3 id="search-endpoint">Search Endpoint<a class="anchor" aria-label="anchor" href="#search-endpoint"></a>
 </h3>
-<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last 7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>endpoint = "all"</code> to collect on <code>full-archive</code> conversation tweets.</p>
+<p>By default the <code>recent</code> search endpoint is used that makes available for collection only tweets that were made within the last ~7 days. If the user has an <code>Academic Research Project</code> they can also use the <code>tcn_threads</code> parameter <code>endpoint = "all"</code> to collect on <code>full-archive</code> conversation tweets.</p>
 <p>If collecting on historical tweets a <code>start_time = "2021-03-18T00:00:00Z"</code> datetime parameter will need to be specified if the conversation is older than 30 days old (the default API search start time). The datetime is in UTC and ISO 8601 format passed as a string.</p>
 </div>
 <div class="section level3">
@@ -181,118 +181,120 @@
 </h3>
 <p>Retrieve and save an app bearer token using its consumer keys.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vosonlab/voson.tcn" class="external-link">voson.tcn</a></span><span class="op">)</span>
-
-<span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,
-                   consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
-
-<span class="co"># alternatively a bearer token string can be assigned directly</span>
-<span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>bearer <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span>
-
-<span class="co"># if you save the token to file this step only needs to be done once</span>
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">token</span>, <span class="st">"~/.tcn_token"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vosonlab/voson.tcn" class="external-link">voson.tcn</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>consumer_key <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,</span>
+<span>                   consumer_secret <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># alternatively a bearer token string can be assigned directly</span></span>
+<span><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_token.html">tcn_token</a></span><span class="op">(</span>bearer <span class="op">=</span> <span class="st">"xxxxxxxx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># if you save the token to file this step only needs to be done once</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">token</span>, <span class="st">"~/.tcn_token"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="collect-conversation-tweets">Collect Conversation Tweets<a class="anchor" aria-label="anchor" href="#collect-conversation-tweets"></a>
 </h3>
 <p>Using tweet urls collect conversation tweets and metadata to generate networks.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># read token from file</span>
-<span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"~/.tcn_token"</span><span class="op">)</span>
-
-<span class="co"># choose a twitter conversation thread or multiple threads to collect</span>
-<span class="co"># e.g https://twitter.com/Warcraft/status/1372615159311699970, and</span>
-<span class="co">#     https://twitter.com/Warcraft/status/1372487989385965569</span>
-
-<span class="co"># can use any tweet or tweet id that is part of the conversation thread</span>
-<span class="co"># input is a list of tweet ids, tweet urls or combination of both</span>
-<span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://twitter.com/Warcraft/status/1372615159311699970"</span>,
-               <span class="st">"1372487989385965569"</span><span class="op">)</span>
-
-<span class="co"># collect the conversation thread tweets for supplied ids           </span>
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span>
-
-<span class="co"># academic track historical endpoint - specify start_time and optionally end_time</span>
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, token <span class="op">=</span> <span class="va">token</span>,
-                      endpoint <span class="op">=</span> <span class="st">"all"</span>,
-                      start_time <span class="op">=</span> <span class="st">"2021-03-17T00:00:00Z"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># read token from file</span></span>
+<span><span class="va">token</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"~/.tcn_token"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># choose a twitter conversation thread or multiple threads to collect</span></span>
+<span><span class="co"># e.g https://twitter.com/Warcraft/status/1372615159311699970, and</span></span>
+<span><span class="co">#     https://twitter.com/Warcraft/status/1372487989385965569</span></span>
+<span></span>
+<span><span class="co"># can use any tweet or tweet id that is part of the conversation thread</span></span>
+<span><span class="co"># input is a list of tweet ids, tweet urls or combination of both</span></span>
+<span><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://twitter.com/Warcraft/status/1372615159311699970"</span>,</span>
+<span>               <span class="st">"1372487989385965569"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># collect the conversation thread tweets for supplied ids           </span></span>
+<span><span class="va">thread_tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># academic track historical endpoint - specify start_time and optionally end_time</span></span>
+<span><span class="va">thread_tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_threads.html">tcn_threads</a></span><span class="op">(</span><span class="va">tweet_ids</span>, token <span class="op">=</span> <span class="va">token</span>,</span>
+<span>                             endpoint <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>                             start_time <span class="op">=</span> <span class="st">"2021-03-17T00:00:00Z"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>tcn_threads</code> function produces a named list comprising a dataframe with tweets and metadata and a dataframe of users metadata.</p>
-<p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than 7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
+<p><em>Note: If using the standard product track only recent search API requests can be performed. No tweets older than ~7 days will be collected in the conversation search. The tweets and any directly referenced tweets for the tweet id’s provided will still be collected however.</em></p>
 <p><em>Note: When specifying start and end times note that the API returns tweet created dates in <code>2021-03-17T00:00:00.000Z</code> format, however API requests require the shorter <code>2021-03-17T00:00:00Z</code> format.</em></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
-<span class="co"># [1] "tweets" "users" "errors" "meta"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span>
-<span class="co"># [1] 147</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">users</span><span class="op">)</span>
-<span class="co"># [1] 118</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">errors</span><span class="op">)</span>
-<span class="co"># [1] 0</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span>
-<span class="co"># [1] 2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">thread_tweets</span><span class="op">)</span></span>
+<span><span class="co"># [1] "tweets" "users" "errors" "meta"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">thread_tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span></span>
+<span><span class="co"># [1] 147</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">thread_tweets</span><span class="op">$</span><span class="va">users</span><span class="op">)</span></span>
+<span><span class="co"># [1] 118</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">errors</span><span class="op">)</span></span>
+<span><span class="co"># [1] 0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">thread_tweets</span><span class="op">$</span><span class="va">meta</span><span class="op">)</span></span>
+<span><span class="co"># [1] 2</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="collect-conversation-tweet-counts">Collect Conversation Tweet Counts<a class="anchor" aria-label="anchor" href="#collect-conversation-tweet-counts"></a>
 </h3>
 <p>This function can be used to retrieve the tweet activity in terms of tweet count for conversation id’s. It will return the volume of tweets for conversations over time, optionally by specified granularity (day, hour or minute). This can be useful for determining how many tweets will be returned before collecting tweets for a conversation or getting an overview of conversation tweet activity.</p>
-<p>The default time granularity is tweet counts per hour for the last 7 days using the <code>recent</code> counts API endpoint. Researchers on the <code>Academic</code> track can specify an endpoint of <code>all</code> and access <code>full-archive</code> tweet counts.</p>
+<p>The default time granularity is tweet counts per hour for the last ~7 days using the <code>recent</code> counts API endpoint. Researchers on the <code>Academic</code> track can specify an endpoint of <code>all</code> and access <code>full-archive</code> tweet counts.</p>
+<p>Tweet counts do not contribute towards your Twitter projects monthly tweet cap.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># get tweet count for conversation thread over approximately 3 days</span>
-<span class="co"># start time set approximately when conversation started</span>
-<span class="va">counts</span> <span class="op">&lt;-</span>
-  <span class="fu"><a href="reference/tcn_counts.html">tcn_counts</a></span><span class="op">(</span>
-    ids <span class="op">=</span> <span class="st">"1491430617111674882"</span>,
-    token <span class="op">=</span> <span class="va">token</span>,
-    endpoint <span class="op">=</span> <span class="st">"recent"</span>,
-    start_time <span class="op">=</span> <span class="st">"2022-02-09T15:00:00Z"</span>,
-    end_time <span class="op">=</span> <span class="st">"2022-02-12T10:00:00Z"</span>,
-    granularity <span class="op">=</span> <span class="st">"day"</span>
-  <span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>
-<span class="co"># [1] "data"   "errors" "meta"   "counts"</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">counts</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>
-<span class="co"># # A tibble: 4 x 6</span>
-<span class="co">#   end                      start     tweet_count timestamp conversation_id page</span>
-<span class="co">#   &lt;chr&gt;                    &lt;chr&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           &lt;lgl&gt;</span>
-<span class="co"># 1 2022-02-10T00:00:00.000Z 2022-02-~           3    1.64e9 14914306171116~ NA</span>
-<span class="co"># 2 2022-02-11T00:00:00.000Z 2022-02-~          87    1.64e9 14914306171116~ NA</span>
-<span class="co"># 3 2022-02-12T00:00:00.000Z 2022-02-~          29    1.64e9 14914306171116~ NA</span>
-<span class="co"># 4 2022-02-12T10:00:00.000Z 2022-02-~           0    1.64e9 14914306171116~ NA</span>
-
-<span class="co"># get total tweets per conversation id for specified period</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-
-<span class="va">counts</span><span class="op">$</span><span class="va">counts</span> |&gt; <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span>
-<span class="co"># # A tibble: 1 x 2</span>
-<span class="co">#   conversation_id         n</span>
-<span class="co">#   &lt;chr&gt;               &lt;int&gt;</span>
-<span class="co"># 1 1491430617111674882   119</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># get tweet count for conversation thread over approximately 3 days</span></span>
+<span><span class="co"># start time set approximately when conversation started</span></span>
+<span><span class="va">thread_counts</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="reference/tcn_counts.html">tcn_counts</a></span><span class="op">(</span></span>
+<span>    ids <span class="op">=</span> <span class="st">"1491430617111674882"</span>,</span>
+<span>    token <span class="op">=</span> <span class="va">token</span>,</span>
+<span>    endpoint <span class="op">=</span> <span class="st">"recent"</span>,</span>
+<span>    start_time <span class="op">=</span> <span class="st">"2022-02-09T15:00:00Z"</span>,</span>
+<span>    end_time <span class="op">=</span> <span class="st">"2022-02-12T10:00:00Z"</span>,</span>
+<span>    granularity <span class="op">=</span> <span class="st">"day"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">thread_counts</span><span class="op">)</span></span>
+<span><span class="co"># [1] "data"   "errors" "meta"   "counts"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">thread_counts</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span></span>
+<span><span class="co"># # A tibble: 4 x 6</span></span>
+<span><span class="co">#   end                      start     tweet_count timestamp conversation_id page</span></span>
+<span><span class="co">#   &lt;chr&gt;                    &lt;chr&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           &lt;lgl&gt;</span></span>
+<span><span class="co"># 1 2022-02-10T00:00:00.000Z 2022-02-~           3    1.64e9 14914306171116~ NA</span></span>
+<span><span class="co"># 2 2022-02-11T00:00:00.000Z 2022-02-~          87    1.64e9 14914306171116~ NA</span></span>
+<span><span class="co"># 3 2022-02-12T00:00:00.000Z 2022-02-~          29    1.64e9 14914306171116~ NA</span></span>
+<span><span class="co"># 4 2022-02-12T10:00:00.000Z 2022-02-~           0    1.64e9 14914306171116~ NA</span></span>
+<span></span>
+<span><span class="co"># get total tweets per conversation id for specified period</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">thread_counts</span><span class="op">$</span><span class="va">counts</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span></span>
+<span><span class="co"># # A tibble: 1 x 2</span></span>
+<span><span class="co">#   conversation_id         n</span></span>
+<span><span class="co">#   &lt;chr&gt;               &lt;int&gt;</span></span>
+<span><span class="co"># 1 1491430617111674882   119</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="collect-specific-tweets">Collect Specific Tweets<a class="anchor" aria-label="anchor" href="#collect-specific-tweets"></a>
 </h3>
 <p>Using tweet urls or id’s it’s also possible collect specific tweets and their metadata.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># choose tweets to collect</span>
-<span class="co"># e.g https://twitter.com/Warcraft/status/1372615159311699970, and</span>
-<span class="co">#     https://twitter.com/Warcraft/status/1372487989385965569</span>
-
-<span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://twitter.com/Warcraft/status/1372615159311699970"</span>,
-               <span class="st">"1372487989385965569"</span><span class="op">)</span>
-
-<span class="co"># collect the tweets for supplied ids           </span>
-<span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_tweets.html">tcn_tweets</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span>, referenced_tweets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>
-<span class="co"># [1] "tweets" "users" "errors"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span>
-<span class="co"># [1] 2</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">users</span><span class="op">)</span>
-<span class="co"># [1] 1</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">errors</span><span class="op">)</span>
-<span class="co"># [1] 0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># choose tweets to collect</span></span>
+<span><span class="co"># e.g https://twitter.com/Warcraft/status/1372615159311699970, and</span></span>
+<span><span class="co">#     https://twitter.com/Warcraft/status/1372487989385965569</span></span>
+<span></span>
+<span><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://twitter.com/Warcraft/status/1372615159311699970"</span>,</span>
+<span>               <span class="st">"1372487989385965569"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># collect the tweets for supplied ids           </span></span>
+<span><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_tweets.html">tcn_tweets</a></span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span>, referenced_tweets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span></span>
+<span><span class="co"># [1] "tweets" "users" "errors"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">tweets</span><span class="op">)</span></span>
+<span><span class="co"># [1] 2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">users</span><span class="op">)</span></span>
+<span><span class="co"># [1] 1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">errors</span><span class="op">)</span></span>
+<span><span class="co"># [1] 0</span></span></code></pre></div>
+<p>Tweets from any time can be collected using any product track access token and do not contribute to your Twitter projects monthly tweet cap.</p>
 </div>
 <div class="section level3">
 <h3 id="generate-networks">Generate Networks<a class="anchor" aria-label="anchor" href="#generate-networks"></a>
@@ -303,81 +305,102 @@
 </h4>
 <p>The activity network has tweet metadata such as tweet metrics and author usernames as node attributes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">activity_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"activity"</span><span class="op">)</span>
-
-<span class="co"># activity nodes dataframe structure</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">activity_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-
-<span class="co"># # A tibble: 148 x 11</span>
-<span class="co">#   tweet_id  user_id  source created_at text    public_metrics.~ public_metrics.~</span>
-<span class="co">#   &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;              &lt;int&gt;            &lt;int&gt;</span>
-<span class="co"># 1 13726476~ 9427940~ Twitt~ 2021-03-1~ @Warcr~                0                0</span>
-<span class="co"># 2 13726461~ 1609030~ Twitt~ 2021-03-1~ @Patri~                0                0</span>
-<span class="co"># 3 13726452~ 1190870~ Twitt~ 2021-03-1~ @Warcr~                0                0</span>
-<span class="co"># # ... with 145 more rows, and 4 more variables:</span>
-<span class="co"># #   public_metrics.like_count &lt;int&gt;, public_metrics.quote_count &lt;int&gt;,</span>
-<span class="co"># #   profile.name &lt;chr&gt;, profile.username &lt;chr&gt;</span>
-
-<span class="co"># activity edges dataframe structure</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">activity_net</span><span class="op">$</span><span class="va">edges</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-
-<span class="co"># # A tibble: 122 x 3</span>
-<span class="co">#   from                to                  type      </span>
-<span class="co">#   &lt;chr&gt;               &lt;chr&gt;               &lt;chr&gt;     </span>
-<span class="co"># 1 1372636834971455494 1372630068162297860 replied_to</span>
-<span class="co"># 2 1372635200748937223 1372615159311699970 replied_to</span>
-<span class="co"># 3 1372634777275265029 1372615159311699970 replied_to</span>
-<span class="co"># # ... with 119 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">activity_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">thread_tweets</span>, <span class="st">"activity"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># activity nodes dataframe structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">activity_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># # A tibble: 148 x 11</span></span>
+<span><span class="co">#   tweet_id  user_id  source created_at text    public_metrics.~ public_metrics.~</span></span>
+<span><span class="co">#   &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;              &lt;int&gt;            &lt;int&gt;</span></span>
+<span><span class="co"># 1 13726476~ 9427940~ Twitt~ 2021-03-1~ @Warcr~                0                0</span></span>
+<span><span class="co"># 2 13726461~ 1609030~ Twitt~ 2021-03-1~ @Patri~                0                0</span></span>
+<span><span class="co"># 3 13726452~ 1190870~ Twitt~ 2021-03-1~ @Warcr~                0                0</span></span>
+<span><span class="co"># # ... with 145 more rows, and 4 more variables:</span></span>
+<span><span class="co"># #   public_metrics.like_count &lt;int&gt;, public_metrics.quote_count &lt;int&gt;,</span></span>
+<span><span class="co"># #   profile.name &lt;chr&gt;, profile.username &lt;chr&gt;</span></span>
+<span></span>
+<span><span class="co"># activity edges dataframe structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">activity_net</span><span class="op">$</span><span class="va">edges</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># # A tibble: 122 x 3</span></span>
+<span><span class="co">#   from                to                  type      </span></span>
+<span><span class="co">#   &lt;chr&gt;               &lt;chr&gt;               &lt;chr&gt;     </span></span>
+<span><span class="co"># 1 1372636834971455494 1372630068162297860 replied_to</span></span>
+<span><span class="co"># 2 1372635200748937223 1372615159311699970 replied_to</span></span>
+<span><span class="co"># 3 1372634777275265029 1372615159311699970 replied_to</span></span>
+<span><span class="co"># # ... with 119 more rows</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="create-an-actor-network">Create an actor network<a class="anchor" aria-label="anchor" href="#create-an-actor-network"></a>
 </h4>
 <p>The actor network has additional user profile metadata as node attributes.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">actor_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">tweets</span>, <span class="st">"actor"</span><span class="op">)</span>
-
-<span class="co"># actor nodes dataframe structure</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-
-<span class="co"># # A tibble: 105 x 13</span>
-<span class="co">#   user_id source profile.name profile.profile~ profile.location profile.username</span>
-<span class="co">#   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;           </span>
-<span class="co"># 1 275993~ Twitt~ "\U0001d43f~ https://pbs.twi~ England          Stab~       </span>
-<span class="co"># 2 133101~ Twitt~ "Andr ~      https://pbs.twi~ NA               virg~ </span>
-<span class="co"># 3 240160~ Twitt~ "Sebast ~    https://pbs.twi~ NA               Nord~     </span>
-<span class="co"># # ... with 102 more rows, and 7 more variables: profile.created_at &lt;chr&gt;,</span>
-<span class="co"># #   profile.description &lt;chr&gt;, profile.verified &lt;lgl&gt;,</span>
-<span class="co"># #   profile.public_metrics.followers_count &lt;int&gt;,</span>
-<span class="co"># #   profile.public_metrics.following_count &lt;int&gt;,</span>
-<span class="co"># #   profile.public_metrics.tweet_count &lt;int&gt;,</span>
-<span class="co"># #   profile.public_metrics.listed_count &lt;int&gt;</span>
-
-<span class="co"># actor edges dataframe structure</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">edges</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-
-<span class="co"># # A tibble: 124 x 6</span>
-<span class="co">#   from       to     type  tweet_id    created_at     text                       </span>
-<span class="co">#   &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;                      </span>
-<span class="co"># 1 2759935913 24599~ reply 1372636834~ 2021-03-18T19~ "@Limp ~   @Warcraft @MSF_~</span>
-<span class="co"># 2 133101119~ 61033~ reply 1372635200~ 2021-03-18T19~ "@Warcraft @MSF_USA Coming~</span>
-<span class="co"># 3 2401609580 61033~ reply 1372634777~ 2021-03-18T19~ "@Warcraft @MSF_USA When d~</span>
-<span class="co"># # ... with 121 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">actor_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tcn_network.html">tcn_network</a></span><span class="op">(</span><span class="va">thread_tweets</span>, <span class="st">"actor"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># actor nodes dataframe structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># # A tibble: 105 x 13</span></span>
+<span><span class="co">#   user_id source profile.name profile.profile~ profile.location profile.username</span></span>
+<span><span class="co">#   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;           </span></span>
+<span><span class="co"># 1 275993~ Twitt~ "\U0001d43f~ https://pbs.twi~ England          Stab~       </span></span>
+<span><span class="co"># 2 133101~ Twitt~ "Andr ~      https://pbs.twi~ NA               virg~ </span></span>
+<span><span class="co"># 3 240160~ Twitt~ "Sebast ~    https://pbs.twi~ NA               Nord~     </span></span>
+<span><span class="co"># # ... with 102 more rows, and 7 more variables: profile.created_at &lt;chr&gt;,</span></span>
+<span><span class="co"># #   profile.description &lt;chr&gt;, profile.verified &lt;lgl&gt;,</span></span>
+<span><span class="co"># #   profile.public_metrics.followers_count &lt;int&gt;,</span></span>
+<span><span class="co"># #   profile.public_metrics.following_count &lt;int&gt;,</span></span>
+<span><span class="co"># #   profile.public_metrics.tweet_count &lt;int&gt;,</span></span>
+<span><span class="co"># #   profile.public_metrics.listed_count &lt;int&gt;</span></span>
+<span></span>
+<span><span class="co"># actor edges dataframe structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">edges</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># # A tibble: 124 x 6</span></span>
+<span><span class="co">#   from       to     type  tweet_id    created_at     text                       </span></span>
+<span><span class="co">#   &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;                      </span></span>
+<span><span class="co"># 1 2759935913 24599~ reply 1372636834~ 2021-03-18T19~ "@Limp ~   @Warcraft @MSF_~</span></span>
+<span><span class="co"># 2 133101119~ 61033~ reply 1372635200~ 2021-03-18T19~ "@Warcraft @MSF_USA Coming~</span></span>
+<span><span class="co"># 3 2401609580 61033~ reply 1372634777~ 2021-03-18T19~ "@Warcraft @MSF_USA When d~</span></span>
+<span><span class="co"># # ... with 121 more rows</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
 <h3 id="network-graphs">Network Graphs<a class="anchor" aria-label="anchor" href="#network-graphs"></a>
 </h3>
-<p>Convert network to an igraph object and perform a simple plot of an actor network with node and edge labels.</p>
+<p>Networks can be converted into different formats and plotted using graph packages such as <code>igraph</code> and <code>ggraph</code>. Below is an example for plotting a threads actor network.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org" class="external-link">igraph</a></span><span class="op">)</span>
-
-<span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_data_frame.html" class="external-link">graph_from_data_frame</a></span><span class="op">(</span><span class="va">actor_net</span><span class="op">$</span><span class="va">edges</span>, vertices <span class="op">=</span> <span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span><span class="op">)</span>
-
-<span class="co"># plot graph</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span>, layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span>,
-     vertex.label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">profile.username</span>,
-     edge.label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">type</span>,
-     vertex.size <span class="op">=</span> <span class="fl">3</span>, edge.arrow.size <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggraph.data-imaginist.com" class="external-link">ggraph</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org" class="external-link">igraph</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># create igraph</span></span>
+<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_data_frame.html" class="external-link">graph_from_data_frame</a></span><span class="op">(</span></span>
+<span>  <span class="va">actor_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>  vertices <span class="op">=</span> <span class="va">actor_net</span><span class="op">$</span><span class="va">nodes</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># dashed lines for quote edges</span></span>
+<span><span class="va">line_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>reply <span class="op">=</span> <span class="st">"solid"</span>, quote <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plot actor network</span></span>
+<span><span class="fu"><a href="https://ggraph.data-imaginist.com/reference/ggraph.html" class="external-link">ggraph</a></span><span class="op">(</span><span class="va">g</span>, layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/layout_nicely.html" class="external-link">layout.auto</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggraph.data-imaginist.com/reference/geom_edge_loop.html" class="external-link">geom_edge_loop</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggraph.data-imaginist.com/reference/geom_edge_fan.html" class="external-link">geom_edge_fan</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>linetype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"gray"</span>,</span>
+<span>    arrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">'mm'</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    start_cap <span class="op">=</span> <span class="fu"><a href="https://ggraph.data-imaginist.com/reference/geometry.html" class="external-link">circle</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="st">'mm'</span><span class="op">)</span>,</span>
+<span>    end_cap <span class="op">=</span> <span class="fu"><a href="https://ggraph.data-imaginist.com/reference/geometry.html" class="external-link">circle</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="st">'mm'</span><span class="op">)</span>,</span>
+<span>    strength <span class="op">=</span> <span class="fl">1.2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_linetype_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">line_vals</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggraph.data-imaginist.com/reference/geom_node_point.html" class="external-link">geom_node_point</a></span><span class="op">(</span></span>
+<span>    size <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>Plots of an activity network and corresponding actor reply network graph generated from a small Twitter conversation thread.</p>
+<p><img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs"></p>
 </div>
 </div>
 <div class="section level2">
@@ -435,7 +458,7 @@
 <li><a href="https://CRAN.R-project.org/package=voson.tcn" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/voson.tcn" alt="CRAN_Monthly"></a></li>
 <li><a href="https://CRAN.R-project.org/package=voson.tcn" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn" alt="CRAN_Total"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/releases" class="external-link"><img src="https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github" alt="Github_Release"></a></li>
-<li><a href="https://github.com/vosonlab/voson.tcn" class="external-link"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.4.0&amp;logo=github" alt="Github_Dev"></a></li>
+<li><a href="https://github.com/vosonlab/voson.tcn" class="external-link"><img src="https://img.shields.io/static/v1?label=dev&amp;message=v0.4.1&amp;logo=github" alt="Github_Dev"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/commits/main" class="external-link"><img src="https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&amp;logo=github" alt="Last_Commit"></a></li>
 <li><a href="https://github.com/vosonlab/voson.tcn/actions" class="external-link"><img src="https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg" alt="Build_Status"></a></li>
 </ul>
@@ -452,7 +475,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

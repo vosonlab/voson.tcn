@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -95,41 +95,56 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">tcn_counts</span><span class="op">(</span>
-  ids <span class="op">=</span> <span class="cn">NULL</span>,
-  token <span class="op">=</span> <span class="cn">NULL</span>,
-  endpoint <span class="op">=</span> <span class="st">"recent"</span>,
-  start_time <span class="op">=</span> <span class="cn">NULL</span>,
-  end_time <span class="op">=</span> <span class="cn">NULL</span>,
-  granularity <span class="op">=</span> <span class="st">"day"</span>,
-  retry_on_limit <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tcn_counts</span><span class="op">(</span></span>
+<span>  ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  endpoint <span class="op">=</span> <span class="st">"recent"</span>,</span>
+<span>  start_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  end_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  granularity <span class="op">=</span> <span class="st">"day"</span>,</span>
+<span>  retry_on_limit <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ids</dt>
 <dd><p>List. Conversation ids.</p></dd>
+
+
 <dt>token</dt>
 <dd><p>List. Twitter API tokens.</p></dd>
+
+
 <dt>endpoint</dt>
 <dd><p>Character string. Twitter API v2 search endpoint. Can be either "recent" for the last 7 days or "all"
 if users app has access to historical "full-archive" tweets. Default is "recent".</p></dd>
+
+
 <dt>start_time</dt>
 <dd><p>Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will
 default to 30 days before end_time. Default is NULL.</p></dd>
+
+
 <dt>end_time</dt>
 <dd><p>Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 to now - 30 seconds. Default is NULL.</p></dd>
+
+
 <dt>granularity</dt>
 <dd><p>Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour". Default is "day".</p></dd>
+
+
 <dt>retry_on_limit</dt>
 <dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 is FALSE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A dataframe of conversation ids and counts.</p>
+    
+
+<p>A dataframe of conversation ids and counts.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
@@ -139,22 +154,22 @@ is FALSE.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># get tweet count for conversation thread over approximately 7 days</span></span>
-<span class="r-in"><span class="va">counts</span> <span class="op">&lt;-</span></span>
-<span class="r-in">  <span class="fu">tcn_counts</span><span class="op">(</span></span>
-<span class="r-in">    ids <span class="op">=</span> <span class="st">"xxxxxxxx"</span>,</span>
-<span class="r-in">    token <span class="op">=</span> <span class="va">token</span>,</span>
-<span class="r-in">    endpoint <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span class="r-in">    start_time <span class="op">=</span> <span class="st">"2020-09-30T01:00:00Z"</span>,</span>
-<span class="r-in">    end_time <span class="op">=</span> <span class="st">"2020-10-07T01:00:00Z"</span>,</span>
-<span class="r-in">    granularity <span class="op">=</span> <span class="st">"day"</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># total tweets per conversation id for period</span></span>
-<span class="r-in"><span class="va">counts</span><span class="op">$</span><span class="va">counts</span> |&gt; <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># get tweet count for conversation thread over approximately 7 days</span></span></span>
+<span class="r-in"><span><span class="va">counts</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu">tcn_counts</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xxxxxx"</span>, <span class="st">"xxxxxx"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    token <span class="op">=</span> <span class="va">token</span>,</span></span>
+<span class="r-in"><span>    endpoint <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>    start_time <span class="op">=</span> <span class="st">"2020-09-30T01:00:00Z"</span>,</span></span>
+<span class="r-in"><span>    end_time <span class="op">=</span> <span class="st">"2020-10-07T01:00:00Z"</span>,</span></span>
+<span class="r-in"><span>    granularity <span class="op">=</span> <span class="st">"day"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># total tweets per conversation id for period</span></span></span>
+<span class="r-in"><span><span class="va">counts</span><span class="op">$</span><span class="va">counts</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">conversation_id</span>, wt <span class="op">=</span> <span class="va">tweet_count</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -169,7 +184,7 @@ is FALSE.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

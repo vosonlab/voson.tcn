@@ -71,3 +71,8 @@ check_fmt_datetime <- function(dt) {
   }
   TRUE
 }
+
+# remove trailing .000Z from twitter datetime if present
+rm_dt_tail <- function(x) {
+  stringr::str_replace(x, "\\.000Z$", "Z")
+}

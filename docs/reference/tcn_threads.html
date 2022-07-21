@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -95,17 +95,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">tcn_threads</span><span class="op">(</span>
-  tweet_ids <span class="op">=</span> <span class="cn">NULL</span>,
-  token <span class="op">=</span> <span class="cn">NULL</span>,
-  endpoint <span class="op">=</span> <span class="st">"recent"</span>,
-  start_time <span class="op">=</span> <span class="cn">NULL</span>,
-  end_time <span class="op">=</span> <span class="cn">NULL</span>,
-  max_results <span class="op">=</span> <span class="fl">100</span>,
-  max_total <span class="op">=</span> <span class="cn">NULL</span>,
-  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,
-  skip_list <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tcn_threads</span><span class="op">(</span></span>
+<span>  tweet_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  endpoint <span class="op">=</span> <span class="st">"recent"</span>,</span>
+<span>  start_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  end_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_results <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  max_total <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  skip_list <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,57 +113,76 @@
     <dl><dt>tweet_ids</dt>
 <dd><p>List. Tweet ids of any tweet that are part of the threaded conversations of interest. Also accepts a
 list of tweet URLs or a mixed list.</p></dd>
+
+
 <dt>token</dt>
 <dd><p>List. Twitter API tokens.</p></dd>
+
+
 <dt>endpoint</dt>
 <dd><p>Character string. Twitter API v2 search endpoint. Can be either "recent" for the last 7 days or "all"
 if users app has access to historical "full-archive" tweets. Default is "recent".</p></dd>
+
+
 <dt>start_time</dt>
 <dd><p>Character string. Earliest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will
 default to 30 days before end_time. Default is NULL.</p></dd>
+
+
 <dt>end_time</dt>
 <dd><p>Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 to now - 30 seconds. Default is NULL.</p></dd>
+
+
 <dt>max_results</dt>
 <dd><p>Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
 or 500 tweets for academic projects can be collected per request. Default is 100.</p></dd>
+
+
 <dt>max_total</dt>
 <dd><p>Numeric. Set maximum total number of tweets to collect as a cap limit precaution. Will only be
 accurate to within one search request count (being max_results, or 100 for standard or 500 tweets for academic
 project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
 (reverse-chronological order), therefore the beginning part of the last conversation thread may be absent. Default
 is NULL.</p></dd>
+
+
 <dt>retry_on_limit</dt>
 <dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 is TRUE.</p></dd>
+
+
 <dt>skip_list</dt>
 <dd><p>Character vector. List of tweet conversation IDs to skip searching if found. This list is
 automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
 duplication.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list. Dataframes of tweets, users, errors and request metadata.</p>
+    
+
+<p>A named list. Dataframes of tweets, users, errors and request metadata.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># get twitter conversation threads by tweet ids or urls</span></span>
-<span class="r-in"><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xxxxxxxx"</span>,</span>
-<span class="r-in">               <span class="st">"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu">tcn_threads</span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span>, endpoint <span class="op">=</span> <span class="st">"recent"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># get twitter conversation threads by tweet ids or urls using historical endpoint</span></span>
-<span class="r-in"><span class="co"># starting from May 01, 2021.</span></span>
-<span class="r-in"><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xxxxxxxx"</span>,</span>
-<span class="r-in">               <span class="st">"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu">tcn_threads</span><span class="op">(</span><span class="va">tweet_ids</span>,</span>
-<span class="r-in">                      token <span class="op">=</span> <span class="va">token</span>,</span>
-<span class="r-in">                      endpoint <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span class="r-in">                      start_time <span class="op">=</span> <span class="st">"2021-05-01T00:00:00Z"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># get twitter conversation threads by tweet ids or urls</span></span></span>
+<span class="r-in"><span><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xxxxxxxx"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu">tcn_threads</span><span class="op">(</span><span class="va">tweet_ids</span>, <span class="va">token</span>, endpoint <span class="op">=</span> <span class="st">"recent"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># get twitter conversation threads by tweet ids or urls using historical endpoint</span></span></span>
+<span class="r-in"><span><span class="co"># starting from May 01, 2021.</span></span></span>
+<span class="r-in"><span><span class="va">tweet_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xxxxxxxx"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"https://twitter.com/xxxxxxxx/status/xxxxxxxx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu">tcn_threads</span><span class="op">(</span><span class="va">tweet_ids</span>,</span></span>
+<span class="r-in"><span>                      token <span class="op">=</span> <span class="va">token</span>,</span></span>
+<span class="r-in"><span>                      endpoint <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>                      start_time <span class="op">=</span> <span class="st">"2021-05-01T00:00:00Z"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -178,7 +197,7 @@ duplication.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

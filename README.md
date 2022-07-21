@@ -6,7 +6,7 @@
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
-[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.4.0&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.4.1&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/main)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -62,7 +62,7 @@ a `voson.tcn` token object using the `bearer` string parameter.
 ### Search Endpoint
 
 By default the `recent` search endpoint is used that makes available for
-collection only tweets that were made within the last 7 days. If the
+collection only tweets that were made within the last \~7 days. If the
 user has an `Academic Research Project` they can also use the
 `tcn_threads` parameter `endpoint = "all"` to collect on `full-archive`
 conversation tweets.
@@ -154,36 +154,37 @@ tweet_ids <- c("https://twitter.com/Warcraft/status/1372615159311699970",
                "1372487989385965569")
 
 # collect the conversation thread tweets for supplied ids           
-tweets <- tcn_threads(tweet_ids, token)
+thread_tweets <- tcn_threads(tweet_ids, token)
 
 # academic track historical endpoint - specify start_time and optionally end_time
-tweets <- tcn_threads(tweet_ids, token = token,
-                      endpoint = "all",
-                      start_time = "2021-03-17T00:00:00Z")
+thread_tweets <- tcn_threads(tweet_ids, token = token,
+                             endpoint = "all",
+                             start_time = "2021-03-17T00:00:00Z")
 ```
 
 The `tcn_threads` function produces a named list comprising a dataframe
 with tweets and metadata and a dataframe of users metadata.
 
 *Note: If using the standard product track only recent search API
-requests can be performed. No tweets older than 7 days will be collected
-in the conversation search. The tweets and any directly referenced
-tweets for the tweet id’s provided will still be collected however.*
+requests can be performed. No tweets older than \~7 days will be
+collected in the conversation search. The tweets and any directly
+referenced tweets for the tweet id’s provided will still be collected
+however.*
 
 *Note: When specifying start and end times note that the API returns
 tweet created dates in `2021-03-17T00:00:00.000Z` format, however API
 requests require the shorter `2021-03-17T00:00:00Z` format.*
 
 ``` r
-names(tweets)
+names(thread_tweets)
 # [1] "tweets" "users" "errors" "meta"
-nrow(tweets$tweets)
+nrow(thread_tweets$tweets)
 # [1] 147
-nrow(tweets$users)
+nrow(thread_tweets$users)
 # [1] 118
 nrow(tweets$errors)
 # [1] 0
-nrow(tweets$meta)
+nrow(thread_tweets$meta)
 # [1] 2
 ```
 
@@ -196,15 +197,18 @@ hour or minute). This can be useful for determining how many tweets will
 be returned before collecting tweets for a conversation or getting an
 overview of conversation tweet activity.
 
-The default time granularity is tweet counts per hour for the last 7
+The default time granularity is tweet counts per hour for the last \~7
 days using the `recent` counts API endpoint. Researchers on the
 `Academic` track can specify an endpoint of `all` and access
 `full-archive` tweet counts.
 
+Tweet counts do not contribute towards your Twitter projects monthly
+tweet cap.
+
 ``` r
 # get tweet count for conversation thread over approximately 3 days
 # start time set approximately when conversation started
-counts <-
+thread_counts <-
   tcn_counts(
     ids = "1491430617111674882",
     token = token,
@@ -214,10 +218,10 @@ counts <-
     granularity = "day"
   )
 
-names(counts)
+names(thread_counts)
 # [1] "data"   "errors" "meta"   "counts"
 
-print(counts$counts)
+print(thread_counts$counts)
 # # A tibble: 4 x 6
 #   end                      start     tweet_count timestamp conversation_id page
 #   <chr>                    <chr>           <int>     <int> <chr>           <lgl>
@@ -229,7 +233,7 @@ print(counts$counts)
 # get total tweets per conversation id for specified period
 library(dplyr)
 
-counts$counts |> dplyr::count(conversation_id, wt = tweet_count)
+thread_counts$counts |> dplyr::count(conversation_id, wt = tweet_count)
 # # A tibble: 1 x 2
 #   conversation_id         n
 #   <chr>               <int>
@@ -262,6 +266,9 @@ nrow(tweets$errors)
 # [1] 0
 ```
 
+Tweets from any time can be collected using any product track access
+token and do not contribute to your Twitter projects monthly tweet cap.
+
 ### Generate Networks
 
 Two types of networks can be generated from the tweets collected. An
@@ -277,7 +284,7 @@ The activity network has tweet metadata such as tweet metrics and author
 usernames as node attributes.
 
 ``` r
-activity_net <- tcn_network(tweets, "activity")
+activity_net <- tcn_network(thread_tweets, "activity")
 
 # activity nodes dataframe structure
 print(activity_net$nodes, n = 3)
@@ -310,7 +317,7 @@ The actor network has additional user profile metadata as node
 attributes.
 
 ``` r
-actor_net <- tcn_network(tweets, "actor")
+actor_net <- tcn_network(thread_tweets, "actor")
 
 # actor nodes dataframe structure
 print(actor_net$nodes, n = 3)
@@ -342,20 +349,45 @@ print(actor_net$edges, n = 3)
 
 ### Network Graphs
 
-Convert network to an igraph object and perform a simple plot of an
-actor network with node and edge labels.
+Networks can be converted into different formats and plotted using graph
+packages such as `igraph` and `ggraph`. Below is an example for plotting
+a threads actor network.
 
 ``` r
+library(ggraph)
 library(igraph)
 
-g <- graph_from_data_frame(actor_net$edges, vertices = actor_net$nodes)
+# create igraph
+g <- graph_from_data_frame(
+  actor_net$edges,
+  vertices = actor_net$nodes
+)
 
-# plot graph
-plot(g, layout = layout_with_fr(g),
-     vertex.label = V(g)$profile.username,
-     edge.label = E(g)$type,
-     vertex.size = 3, edge.arrow.size = 0.2)
+# dashed lines for quote edges
+line_vals <- c(reply = "solid", quote = "dashed")
+
+# plot actor network
+ggraph(g, layout = layout.auto(g)) +
+  geom_edge_loop(color = "gray") +
+  geom_edge_fan(
+    aes(linetype = as.factor(type)),
+    color = "gray",
+    arrow = arrow(length = unit(2, 'mm')),
+    start_cap = circle(1.5, 'mm'),
+    end_cap = circle(1.5, 'mm'),
+    strength = 1.2
+  ) +
+  scale_linetype_manual(values = line_vals) +
+  geom_node_point(
+    size = 2.5,
+    aes(color = as.factor(name))
+  )
 ```
+
+Plots of an activity network and corresponding actor reply network graph
+generated from a small Twitter conversation thread.
+
+<img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs"/>
 
 ## Code of Conduct
 

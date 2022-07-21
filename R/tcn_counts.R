@@ -67,6 +67,7 @@ tcn_counts <-
     }
 
     if (!is.null(start_time)) {
+      start_time <- rm_dt_tail(start_time)
       if (!check_fmt_datetime(start_time)) {
         stop(
           "invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
@@ -75,6 +76,7 @@ tcn_counts <-
     }
 
     if (!is.null(end_time)) {
+      end_time <- rm_dt_tail(end_time)
       if (!check_fmt_datetime(end_time)) {
         stop(
           "invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
