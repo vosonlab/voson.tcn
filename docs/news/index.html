@@ -90,21 +90,24 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.4.0" id="vosontcn-040">voson.tcn 0.4.0<a class="anchor" aria-label="anchor" href="#vosontcn-040"></a></h2>
+<h2 class="page-header" data-toc-text="0.4.1" id="vosontcn-041">voson.tcn 0.4.1<a class="anchor" aria-label="anchor" href="#vosontcn-041"></a></h2>
 <div class="section level3">
-<h3 id="major-changes-0-4-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-4-0"></a></h3>
+<h3 id="major-changes-0-4-1">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-4-1"></a></h3>
 <ul><li>Package now requires R version <code>4.1</code> or greater.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="minor-changes-0-4-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-0"></a></h3>
+<h3 id="minor-changes-0-4-1">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-1"></a></h3>
 <ul><li>Changed <code>tcn_tweets</code> to be able to accept any number of tweet ids or urls. Previously was set to a maximum of 100.</li>
 <li>Added <code>referenced_tweets</code> parameter to <code>tcn_tweets</code> function so as to now have the option to specify if referenced tweets should also be retrieved. The default value is <code>FALSE</code>.</li>
 <li>Added retry on rate limit <code>retry_on_limit</code> parameter to <code>tcn_tweets</code> and <code>tcn_counts</code> functions.</li>
 <li>Changed <code>warning</code> messages to use the <code>message</code> function instead.</li>
 <li>Removed <code>magrittr</code> import and replaced pipes with native R version.</li>
+<li>
+<code>tcn_counts</code> will now also accept tweet urls.</li>
+<li>Changed extraction of tweet ids from urls to use a more robust regex.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-4-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h3>
+<h3 id="bug-fixes-0-4-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-1"></a></h3>
 <ul><li>Added a 1 second delay to initial full-archive search requests as 15 min API rate-limit timeout was being triggered when multiple low number results returned too quickly.</li>
 </ul></div>
 </div>

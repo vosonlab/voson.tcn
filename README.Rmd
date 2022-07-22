@@ -19,38 +19,37 @@ Twitter Conversation Networks and Analysis. This package uses the Twitter API v2
 
 An introduction to the Twitter API v2 can be found [here](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api), and the Twitter Developer Application process [here](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api).
 
-## Installation
+## Installation Options
 
-Install the latest release via CRAN:
+Install the most recent CRAN release:
 ``` r
 install.packages("`r pkg`")
 ```
 
 ```{r release, include=FALSE}
-rel_path <- NULL
-if (all(sapply(c("httr", "dplyr", "jsonlite"), require, character.only = TRUE))) {
+dl_url <- NULL
+if (all(sapply(c("httr", "dplyr", "jsonlite", "tidyr"), require, character.only = TRUE))) {
   rel_resp <- GET(paste0("https://api.github.com/repos/vosonlab/", pkg, "/releases"),
                   add_headers(Accept = "application/vnd.github.v3+json"))
   if (rel_resp$status_code == 200) {
     resp_content <- fromJSON(rawToChar(rel_resp$content))
     if ("tag_name" %in% names(resp_content)) {
       meta <- select(slice_head(resp_content), tag_name, tarball_url, assets)
-      rel_path <- pull(meta, tarball_url, tag_name)
-      # rel_path <- pull(meta, assets)
-      # rel_path_url <- rel_path[[1]]$browser_download_url[[1]]
-      rel_path_url <- rel_path
-      rel_inst <- paste0("Install the latest release via GitHub:\n\n",
+      assets <- meta |> select(assets) |> unnest(cols = c(assets))
+      dl_url <- assets |> pull(browser_download_url)
+      rel_inst <- paste0("Install the most recent release tag via GitHub:\n\n",
                          "``` r\n",
-                         "install.packages(\"", rel_path_url, "\",\n",
-                         "                 repo = NULL, type = \"source\")\n",
+                         "install.packages(\n",
+                         "  \"", dl_url, "\",\n",
+                         "  repo = NULL, type = \"source\")\n",
                          "```\n")
     }
   }
 }
 ```
-`r if(!is.null(rel_path)) rel_inst`
+`r if(!is.null(dl_url)) rel_inst`
 
-Install the development version:
+Install the latest development version:
 
 ``` r
 # library(remotes)

@@ -6,7 +6,7 @@
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
-[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.4.1&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.3.3&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/main)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -20,22 +20,23 @@ An introduction to the Twitter API v2 can be found
 and the Twitter Developer Application process
 [here](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api).
 
-## Installation
+## Installation Options
 
-Install the latest release via CRAN:
+Install the most recent CRAN release:
 
 ``` r
 install.packages("voson.tcn")
 ```
 
-Install the latest release via GitHub:
+Install the most recent release tag via GitHub:
 
 ``` r
-install.packages("https://api.github.com/repos/vosonlab/voson.tcn/tarball/v0.3.3",
-                 repo = NULL, type = "source")
+install.packages(
+  "https://github.com/vosonlab/voson.tcn/releases/download/v0.3.3/voson.tcn-0.3.3.tar.gz",
+  repo = NULL, type = "source")
 ```
 
-Install the development version:
+Install the latest development version:
 
 ``` r
 # library(remotes)

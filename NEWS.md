@@ -1,4 +1,4 @@
-# voson.tcn 0.4.0
+# voson.tcn 0.4.1
 
 ## Major Changes
 - Package now requires R version `4.1` or greater.
@@ -9,6 +9,8 @@
 - Added retry on rate limit `retry_on_limit` parameter to `tcn_tweets` and `tcn_counts` functions.
 - Changed `warning` messages to use the `message` function instead.
 - Removed `magrittr` import and replaced pipes with native R version.
+- `tcn_counts` will now also accept tweet urls.
+- Changed extraction of tweet ids from urls to use a more robust regex.
 
 ## Bug Fixes
 - Added a 1 second delay to initial full-archive search requests as 15 min API rate-limit timeout was being triggered when
