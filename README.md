@@ -32,7 +32,7 @@ Install the most recent release tag via GitHub:
 
 ``` r
 install.packages(
-  "https://github.com/vosonlab/voson.tcn/releases/download/v0.3.3/voson.tcn-0.3.3.tar.gz",
+  "https://github.com/vosonlab/voson.tcn/releases/download/v0.4.1/voson.tcn-0.4.1.tar.gz",
   repo = NULL, type = "source")
 ```
 
