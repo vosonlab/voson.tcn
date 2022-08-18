@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
       </span>
     </div>
 
@@ -90,7 +90,18 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.4.1" id="vosontcn-041">voson.tcn 0.4.1<a class="anchor" aria-label="anchor" href="#vosontcn-041"></a></h2>
+<h2 class="page-header" data-toc-text="0.4.2" id="vosontcn-042">voson.tcn 0.4.2<a class="anchor" aria-label="anchor" href="#vosontcn-042"></a></h2>
+<div class="section level3">
+<h3 id="minor-changes-0-4-2">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-2"></a></h3>
+<ul><li>Previously each tweet provided to <code>tcn_threads</code> was retrieved individually as the initializing tweet, the <code>conversation_id</code> extracted and then used as a search filter to collect a single conversation thread. This was a very inefficient process for large numbers of threads as it used one API request per thread, soon reaching the <code>full-archive</code> search endpoint 300 request per 15 minute rate-limit (and imposing a ceiling of maximum 300 threads per 15 minutes).</li>
+<li>Tweets provided to <code>tcn_threads</code> are now collected at the start of an operation in batch and unique <code>conversation_id</code> extracted from the tweets to do batch thread collection. An <code>academic</code> or <code>full-archive</code> enabled project has a search query character limit of 1024 characters, and projects limited to the <code>recent</code> search endpoint a 512 character limit. A search query for multiple <code>conversation_id</code> is performed in the following format: <code>conversation_id:xxxxxxxxxxxxxxxxxxx OR conversation_id:xxxxxxxxxxxxxxxxxxx OR ...</code>.</li>
+<li>The <code>tcn_threads</code> function now takes advantage of the query limits by conservatively searching for 20 <code>conversation_id</code> per request for <code>full-archive</code> searches and 10 <code>conversation_id</code> per request for <code>recent</code> endpoint searches significantly improving the thread collection time.</li>
+<li>Now a maximum of 6000 (300 requests) and 4500 threads (450 requests) for <code>full-archive</code> and <code>recent</code> search endpoints respectively can be collected per 15 minutes (assuming all minimum thread sizes &lt; 100 tweets).</li>
+<li>Added a progress bar for thread collection.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.1" id="vosontcn-041">voson.tcn 0.4.1<small>2022-08-05</small><a class="anchor" aria-label="anchor" href="#vosontcn-041"></a></h2>
 <div class="section level3">
 <h3 id="major-changes-0-4-1">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-4-1"></a></h3>
 <ul><li>Package now requires R version <code>4.1</code> or greater.</li>

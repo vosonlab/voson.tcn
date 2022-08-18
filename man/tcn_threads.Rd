@@ -43,9 +43,7 @@ is NULL.}
 \item{retry_on_limit}{Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 is TRUE.}
 
-\item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found. This list is
-automatically appended with conversation_id's when collecting multiple conversation threads to prevent search
-duplication.}
+\item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found.}
 }
 \value{
 A named list. Dataframes of tweets, users, errors and request metadata.

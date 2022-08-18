@@ -1,3 +1,12 @@
+# voson.tcn 0.4.2
+
+## Minor Changes
+- Previously each tweet provided to `tcn_threads` was retrieved individually as the initializing tweet, the `conversation_id` extracted and then used as a search filter to collect a single conversation thread. This was a very inefficient process for large numbers of threads as it used one API request per thread, soon reaching the `full-archive` search endpoint 300 request per 15 minute rate-limit (and imposing a ceiling of maximum 300 threads per 15 minutes).
+- Tweets provided to `tcn_threads` are now collected at the start of an operation in batch and unique `conversation_id` extracted from the tweets to do batch thread collection. An `academic` or `full-archive` enabled project has a search query character limit of 1024 characters, and projects limited to the `recent` search endpoint a 512 character limit. A search query for multiple `conversation_id` is performed in the following format: `conversation_id:xxxxxxxxxxxxxxxxxxx OR conversation_id:xxxxxxxxxxxxxxxxxxx OR ...`. 
+- The `tcn_threads` function now takes advantage of the query limits by conservatively searching for 20 `conversation_id` per request for `full-archive` searches and 10 `conversation_id` per request for `recent` endpoint searches significantly improving the thread collection time.
+- Now a maximum of 6000 (300 requests) and 4500 threads (450 requests) for `full-archive` and `recent` search endpoints respectively can be collected per 15 minutes (assuming all minimum thread sizes < 100 tweets).
+- Added a progress bar for thread collection.
+
 # voson.tcn 0.4.1
 
 ## Major Changes

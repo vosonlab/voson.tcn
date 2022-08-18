@@ -8,7 +8,8 @@ tcn_tweets(
   tweet_ids = NULL,
   token = NULL,
   referenced_tweets = FALSE,
-  retry_on_limit = TRUE
+  retry_on_limit = TRUE,
+  clean = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ tcn_tweets(
 
 \item{retry_on_limit}{Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 is TRUE.}
+
+\item{clean}{Logical. Clean results.}
 }
 \value{
 A named list. Dataframes of tweets, users, errors and request metadata.

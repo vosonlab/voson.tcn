@@ -82,11 +82,15 @@ tweets_url <- function(ids, ref_tweets = FALSE) {
 
 # search query url
 search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
+  q <- paste0(paste0("conversation_id:", convo_id), collapse = "%20OR%20")
+
   paste0(
     "https://api.twitter.com/2/tweets/search/",
     endpoint,
-    "?query=conversation_id:",
-    convo_id,
+    # "?query=conversation_id:",
+    # convo_id,
+    "?query=",
+    q,
     "&",
     query_tweet_fields(),
     "&",

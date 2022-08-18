@@ -7,6 +7,7 @@
 #' @param referenced_tweets Logical. Also retrieve tweets referenced by requested tweets. Default is FALSE.
 #' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 #'   is TRUE.
+#' @param clean Logical. Clean results.
 #'
 #' @return A named list. Dataframes of tweets, users, errors and request metadata.
 #' @export
@@ -24,7 +25,9 @@ tcn_tweets <-
   function(tweet_ids = NULL,
            token = NULL,
            referenced_tweets = FALSE,
-           retry_on_limit = TRUE) {
+           retry_on_limit = TRUE,
+           clean = TRUE) {
+
     # check params
     if (is.null(token$bearer) ||
         !is.character(token$bearer)) {
@@ -83,6 +86,7 @@ tcn_tweets <-
     }
 
     # tidy up results
+    if (!clean) return(results)
     clean_results(results)
   }
 

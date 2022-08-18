@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
       </span>
     </div>
 
@@ -99,7 +99,8 @@
 <span>  tweet_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  referenced_tweets <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  clean <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -120,6 +121,10 @@
 <dt>retry_on_limit</dt>
 <dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 is TRUE.</p></dd>
+
+
+<dt>clean</dt>
+<dd><p>Logical. Clean results.</p></dd>
 
 </dl></div>
     <div id="value">
