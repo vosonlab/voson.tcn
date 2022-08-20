@@ -12,7 +12,7 @@
 #'   to now - 30 seconds. Default is NULL.
 #' @param granularity Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour". Default is "day".
 #' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
-#'   is FALSE.
+#'   is TRUE.
 #'
 #' @note A rate-limit of 300 requests per 15 minute window applies. If a conversation count request contains more than
 #'   31 days-worth of results it will use more than one request as API results will be paginated.
@@ -44,7 +44,7 @@ tcn_counts <-
            start_time = NULL,
            end_time = NULL,
            granularity = "day",
-           retry_on_limit = FALSE) {
+           retry_on_limit = TRUE) {
 
     # check params
     if (is.null(token$bearer) || !is.character(token$bearer)) {
@@ -79,7 +79,7 @@ tcn_counts <-
 
     results <- lst_counts_results()
 
-    pb <- prog_bar(length(ids))
+    pb <- prog_bar(length(ids), paste0(" of ", length(ids), " | counts"))
     pb$tick(0)
 
     for (convo_id in ids) {
@@ -92,7 +92,7 @@ tcn_counts <-
 
       # check rate-limit
       if (resp$status == 429) {
-        message(paste0("twitter api rate-limit reached at ", Sys.time()))
+        message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
           rl_status <- resp_rate_limit(resp$headers, endpoint_desc, TRUE)
@@ -106,6 +106,7 @@ tcn_counts <-
         } else {
           rl_status <- resp_rate_limit(resp$headers, endpoint_desc, FALSE)
           next_token <- NULL
+          break
         }
       }
 
@@ -124,7 +125,7 @@ tcn_counts <-
       } else {
         message(
           paste0(
-            "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+            "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
             "conversation_id: ", convo_id, ", next_token: -"
           ))
         next_token <- NULL
@@ -144,7 +145,7 @@ tcn_counts <-
 
         # check rate-limit
         if (resp$status == 429) {
-          message(paste0("twitter api rate-limit reached at ", Sys.time()))
+          message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
           reset <- resp$headers$`x-rate-limit-reset`
           if (retry_on_limit & !is.null(reset)) {
             rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
@@ -174,7 +175,7 @@ tcn_counts <-
         } else {
           message(
             paste0(
-              "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+              "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
               "conversation_id: ", convo_id, ", next_token: ", next_token
             ))
           next_token <- NULL

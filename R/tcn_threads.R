@@ -142,14 +142,14 @@ tcn_threads <-
 
     chunks <- build_chunks(cids, endpoint = endpoint)
 
-    pb <- prog_bar(length(chunks))
+    pb <- prog_bar(length(chunks), paste0(" of ", length(cids), " | threads"))
     pb$tick(0)
 
     i <- 1
     for (cids_chunk in chunks) {
       if (!is.null(max_total) && total_results >= max_total) {
         message(
-          paste0("exceeded max total results.\nmax total: ", max_total, ", total results: ", total_results)
+          paste0("\nexceeded max total results.\nmax total: ", max_total, ", total results: ", total_results)
         )
         break
       }
@@ -179,7 +179,7 @@ tcn_threads <-
       }
 
       if (!is.null(results$rl_abort) && results$rl_abort == TRUE) {
-        message(paste0("aborting GET 2/tweets/search/ as retry_on_limit = FALSE. tweet ids chunk: ", i))
+        message(paste0("\naborting GET 2/tweets/search/ as retry_on_limit = FALSE. tweet ids chunk: ", i))
         results$rl_abort <- NULL
         break
       }
@@ -224,7 +224,7 @@ get_thread <-
 
     # check rate-limit
     if (resp$status == 429) {
-      message(paste0("twitter api rate-limit reached at ", Sys.time()))
+      message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
 
       if (retry_on_limit & !is.null(reset)) {
@@ -250,7 +250,7 @@ get_thread <-
     } else {
       message(
         paste0(
-          "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+          "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
           "conversation_id: ", chr_cids, ", next_token: -")
       )
       next_token <- NULL
@@ -268,7 +268,7 @@ get_thread <-
           if (result_tally >= max_total) {
             message(
               paste0(
-                "reached max_total tweets: ", result_tally, "\n",
+                "\nreached max_total tweets: ", result_tally, "\n",
                 "conversation_id: ", chr_cids, ", next_token: ", next_token
               ))
             break
@@ -286,7 +286,7 @@ get_thread <-
 
       # check rate-limit
       if (resp$status == 429) {
-        message(paste0("twitter api rate-limit reached at ", Sys.time()))
+        message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
           rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
@@ -313,7 +313,7 @@ get_thread <-
       } else {
         message(
           paste0(
-            "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+            "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
             "conversation_id: ", chr_cids, ", next_token: ", next_token
           ))
         next_token <- NULL

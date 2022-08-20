@@ -47,7 +47,7 @@ tcn_tweets <-
 
     chunks <- split(tweet_ids, ceiling(seq_along(tweet_ids) / 100))
 
-    pb <- prog_bar(length(chunks))
+    pb <- prog_bar(length(chunks), paste0(" of ", length(tweet_ids), " | tweets"))
     pb$tick(0)
 
     i <- 1
@@ -63,7 +63,7 @@ tcn_tweets <-
       results <- add_tweets_results(results, chunk_tweets)
 
       if (!is.null(results$rl_abort) && results$rl_abort == TRUE) {
-        message(paste0("aborting GET 2/tweets as retry_on_limit = FALSE. tweet ids chunk: ", i))
+        message(paste0("\naborting GET 2/tweets as retry_on_limit = FALSE. tweet ids chunk: ", i))
         results$rl_abort <- NULL
         break
       }
@@ -99,7 +99,7 @@ get_tweets <-
 
     # check rate-limit
     if (resp$status == 429) {
-      message(paste0("twitter api rate-limit reached at ", Sys.time()))
+      message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
       if (retry_on_limit & !is.null(reset)) {
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
@@ -121,7 +121,7 @@ get_tweets <-
       results <- add_tweets_results(results, resp_data)
       results$rl_abort <- FALSE
     } else {
-      message(paste0("twitter api response status (", endpoint_desc, "): ", resp$status))
+      message(paste0("\ntwitter api response status (", endpoint_desc, "): ", resp$status))
     }
 
     results

@@ -148,9 +148,9 @@ build_chunks <- function(ids, endpoint = "recent") {
   chunks
 }
 
-prog_bar <- function(n_iter) {
+prog_bar <- function(n_iter, desc) {
   progress::progress_bar$new(
-    format = "[:bar] :percent [elapsed: :elapsedfull]",
+    format = paste0("[:bar] :percent ", desc),
     total = n_iter,
     complete = "=",
     incomplete = "-",
