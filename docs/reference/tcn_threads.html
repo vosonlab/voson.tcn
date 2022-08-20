@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
       </span>
     </div>
 
@@ -101,7 +101,8 @@
 <span>  endpoint <span class="op">=</span> <span class="st">"recent"</span>,</span>
 <span>  start_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  end_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_results <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  annotations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  max_results <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_total <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  skip_list <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -134,9 +135,14 @@ default to 30 days before end_time. Default is NULL.</p></dd>
 to now - 30 seconds. Default is NULL.</p></dd>
 
 
+<dt>annotations</dt>
+<dd><p>Logical. Include tweet context annotation field in results. If TRUE Twitter imposes a max_results
+limit of 100. Default is FALSE.</p></dd>
+
+
 <dt>max_results</dt>
 <dd><p>Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
-or 500 tweets for academic projects can be collected per request. Default is 100.</p></dd>
+or 500 tweets for academic projects can be collected per request. Default is NULL to set maximum allowed.</p></dd>
 
 
 <dt>max_total</dt>

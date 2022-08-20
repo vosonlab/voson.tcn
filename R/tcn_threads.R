@@ -311,7 +311,6 @@ get_thread <-
         results$rl_abort <- FALSE
         next_token <- resp_data$meta[["next_token"]]
       } else {
-        tmp_ids
         message(
           paste0(
             "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
