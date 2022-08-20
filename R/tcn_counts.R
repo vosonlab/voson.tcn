@@ -47,61 +47,46 @@ tcn_counts <-
            retry_on_limit = FALSE) {
 
     # check params
-    if (is.null(token$bearer) ||
-        !is.character(token$bearer)) {
+    if (is.null(token$bearer) || !is.character(token$bearer)) {
       stop("missing or invalid bearer token.")
     }
 
     ids <- ids_from_urls(ids)
 
-    if (is.null(ids)) {
-      stop("please provide ids.")
-    }
+    if (is.null(ids)) stop("please provide ids.")
 
     if (any(is.na(ids))) {
       na_indexes <- which(is.na(ids))
-
-      stop(paste0("invalid ids found.\n",
-                  "index: ",
-                  paste0(na_indexes, collapse = ",")))
+      stop(paste0("invalid ids found.\n", "index: ", paste0(na_indexes, collapse = ",")))
     }
 
     if (!is.null(start_time)) {
       start_time <- rm_dt_tail(start_time)
       if (!check_fmt_datetime(start_time)) {
-        stop(
-          "invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
-        )
+        stop("invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z.")
       }
     }
 
     if (!is.null(end_time)) {
       end_time <- rm_dt_tail(end_time)
       if (!check_fmt_datetime(end_time)) {
-        stop(
-          "invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
-        )
+        stop("invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z.")
       }
     }
 
     # search endpoints
-    if (!endpoint %in% c("recent", "all")) {
-      endpoint <- "recent"
-    }
+    if (!endpoint %in% c("recent", "all")) endpoint <- "recent"
 
-    results <-
-      list(
-        counts = NULL,
-        errors = NULL,
-        meta = NULL
-      )
+    results <- lst_counts_results()
+
+    pb <- prog_bar(length(ids))
+    pb$tick(0)
 
     for (convo_id in ids) {
       # endpoint description
       endpoint_desc <- paste0("GET 2/tweets/counts/", endpoint)
 
-      query_url <-
-        counts_url(endpoint, convo_id, start_time, end_time, granularity)
+      query_url <- counts_url(endpoint, convo_id, start_time, end_time, granularity)
       req_header <- req_auth_header(token)
       resp <- httr::GET(query_url, req_header)
 
@@ -129,10 +114,8 @@ tcn_counts <-
 
         data <- dplyr::mutate(resp_data$counts, conversation_id = convo_id, page = NA)
 
-        results$counts <-
-          dplyr::bind_rows(results$counts, data)
-        results$errors <-
-          dplyr::bind_rows(results$errors, resp_data$errors)
+        results$counts <- dplyr::bind_rows(results$counts, data)
+        results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
         results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
 
         # if request contains more than 31 days-worth of results
@@ -141,14 +124,8 @@ tcn_counts <-
       } else {
         message(
           paste0(
-            "twitter api response status (",
-            endpoint_desc,
-            "): ",
-            resp$status,
-            "\n",
-            "conversation_id: ",
-            convo_id,
-            ", next_token: -"
+            "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+            "conversation_id: ", convo_id, ", next_token: -"
           ))
         next_token <- NULL
       }
@@ -158,8 +135,7 @@ tcn_counts <-
       # if more pages of results keep going
       while (!is.null(next_token)) {
         # ensure only 1 request per second full-archive search
-        if (endpoint == "all" &
-            req_ts == as.integer(as.POSIXct(Sys.time()))) {
+        if (endpoint == "all" & req_ts == as.integer(as.POSIXct(Sys.time()))) {
           Sys.sleep(1)
         }
 
@@ -190,31 +166,24 @@ tcn_counts <-
 
           data <- dplyr::mutate(resp_data$counts, conversation_id = convo_id, page = next_token)
 
-          results$counts <-
-            dplyr::bind_rows(results$counts, data)
-          results$errors <-
-            dplyr::bind_rows(results$errors, resp_data$errors)
+          results$counts <- dplyr::bind_rows(results$counts, data)
+          results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
           results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
 
           next_token <- resp_data$meta[["next_token"]]
         } else {
           message(
             paste0(
-              "twitter api response status (",
-              endpoint_desc,
-              "): ",
-              resp$status,
-              "\n",
-              "conversation_id: ",
-              convo_id,
-              ", next_token: ",
-              next_token
+              "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+              "conversation_id: ", convo_id, ", next_token: ", next_token
             ))
           next_token <- NULL
         }
 
         req_ts <- as.integer(as.POSIXct(Sys.time()))
       }
+
+      pb$tick(1)
     }
 
     results
@@ -226,26 +195,19 @@ resp_content_counts <- function(resp) {
   counts <- errors <- meta <- NULL
 
   content <- tryCatch({
-    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"),
-                       flatten = TRUE)
+    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"), flatten = TRUE)
   }, error = function(e) {
     message("JSON content error: ", e)
     return(NULL)
   })
 
   if (!is.null(content)) {
-    counts <-
-      tibble::as_tibble(content$data) |> dplyr::mutate(timestamp = ts)
+    counts <- tibble::as_tibble(content$data) |> dplyr::mutate(timestamp = ts)
 
     if (!is.null(content$meta)) {
-      meta <-
-        tibble::as_tibble(content$meta) |> dplyr::mutate(timestamp = ts)
+      meta <- tibble::as_tibble(content$meta) |> dplyr::mutate(timestamp = ts)
     }
   }
 
-  list(
-    counts = counts,
-    errors = errors,
-    meta = meta
-  )
+  list(counts = counts, errors = errors, meta = meta)
 }

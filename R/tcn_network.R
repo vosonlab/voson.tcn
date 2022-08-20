@@ -24,13 +24,8 @@ tcn_network <- function(data = NULL, type = "actor") {
     stop("invalid input dataframe.")
   }
 
-  if (nrow(data$tweets) < 1) {
-    stop("input dataframe is empty.")
-  }
-
-  if (!type %in% c("activity", "actor")) {
-    stop("network type not supported.")
-  }
+  if (nrow(data$tweets) < 1) stop("input dataframe is empty.")
+  if (!type %in% c("activity", "actor")) stop("network type not supported.")
 
   # unnest referenced tweets
   unnested_refs <- data$tweets |>

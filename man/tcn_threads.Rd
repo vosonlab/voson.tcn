@@ -10,7 +10,8 @@ tcn_threads(
   endpoint = "recent",
   start_time = NULL,
   end_time = NULL,
-  max_results = 100,
+  annotations = FALSE,
+  max_results = NULL,
   max_total = NULL,
   retry_on_limit = TRUE,
   skip_list = NULL
@@ -31,8 +32,11 @@ default to 30 days before end_time. Default is NULL.}
 \item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 to now - 30 seconds. Default is NULL.}
 
+\item{annotations}{Logical. Include tweet context annotation field in results. If TRUE Twitter imposes a max_results
+limit of 100. Default is FALSE.}
+
 \item{max_results}{Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
-or 500 tweets for academic projects can be collected per request. Default is 100.}
+or 500 tweets for academic projects can be collected per request. Default is NULL to set maximum allowed.}
 
 \item{max_total}{Numeric. Set maximum total number of tweets to collect as a cap limit precaution. Will only be
 accurate to within one search request count (being max_results, or 100 for standard or 500 tweets for academic

@@ -37,9 +37,6 @@ tcn_token <- function(bearer = NULL,
     stop("invalid consumer key or secret.")
   }
 
-  # saved_opts <- save_set_opts()
-  # on.exit(restore_opts(saved_opts), add = TRUE)
-
   token <- get_bearer(consumer_key, consumer_secret)
 
   if (is.null(token)) {

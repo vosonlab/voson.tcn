@@ -1,9 +1,9 @@
 # tweet fields to request
-query_tweet_fields <- function() {
+query_tweet_fields <- function(annotations = FALSE) {
   tweet_fields <- c(
     "attachments",
     "author_id",
-    "context_annotations",
+    if (annotations) "context_annotations",
     "conversation_id",
     "created_at",
     "entities",
@@ -66,13 +66,13 @@ query_user_fields <- function() {
 }
 
 # tweets query url
-tweets_url <- function(ids, ref_tweets = FALSE) {
+tweets_url <- function(ids, ref_tweets = FALSE, annotations = TRUE) {
   paste0(
     "https://api.twitter.com/2/tweets",
     "?ids=",
     paste0(ids, collapse = ","),
     "&",
-    query_tweet_fields(),
+    query_tweet_fields(annotations = annotations),
     "&",
     query_expansions(ref_tweets = ref_tweets),
     "&",
@@ -81,18 +81,14 @@ tweets_url <- function(ids, ref_tweets = FALSE) {
 }
 
 # search query url
-search_url <- function(endpoint, convo_id, start_time, end_time, max_results) {
-  q <- paste0(paste0("conversation_id:", convo_id), collapse = "%20OR%20")
-
+search_url <- function(endpoint, qs, start_time, end_time, annotations, max_results) {
   paste0(
     "https://api.twitter.com/2/tweets/search/",
     endpoint,
-    # "?query=conversation_id:",
-    # convo_id,
     "?query=",
-    q,
+    qs,
     "&",
-    query_tweet_fields(),
+    query_tweet_fields(annotations = annotations),
     "&",
     query_expansions(),
     "&",

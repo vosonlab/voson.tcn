@@ -76,3 +76,85 @@ check_fmt_datetime <- function(dt) {
 rm_dt_tail <- function(x) {
   stringr::str_replace(x, "\\.000Z$", "Z")
 }
+
+# counts results list
+lst_counts_results <- function(...) {
+  list(counts = NULL, errors = NULL, meta = NULL, ...)
+}
+
+# tweets results list
+lst_tweets_results <- function(...) {
+  list(tweets = NULL, users = NULL, errors = NULL, meta = NULL, ...)
+}
+
+# append dataframes in tweet results list
+add_tweets_results <- function(x, y) {
+  x$tweets <- dplyr::bind_rows(x$tweets, y$tweets)
+  x$users <- dplyr::bind_rows(x$users, y$users)
+  x$errors <- dplyr::bind_rows(x$errors, y$errors)
+  x$meta <- dplyr::bind_rows(x$meta, y$meta)
+  x
+}
+
+# reformat results data and remove duplicates
+# attempts to retain most recent version if duplicated
+clean_results <- function(results) {
+  if (!is.null(results$tweets) && nrow(results$tweets)) {
+    results$tweets <- results$tweets |>
+      dplyr::rename(tweet_id = .data$id) |>
+      dplyr::arrange(dplyr::desc(.data$timestamp)) |>
+      dplyr::distinct(.data$tweet_id, .keep_all = TRUE)
+  }
+
+  if (!is.null(results$users) && nrow(results$users)) {
+    results$users <- results$users |>
+      dplyr::rename_with(~ paste0("profile.", .x)) |>
+      dplyr::rename(user_id = .data$profile.id,
+                    timestamp = .data$profile.timestamp) |>
+      dplyr::arrange(
+        dplyr::desc(.data$timestamp),
+        dplyr::desc(as.integer(.data$profile.public_metrics.tweet_count)) # imperfect
+      ) |>
+      dplyr::distinct(.data$user_id, .keep_all = TRUE)
+  }
+
+  results
+}
+
+# build conversation id search queries based on ids and endpoint
+build_chunks <- function(ids, endpoint = "recent") {
+  if (length(ids) == 1) return(paste0("conversation_id:", ids))
+
+  q_size <- 512
+  if (endpoint == "all") q_size <- 1024
+
+  chunks <- c()
+  qs <- ""
+  n_chr_tally <- 0
+  for (x in ids) {
+    q <- paste0("conversation_id:", x)
+    if ((n_chr_tally + nchar(q)) > q_size) {
+      qs <- sub("\\sOR\\s$", "", qs)
+      qs <- gsub("\\sOR\\s", "%20OR%20", qs)
+      chunks <- c(chunks, qs)
+      qs <- ""
+      n_chr_tally <- 0
+    } else {
+      qs <- paste0(qs, q, " OR ")
+      n_chr_tally <- nchar(qs)
+    }
+  }
+
+  chunks
+}
+
+prog_bar <- function(n_iter) {
+  progress::progress_bar$new(
+    format = "[:bar] :percent [elapsed: :elapsedfull]",
+    total = n_iter,
+    complete = "=",
+    incomplete = "-",
+    current = ">",
+    width = 60)
+}
+

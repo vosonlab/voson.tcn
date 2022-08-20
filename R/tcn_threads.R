@@ -11,8 +11,10 @@
 #'   default to 30 days before end_time. Default is NULL.
 #' @param end_time Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 #'   to now - 30 seconds. Default is NULL.
+#' @param annotations Logical. Include tweet context annotation field in results. If TRUE Twitter imposes a max_results
+#'   limit of 100. Default is FALSE.
 #' @param max_results Numeric. Set maximum number of tweets to collect per API v2 request. Up to 100 tweets for standard
-#'   or 500 tweets for academic projects can be collected per request. Default is 100.
+#'   or 500 tweets for academic projects can be collected per request. Default is NULL to set maximum allowed.
 #' @param max_total Numeric. Set maximum total number of tweets to collect as a cap limit precaution. Will only be
 #'   accurate to within one search request count (being max_results, or 100 for standard or 500 tweets for academic
 #'   project). This will not be ideal for most cases as an API search generally retrieves the most recent tweets first
@@ -50,56 +52,58 @@ tcn_threads <-
            endpoint = "recent",
            start_time = NULL,
            end_time = NULL,
-           max_results = 100,
+           annotations = FALSE,
+           max_results = NULL,
            max_total = NULL,
            retry_on_limit = TRUE,
            skip_list = NULL) {
 
     # check params
-    if (is.null(token$bearer) ||
-        !is.character(token$bearer)) {
+    if (is.null(token$bearer) || !is.character(token$bearer)) {
       stop("missing or invalid bearer token.")
     }
 
     tweet_ids <- ids_from_urls(tweet_ids)
 
-    if (is.null(tweet_ids)) {
-      stop("please provide tweet_ids.")
-    }
+    if (is.null(tweet_ids)) stop("please provide tweet_ids.")
 
     if (any(is.na(tweet_ids))) {
       na_indexes <- which(is.na(tweet_ids))
-
-      stop(paste0("invalid ids in tweet_ids.\n",
-                  "index: ",
-                  paste0(na_indexes, collapse = ",")))
+      stop(paste0("invalid ids in tweet_ids.\n", "index: ", paste0(na_indexes, collapse = ",")))
     }
 
     if (!is.null(start_time)) {
       start_time <- rm_dt_tail(start_time)
       if (!check_fmt_datetime(start_time)) {
-        stop(
-          "invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
-        )
+        stop("invalid start_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z.")
       }
     }
 
     if (!is.null(end_time)) {
       end_time <- rm_dt_tail(end_time)
       if (!check_fmt_datetime(end_time)) {
-        stop(
-          "invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z."
-        )
+        stop("invalid end_time. string must be datetime in ISO 8601 format e.g 2021-05-01T00:00:00Z.")
       }
     }
 
     # search endpoints
-    if (!endpoint %in% c("recent", "all")) {
-      endpoint <- "recent"
+    if (!endpoint %in% c("recent", "all")) endpoint <- "recent"
+
+    ep_max_results <- 100
+    if (endpoint == "all") ep_max_results <- 500
+
+    # set default max results
+    if (is.null(max_results)) {
+      max_results <- 100
+      if (endpoint == "all" & !annotations) max_results <- 500
     }
 
-    if (is.null(max_results) || !is.numeric(max_results)) {
+    if (!is.numeric(max_results)) {
       stop("invalid max_results. must be a number.")
+    }
+
+    if (max_results < 1 | max_results > ep_max_results) {
+      stop(paste0("invalid max_results. must be between 1 and ", ep_max_results, "."))
     }
 
     if (!is.null(max_total) && !is.numeric(max_total)) {
@@ -110,23 +114,8 @@ tcn_threads <-
       stop("invalid retry_on_limit must be logical.")
     }
 
-    results <-
-      list(
-        tweets = NULL,
-        users = NULL,
-        errors = NULL,
-        meta = NULL
-      )
-
+    results <- lst_tweets_results()
     total_results <- 0
-
-    add_results <- function(res, x) {
-      res$tweets <- dplyr::bind_rows(res$tweets, x$tweets)
-      res$users <- dplyr::bind_rows(res$users, x$users)
-      res$errors <- dplyr::bind_rows(res$errors, x$errors)
-      res$meta <- dplyr::bind_rows(res$meta, x$meta)
-      res
-    }
 
     # get tweets
     tweets <- tcn_tweets(
@@ -136,7 +125,7 @@ tcn_threads <-
       retry_on_limit = TRUE,
       clean = FALSE)
 
-    results <- add_results(results, tweets)
+    results <- add_tweets_results(results, tweets)
 
     # get conversation_ids
     cids <- unique(tweets$tweets$conversation_id)
@@ -146,27 +135,21 @@ tcn_threads <-
       cids <- setdiff(cids, skip_list)
     }
 
-
     if (is.null(cids)) {
       message("failed to get any conversation_ids")
       return(NULL)
     }
 
-    n_cid_chunk <- 10
-    if (endpoint == "all") n_cid_chunk <- 20
+    chunks <- build_chunks(cids, endpoint = endpoint)
 
-    chunks <- split(cids, ceiling(seq_along(cids) / n_cid_chunk))
-
-    pb <- progress::progress_bar$new(total = length(chunks))
+    pb <- prog_bar(length(chunks))
+    pb$tick(0)
 
     i <- 1
     for (cids_chunk in chunks) {
-      pb$tick(0)
-
       if (!is.null(max_total) && total_results >= max_total) {
         message(
-          paste0("exceeded max total results.\nmax total: ", max_total,
-                 ", total results: ", total_results)
+          paste0("exceeded max total results.\nmax total: ", max_total, ", total results: ", total_results)
         )
         break
       }
@@ -177,6 +160,7 @@ tcn_threads <-
         endpoint = endpoint,
         start_time = start_time,
         end_time = end_time,
+        annotations = annotations,
         max_results = max_results,
         max_total = max_total,
         total_results = total_results,
@@ -184,7 +168,7 @@ tcn_threads <-
       )
 
       if (!is.null(df$tweets) && nrow(df$tweets)) {
-        results <- add_results(results, df)
+        results <- add_tweets_results(results, df)
       }
       skip_list <- union(skip_list, cids_chunk)
 
@@ -214,20 +198,16 @@ get_thread <-
            endpoint = "recent",
            start_time = NULL,
            end_time = NULL,
+           annotations = FALSE,
            max_results = 100,
            max_total = NULL,
            total_results = 0,
            retry_on_limit = FALSE) {
 
-    ts <- as.integer(as.POSIXct(Sys.time()))
+    results <- lst_tweets_results(rl_abort = FALSE)
 
-    results <-
-      list(
-        tweets = NULL,
-        users = NULL,
-        errors = NULL,
-        meta = NULL
-      )
+    chr_cids <- gsub("%20OR%20", ",", conversation_ids)
+    chr_cids <- gsub("conversation_id:", "", chr_cids)
 
     # search for tweets
 
@@ -237,7 +217,7 @@ get_thread <-
     # endpoint description
     endpoint_desc <- paste0("GET 2/tweets/search/", endpoint)
 
-    query_url <- search_url(endpoint, conversation_ids, start_time, end_time, max_results)
+    query_url <- search_url(endpoint, conversation_ids, start_time, end_time, annotations, max_results)
 
     req_header <- req_auth_header(token)
     resp <- httr::GET(query_url, req_header)
@@ -246,6 +226,7 @@ get_thread <-
     if (resp$status == 429) {
       message(paste0("twitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
+
       if (retry_on_limit & !is.null(reset)) {
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
 
@@ -264,17 +245,13 @@ get_thread <-
 
     if (resp$status == 200) {
       resp_data <- resp_content(resp)
-
-      results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
-      results$users <- dplyr::bind_rows(results$users, resp_data$users)
-      results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
-      results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
-
+      results <- add_tweets_results(results, resp_data)
       next_token <- resp_data$meta[["next_token"]]
     } else {
       message(
-        paste0("twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
-               "conversation_id: ", paste0(conversation_ids, collapse = ","), ", next_token: -")
+        paste0(
+          "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+          "conversation_id: ", chr_cids, ", next_token: -")
       )
       next_token <- NULL
     }
@@ -292,8 +269,7 @@ get_thread <-
             message(
               paste0(
                 "reached max_total tweets: ", result_tally, "\n",
-                "conversation_id: ", paste0(conversation_ids, collapse = ","),
-                ", next_token: ", next_token
+                "conversation_id: ", chr_cids, ", next_token: ", next_token
               ))
             break
           }
@@ -331,20 +307,15 @@ get_thread <-
 
       if (resp$status == 200) {
         resp_data <- resp_content(resp)
-
-        results$tweets <- dplyr::bind_rows(results$tweets, resp_data$tweets)
-        results$users <- dplyr::bind_rows(results$users, resp_data$users)
-        results$errors <- dplyr::bind_rows(results$errors, resp_data$errors)
-        results$meta <- dplyr::bind_rows(results$meta, resp_data$meta)
-
+        results <- add_tweets_results(results, resp_data)
         results$rl_abort <- FALSE
         next_token <- resp_data$meta[["next_token"]]
       } else {
+        tmp_ids
         message(
           paste0(
             "twitter api response status (", endpoint_desc, "): ", resp$status, "\n",
-            "conversation_id: ", paste0(conversation_ids, collapse = ","),
-            ", next_token: ", next_token
+            "conversation_id: ", chr_cids, ", next_token: ", next_token
           ))
         next_token <- NULL
       }
@@ -382,7 +353,7 @@ resp_content <- function(resp) {
       # this is because tweets as seen in conversation threads are referenced_tweets (replied_to, quoted),
       # includes will also contain conversation starter tweet and any quoted tweets not part of conversation
 
-      # find obs that occur in incl_tweets but not in tweets
+      # find any tweets that occur in includes but are not in content tweets
       incl_tweets <- dplyr::anti_join(incl_tweets, tweets, by = "id")
 
       tweets <- dplyr::bind_rows(tweets, incl_tweets)
@@ -397,35 +368,5 @@ resp_content <- function(resp) {
     }
   }
 
-  list(
-    tweets = tweets,
-    users = users,
-    errors = errors,
-    meta = meta
-  )
-}
-
-# reformat and remove duplicates
-# attempts to retain most recent version if duplicated
-clean_results <- function(results) {
-  if (!is.null(results$tweets) && nrow(results$tweets)) {
-    results$tweets <- results$tweets |>
-      dplyr::rename(tweet_id = .data$id) |>
-      dplyr::arrange(dplyr::desc(.data$timestamp)) |>
-      dplyr::distinct(.data$tweet_id, .keep_all = TRUE)
-  }
-
-  if (!is.null(results$users) && nrow(results$users)) {
-    results$users <- results$users |>
-      dplyr::rename_with(~ paste0("profile.", .x)) |>
-      dplyr::rename(user_id = .data$profile.id,
-                    timestamp = .data$profile.timestamp) |>
-      dplyr::arrange(
-        dplyr::desc(.data$timestamp),
-        dplyr::desc(as.integer(.data$profile.public_metrics.tweet_count)) # imperfect
-      ) |>
-      dplyr::distinct(.data$user_id, .keep_all = TRUE)
-  }
-
-  results
+  list(tweets = tweets, users = users, errors = errors, meta = meta)
 }

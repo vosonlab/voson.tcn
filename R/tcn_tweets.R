@@ -29,34 +29,27 @@ tcn_tweets <-
            clean = TRUE) {
 
     # check params
-    if (is.null(token$bearer) ||
-        !is.character(token$bearer)) {
+    if (is.null(token$bearer) || !is.character(token$bearer)) {
       stop("missing or invalid bearer token.")
     }
 
     tweet_ids <- ids_from_urls(tweet_ids)
 
-    if (is.null(tweet_ids)) {
-      stop("please provide tweet_ids.")
-    }
+    if (is.null(tweet_ids)) stop("please provide tweet_ids.")
 
     if (any(is.na(tweet_ids))) {
       na_indexes <- which(is.na(tweet_ids))
 
-      stop(paste0("invalid ids in tweet_ids.\n",
-           "index: ",
-           paste0(na_indexes, collapse = ",")))
+      stop(paste0("invalid ids in tweet_ids.\n", "index: ", paste0(na_indexes, collapse = ",")))
     }
 
-    results <-
-      list(
-        tweets = NULL,
-        users = NULL,
-        errors = NULL,
-        meta = NULL
-      )
+    results <- lst_tweets_results()
 
     chunks <- split(tweet_ids, ceiling(seq_along(tweet_ids) / 100))
+
+    pb <- prog_bar(length(chunks))
+    pb$tick(0)
+
     i <- 1
     for (x in chunks) {
       chunk_tweets <-
@@ -67,10 +60,7 @@ tcn_tweets <-
           referenced_tweets = referenced_tweets
         )
 
-      results$tweets <- dplyr::bind_rows(results$tweets, chunk_tweets$tweets)
-      results$users <- dplyr::bind_rows(results$users, chunk_tweets$users)
-      results$errors <- dplyr::bind_rows(results$errors, chunk_tweets$errors)
-      results$meta <- dplyr::bind_rows(results$meta, chunk_tweets$meta)
+      results <- add_tweets_results(results, chunk_tweets)
 
       if (!is.null(results$rl_abort) && results$rl_abort == TRUE) {
         message(paste0("aborting GET 2/tweets as retry_on_limit = FALSE. tweet ids chunk: ", i))
@@ -78,6 +68,7 @@ tcn_tweets <-
         break
       }
 
+      pb$tick(1)
       i <- i + 1
     }
 
@@ -97,14 +88,7 @@ get_tweets <-
            referenced_tweets = FALSE,
            retry_on_limit = TRUE) {
 
-    results <-
-      list(
-        tweets = NULL,
-        users = NULL,
-        errors = NULL,
-        meta = NULL,
-        rl_abort = FALSE
-      )
+    results <- lst_tweets_results(rl_abort = FALSE)
 
     # endpoint description
     endpoint_desc <- "GET 2/tweets"
@@ -121,9 +105,8 @@ get_tweets <-
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
 
         # repeat request after reset
-        if (rl_status) {
-          resp <- httr::GET(query_url, req_header)
-        }
+        if (rl_status) resp <- httr::GET(query_url, req_header)
+
       } else {
         rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
         results$rl_abort <- TRUE
@@ -134,19 +117,11 @@ get_tweets <-
       # parse response
       resp_data <- resp_content(resp)
 
-      results$tweets <- resp_data$tweets
-      results$users <- resp_data$users
-      results$errors <- resp_data$errors
-      results$meta <- resp_data$meta
+      # assign response data to results
+      results <- add_tweets_results(results, resp_data)
       results$rl_abort <- FALSE
     } else {
-      message(
-        paste0(
-          "twitter api response status (",
-          endpoint_desc,
-          "): ",
-          resp$status
-        ))
+      message(paste0("twitter api response status (", endpoint_desc, "): ", resp$status))
     }
 
     results
