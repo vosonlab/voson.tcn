@@ -23,6 +23,7 @@
 #' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 #'   is TRUE.
 #' @param skip_list Character vector. List of tweet conversation IDs to skip searching if found.
+#' @param verbose Logical. Output additional information. Default is \code{TRUE}.
 #'
 #' @return A named list. Dataframes of tweets, users, errors and request metadata.
 #' @export
@@ -56,7 +57,10 @@ tcn_threads <-
            max_results = NULL,
            max_total = NULL,
            retry_on_limit = TRUE,
-           skip_list = NULL) {
+           skip_list = NULL,
+           verbose = TRUE) {
+
+    msg <- f_verbose(verbose)
 
     # check params
     if (is.null(token$bearer) || !is.character(token$bearer)) {
@@ -123,7 +127,8 @@ tcn_threads <-
       token = token,
       referenced_tweets = FALSE,
       retry_on_limit = TRUE,
-      clean = FALSE)
+      clean = FALSE,
+      verbose = verbose)
 
     results <- add_tweets_results(results, tweets)
 
@@ -136,19 +141,23 @@ tcn_threads <-
     }
 
     if (is.null(cids)) {
-      message("failed to get any conversation_ids")
+      err_msg("failed to get any conversation_ids")
       return(NULL)
     }
 
     chunks <- build_chunks(cids, endpoint = endpoint)
 
-    pb <- prog_bar(length(chunks), paste0(" of ", length(cids), " | threads"))
-    pb$tick(0)
+    msg(paste0("voson.tcn conversation threads: n=", length(cids), ", min-api-requests=", length(chunks), ", endpoint=", endpoint))
+
+    if (verbose) {
+      pb <- prog_bar(length(chunks), "")
+      pb$tick(0)
+    }
 
     i <- 1
     for (cids_chunk in chunks) {
       if (!is.null(max_total) && total_results >= max_total) {
-        message(
+        msg(
           paste0("\nexceeded max total results.\nmax total: ", max_total, ", total results: ", total_results)
         )
         break
@@ -164,7 +173,8 @@ tcn_threads <-
         max_results = max_results,
         max_total = max_total,
         total_results = total_results,
-        retry_on_limit = retry_on_limit
+        retry_on_limit = retry_on_limit,
+        verbose = verbose
       )
 
       if (!is.null(df$tweets) && nrow(df$tweets)) {
@@ -179,12 +189,12 @@ tcn_threads <-
       }
 
       if (!is.null(results$rl_abort) && results$rl_abort == TRUE) {
-        message(paste0("\naborting GET 2/tweets/search/ as retry_on_limit = FALSE. tweet ids chunk: ", i))
+        err_msg(paste0("\naborting GET 2/tweets/search/ as retry_on_limit = FALSE. tweet ids chunk: ", i))
         results$rl_abort <- NULL
         break
       }
 
-      pb$tick(1)
+      if (verbose) pb$tick(1)
       i <- i + 1
     }
 
@@ -202,7 +212,10 @@ get_thread <-
            max_results = 100,
            max_total = NULL,
            total_results = 0,
-           retry_on_limit = FALSE) {
+           retry_on_limit = FALSE,
+           verbose = TRUE) {
+
+    msg <- f_verbose(verbose)
 
     results <- lst_tweets_results(rl_abort = FALSE)
 
@@ -224,11 +237,11 @@ get_thread <-
 
     # check rate-limit
     if (resp$status == 429) {
-      message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
+      msg(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
 
       if (retry_on_limit & !is.null(reset)) {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE, verbose = verbose)
 
         # repeat request after reset
         if (rl_status) {
@@ -238,7 +251,7 @@ get_thread <-
         }
 
       } else {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE, verbose = verbose)
         next_token <- NULL
       }
     }
@@ -248,9 +261,10 @@ get_thread <-
       results <- add_tweets_results(results, resp_data)
       next_token <- resp_data$meta[["next_token"]]
     } else {
-      message(
+      err_msg(
         paste0(
-          "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+          "\nresponse error:\n",
+          "api status (", endpoint_desc, "): ", resp$status, "\n",
           "conversation_id: ", chr_cids, ", next_token: -")
       )
       next_token <- NULL
@@ -266,7 +280,7 @@ get_thread <-
         if (!is.null(resp_data$meta$result_count)) {
           result_tally <- total_results + sum(resp_data$meta$result_count, na.rm = TRUE)
           if (result_tally >= max_total) {
-            message(
+            msg(
               paste0(
                 "\nreached max_total tweets: ", result_tally, "\n",
                 "conversation_id: ", chr_cids, ", next_token: ", next_token
@@ -286,10 +300,10 @@ get_thread <-
 
       # check rate-limit
       if (resp$status == 429) {
-        message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
+        msg(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
         reset <- resp$headers$`x-rate-limit-reset`
         if (retry_on_limit & !is.null(reset)) {
-          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE, verbose = verbose)
 
           # repeat request after reset
           if (rl_status) {
@@ -299,7 +313,7 @@ get_thread <-
           }
 
         } else {
-          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
+          rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE, verbose = verbose)
           results$rl_abort <- TRUE
           next_token <- NULL
         }
@@ -311,9 +325,10 @@ get_thread <-
         results$rl_abort <- FALSE
         next_token <- resp_data$meta[["next_token"]]
       } else {
-        message(
+        err_msg(
           paste0(
-            "\ntwitter api response status (", endpoint_desc, "): ", resp$status, "\n",
+            "\nresponse error:\n",
+            "api status (", endpoint_desc, "): ", resp$status, "\n",
             "conversation_id: ", chr_cids, ", next_token: ", next_token
           ))
         next_token <- NULL
@@ -332,7 +347,7 @@ resp_content <- function(resp) {
   content <- tryCatch({
     jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"), flatten = TRUE)
   }, error = function(e) {
-    message("JSON content error: ", e)
+    err_msg(paste0("JSON content error: ", e))
     return(NULL)
   })
 

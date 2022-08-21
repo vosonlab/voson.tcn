@@ -1,10 +1,14 @@
-# voson.tcn 0.4.3
+# voson.tcn 0.4.4
 
 ## Minor Changes
 - Previously each tweet provided to `tcn_threads` was retrieved individually as the initializing tweet, the `conversation_id` extracted and then used as a search filter to collect a single conversation thread. This was a very inefficient process for large numbers of threads as it used one API request per thread, soon reaching the `full-archive` search endpoint 300 request per 15 minute rate-limit (and imposing a ceiling of maximum 300 threads per 15 minutes).
 - Tweets provided to `tcn_threads` are now collected at the start of an operation in batch and unique `conversation_id` extracted from the tweets to do batch thread collection. An `academic` or `full-archive` enabled project has a search query character limit of 1024 characters, and projects limited to the `recent` search endpoint a 512 character limit. A search query for multiple `conversation_id` can be created in the following format: `conversation_id:xxxxxxxxxxxxxxxxxxx OR conversation_id:xxxxxxxxxxxxxxxxxxx OR ...` within the character limit. 
 - The `tcn_threads` function now searches for as many `conversation_id` per request that will fit into the search query character limit, significantly improving the thread collection time. This is approximately 26 ID's per `full-archive` and 13 per `recent` search request. So for example, a maximum of 26 threads can be collected in a single request assuming the sum of tweets from all threads is less than `max_results`. This translates to 7,800 threads per 15 minutes (300 * 26) for the `full-archive` endpoint if each request of 26 threads has less than 500 tweets.
 - Set the default `max_results` to again be `500` tweets for `full-archive` searches. This was previously set to `100` tweets, the same as the `max_results` for a `recent` endpoint search because of an issue requesting the `context_annotations` tweet data field (Twitter impose a 100 tweet max for requests that include this field). The `context_annotations` is no longer collected by default but can be included by using the `annotations = TRUE` parameter.
+- Added progress bars and option for verbose output.
+
+## Bug Fixes
+- Fixed a bug in the function that builds search `conversation_id` queries.
 
 # voson.tcn 0.4.1
 

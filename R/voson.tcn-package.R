@@ -5,4 +5,5 @@
 "_PACKAGE"
 #' @importFrom rlang ".data"
 #' @importFrom stats na.omit
+#' @importFrom utils flush.console
 NULL

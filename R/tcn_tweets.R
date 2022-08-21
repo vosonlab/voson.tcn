@@ -8,6 +8,7 @@
 #' @param retry_on_limit Logical. When the API v2 rate-limit has been reached wait for reset time. Default
 #'   is TRUE.
 #' @param clean Logical. Clean results.
+#' @param verbose Logical. Output additional information. Default is \code{TRUE}.
 #'
 #' @return A named list. Dataframes of tweets, users, errors and request metadata.
 #' @export
@@ -26,7 +27,10 @@ tcn_tweets <-
            token = NULL,
            referenced_tweets = FALSE,
            retry_on_limit = TRUE,
-           clean = TRUE) {
+           clean = TRUE,
+           verbose = TRUE) {
+
+    msg <- f_verbose(verbose)
 
     # check params
     if (is.null(token$bearer) || !is.character(token$bearer)) {
@@ -47,8 +51,12 @@ tcn_tweets <-
 
     chunks <- split(tweet_ids, ceiling(seq_along(tweet_ids) / 100))
 
-    pb <- prog_bar(length(chunks), paste0(" of ", length(tweet_ids), " | tweets"))
-    pb$tick(0)
+    msg(paste0("voson.tcn tweets: n=", length(tweet_ids), ", min-api-requests=", length(chunks)))
+
+    if (verbose) {
+      pb <- prog_bar(length(chunks), "")
+      pb$tick(0)
+    }
 
     i <- 1
     for (x in chunks) {
@@ -57,23 +65,24 @@ tcn_tweets <-
           tweet_ids = x,
           token = token,
           retry_on_limit = retry_on_limit,
-          referenced_tweets = referenced_tweets
+          referenced_tweets = referenced_tweets,
+          verbose = verbose
         )
 
       results <- add_tweets_results(results, chunk_tweets)
 
       if (!is.null(results$rl_abort) && results$rl_abort == TRUE) {
-        message(paste0("\naborting GET 2/tweets as retry_on_limit = FALSE. tweet ids chunk: ", i))
+        err_msg(paste0("\naborting GET 2/tweets as retry_on_limit = FALSE. tweet ids chunk: ", i))
         results$rl_abort <- NULL
         break
       }
 
-      pb$tick(1)
+      if (verbose) pb$tick(1)
       i <- i + 1
     }
 
     if (!is.null(results$tweets) && nrow(results$tweets) < 1) {
-      message("failed to retrieve any tweets.")
+      err_msg("error: failed to retrieve any tweets.")
     }
 
     # tidy up results
@@ -86,7 +95,10 @@ get_tweets <-
   function(tweet_ids = NULL,
            token = NULL,
            referenced_tweets = FALSE,
-           retry_on_limit = TRUE) {
+           retry_on_limit = TRUE,
+           verbose = TRUE) {
+
+    msg <- f_verbose(verbose)
 
     results <- lst_tweets_results(rl_abort = FALSE)
 
@@ -99,16 +111,16 @@ get_tweets <-
 
     # check rate-limit
     if (resp$status == 429) {
-      message(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
+      msg(paste0("\ntwitter api rate-limit reached at ", Sys.time()))
       reset <- resp$headers$`x-rate-limit-reset`
       if (retry_on_limit & !is.null(reset)) {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = TRUE, verbose = verbose)
 
         # repeat request after reset
         if (rl_status) resp <- httr::GET(query_url, req_header)
 
       } else {
-        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE)
+        rl_status <- resp_rate_limit(resp$headers, endpoint_desc, sleep = FALSE, verbose = verbose)
         results$rl_abort <- TRUE
       }
     }
@@ -121,7 +133,8 @@ get_tweets <-
       results <- add_tweets_results(results, resp_data)
       results$rl_abort <- FALSE
     } else {
-      message(paste0("\ntwitter api response status (", endpoint_desc, "): ", resp$status))
+      err_msg(paste0("\nresponse error:\n",
+                     "api status (", endpoint_desc, "): ", resp$status))
     }
 
     results

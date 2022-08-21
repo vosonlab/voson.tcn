@@ -14,7 +14,8 @@ tcn_threads(
   max_results = NULL,
   max_total = NULL,
   retry_on_limit = TRUE,
-  skip_list = NULL
+  skip_list = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ is NULL.}
 is TRUE.}
 
 \item{skip_list}{Character vector. List of tweet conversation IDs to skip searching if found.}
+
+\item{verbose}{Logical. Output additional information. Default is \code{TRUE}.}
 }
 \value{
 A named list. Dataframes of tweets, users, errors and request metadata.

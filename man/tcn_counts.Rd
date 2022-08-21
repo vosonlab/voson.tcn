@@ -11,7 +11,8 @@ tcn_counts(
   start_time = NULL,
   end_time = NULL,
   granularity = "day",
-  retry_on_limit = FALSE
+  retry_on_limit = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,10 +29,13 @@ default to 30 days before end_time. Default is NULL.}
 \item{end_time}{Character string. Latest tweet timestamp to return (UTC in ISO 8601 format). If NULL API will default
 to now - 30 seconds. Default is NULL.}
 
-\item{granularity}{Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour". Default is "day".}
+\item{granularity}{Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour".
+Default is "day".}
 
 \item{retry_on_limit}{Logical. When the API v2 rate-limit has been reached wait for reset time. Default
-is FALSE.}
+is TRUE.}
+
+\item{verbose}{Logical. Output additional information. Default is \code{TRUE}.}
 }
 \value{
 A dataframe of conversation ids and counts.

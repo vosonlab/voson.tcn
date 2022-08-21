@@ -9,7 +9,8 @@ tcn_tweets(
   token = NULL,
   referenced_tweets = FALSE,
   retry_on_limit = TRUE,
-  clean = TRUE
+  clean = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ tcn_tweets(
 is TRUE.}
 
 \item{clean}{Logical. Clean results.}
+
+\item{verbose}{Logical. Output additional information. Default is \code{TRUE}.}
 }
 \value{
 A named list. Dataframes of tweets, users, errors and request metadata.
