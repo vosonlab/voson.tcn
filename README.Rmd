@@ -333,7 +333,7 @@ ggraph(g, layout = layout.auto(g)) +
 
 Plots of an activity network and corresponding actor reply network graph generated from a small Twitter conversation thread.
 
-<img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs"/>
+<img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs" width="90%"/>
 
 ## Code of Conduct
   

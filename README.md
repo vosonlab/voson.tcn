@@ -6,7 +6,7 @@
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![Github_Release](https://img.shields.io/github/release-pre/vosonlab/voson.tcn.svg?logo=github)](https://github.com/vosonlab/voson.tcn/releases)
-[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.4.3&logo=github)](https://github.com/vosonlab/voson.tcn)
+[![Github_Dev](https://img.shields.io/static/v1?label=dev&message=v0.5.0&logo=github)](https://github.com/vosonlab/voson.tcn)
 [![Last_Commit](https://img.shields.io/github/last-commit/vosonlab/voson.tcn.svg?&logo=github)](https://github.com/vosonlab/voson.tcn/commits/main)
 [![Build_Status](https://github.com/vosonlab/voson.tcn/workflows/R-CMD-check/badge.svg)](https://github.com/vosonlab/voson.tcn/actions)
 
@@ -32,7 +32,7 @@ Install the most recent release tag via GitHub:
 
 ``` r
 install.packages(
-  "https://github.com/vosonlab/voson.tcn/releases/download/v0.4.1/voson.tcn-0.4.1.tar.gz",
+  "https://github.com/vosonlab/voson.tcn/releases/download/v0.5.0/voson.tcn-0.5.0.tar.gz",
   repo = NULL, type = "source")
 ```
 
@@ -388,7 +388,7 @@ ggraph(g, layout = layout.auto(g)) +
 Plots of an activity network and corresponding actor reply network graph
 generated from a small Twitter conversation thread.
 
-<img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs"/>
+<img src="https://vosonlab.github.io/voson.tcn/images/network_graphs_plot.png" alt="activity and actor network graphs" width="90%"/>
 
 ## Code of Conduct
 

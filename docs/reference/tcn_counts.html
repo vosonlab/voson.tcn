@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voson.tcn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -102,7 +102,8 @@
 <span>  start_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  end_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  granularity <span class="op">=</span> <span class="st">"day"</span>,</span>
-<span>  retry_on_limit <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  retry_on_limit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -132,12 +133,17 @@ to now - 30 seconds. Default is NULL.</p></dd>
 
 
 <dt>granularity</dt>
-<dd><p>Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour". Default is "day".</p></dd>
+<dd><p>Character string. Granularity or period for tweet counts. Can be "day", "minute" or "hour".
+Default is "day".</p></dd>
 
 
 <dt>retry_on_limit</dt>
 <dd><p>Logical. When the API v2 rate-limit has been reached wait for reset time. Default
-is FALSE.</p></dd>
+is TRUE.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Logical. Output additional information. Default is <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div id="value">

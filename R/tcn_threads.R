@@ -147,7 +147,9 @@ tcn_threads <-
 
     chunks <- build_chunks(cids, endpoint = endpoint)
 
-    msg(paste0("voson.tcn conversation threads: n=", length(cids), ", min-api-requests=", length(chunks), ", endpoint=", endpoint))
+    msg(paste0("voson.tcn conversation threads: n=", length(cids),
+               ", min-api-requests=", length(chunks),
+               ", endpoint=", endpoint))
 
     if (verbose) {
       pb <- prog_bar(length(chunks), "")
