@@ -1,7 +1,6 @@
 
 # voson.tcn - Twitter Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
 
-[![Twitter_API_v2](https://img.shields.io/endpoint?url=https://twbadges.glitch.me/badges/v2)](https://developer.twitter.com/en/docs/twitter-api)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Total](https://cranlogs.r-pkg.org/badges/grand-total/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
