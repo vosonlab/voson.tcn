@@ -20,6 +20,9 @@ An introduction to the Twitter API v2 can be found
 and the Twitter Developer Application process
 [here](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api).
 
+> [!NOTE]
+> Please note that due to significant changes to the Twitter/X API project plans in 2023 that this package is not currently actively maintained. However, as it uses the Twitter v2 API endpoints it should remain fully functional for users with API access (pending any future breaking changes to the Twitter v2 REST API).
+
 ## Installation Options
 
 Install the most recent CRAN release:
