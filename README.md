@@ -1,5 +1,5 @@
 
-# voson.tcn - Twitter Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
+# voson.tcn - Twitter/X Conversation Networks<img src="https://vosonlab.github.io/voson.tcn/images/logo.png" width="140px" align="right" />
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
 [![CRAN_Monthly](https://cranlogs.r-pkg.org/badges/voson.tcn)](https://CRAN.R-project.org/package=voson.tcn)
